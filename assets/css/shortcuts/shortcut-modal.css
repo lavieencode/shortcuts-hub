@@ -45,6 +45,22 @@
     font-size: 15px;
 }
 
+/* Modal form labels */
+#edit-shortcut-form label{
+    font-weight:600;
+    font-size:13px;
+    margin-bottom:0px;
+    padding-bottom:5px;
+    display:inline-block;
+    color:#252525;
+    background-color:#909cfe;
+    line-height:1.3em;
+    padding-top:5px;
+    padding-right:10px;
+    padding-left:10px;
+    margin-left:1px;
+   }
+
 /* Modal Buttons */
 #edit-modal button.shortcuts-button {
     background-color: #909CFE;
@@ -66,4 +82,10 @@
     color: #252525;
     font-weight: 600;
     margin-left: 15px;
+}
+
+.success-message {
+    color: #909cfe;
+    margin-top: 10px;
+    font-weight: bold;
 }
