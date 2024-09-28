@@ -90,6 +90,8 @@ function shortcuts_hub_render_admin_page() {
                     <span class="close-button">&times;</span>
                     <h2>Edit Shortcut</h2>
                     <form id="edit-shortcut-form">
+                        <input type="hidden" id="shortcut-id" name="id">
+                        
                         <label for="shortcut-name">Shortcut Name</label>
                         <input type="text" id="shortcut-name" name="name" required>
 

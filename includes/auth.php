@@ -63,7 +63,7 @@ function get_refresh_sb_token() {
  * @param array $query_params - Optional query parameters
  * @return mixed - Decoded response body or WP_Error on failure
  */
-function make_sb_api_call($endpoint, $query_params = array()) {
+function make_sb_api_call($endpoint, $method = 'GET', $query_params = array(), $body = null) {
     // Check if SB_URL is defined
     if (!defined('SB_URL')) {
         error_log('Error: SB_URL is not defined');
@@ -73,42 +73,58 @@ function make_sb_api_call($endpoint, $query_params = array()) {
     // Construct the full API URL
     $api_url = SB_URL . $endpoint;
 
-    // Append query parameters if available
-    if (!empty($query_params)) {
+    // Append query parameters for GET requests
+    if (!empty($query_params) && $method === 'GET') {
         $api_url .= '?' . http_build_query($query_params);
     }
 
-    // Log the constructed API URL
+    // Log the API URL
     error_log('Constructed API URL: ' . $api_url);
 
     // Get the bearer token
     $bearer_token = get_refresh_sb_token();
+    if (is_wp_error($bearer_token)) {
+        error_log('Error fetching bearer token: ' . $bearer_token->get_error_message());
+        return $bearer_token;
+    }
 
-    // Log the bearer token
-    error_log('Bearer Token Used: ' . $bearer_token);
+    // Log the bearer token (masked for security reasons)
+    error_log('Bearer Token Used (masked): ' . substr($bearer_token, 0, 6) . '********');
 
-    // Make the API request
-    $response = wp_remote_get($api_url, array(
+    // Set up the request arguments
+    $args = array(
+        'method'  => $method,
         'headers' => array(
             'Authorization' => 'Bearer ' . $bearer_token,
+            'Content-Type'  => 'application/json',
         ),
-    ));
+        'timeout' => 15, // Set a timeout for the request
+    );
 
-    // Log the full response for debugging
-    error_log('Full API Response: ' . print_r($response, true));
+    // Log the request method and body
+    error_log('Request Method: ' . $method);
 
-    // Handle potential errors
+    // Include the request body for PATCH or POST
+    if ($method !== 'GET' && !empty($body)) {
+        $args['body'] = json_encode($body);
+        error_log('Request Body: ' . print_r($args['body'], true));
+    }
+
+    // Perform the API request
+    $response = wp_remote_request($api_url, $args);
+
+    // Log any errors
     if (is_wp_error($response)) {
         error_log('Error Message from API Request: ' . $response->get_error_message());
         return $response;
     }
 
-    // Retrieve and decode the body of the response
+    // Retrieve and log the raw response body
     $body = wp_remote_retrieve_body($response);
-    $decoded_body = json_decode($body, true);
-
-    // Log the raw and decoded response body for debugging
     error_log('Raw API Response Body: ' . $body);
+
+    // Decode the response body and log it
+    $decoded_body = json_decode($body, true);
     error_log('Decoded API Response: ' . print_r($decoded_body, true));
 
     return $decoded_body;

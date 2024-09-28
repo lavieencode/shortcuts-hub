@@ -32,15 +32,33 @@ function shortcuts_hub_fetch_shortcuts() {
         $query_params['search'] = $search_term;
     }
 
-    // Make the API call using the token
-    $shortcuts = make_sb_api_call('/shortcuts', $query_params);
+    // Log the query parameters being sent
+    error_log('Query parameters for fetching shortcuts: ' . print_r($query_params, true));
 
-    if (!$shortcuts) {
+    // Make the API call using the token
+    $shortcuts = make_sb_api_call('/shortcuts', 'GET', $query_params);
+
+    // Handle the case where no shortcuts are returned or there's an error
+    if (is_wp_error($shortcuts)) {
+        error_log('Error fetching shortcuts: ' . $shortcuts->get_error_message());
         wp_send_json_error('Error fetching shortcuts from the API.');
         return;
     }
 
-    wp_send_json_success($shortcuts);
+    if (empty($shortcuts)) {
+        error_log('No shortcuts found in the response.');
+        wp_send_json_error('No shortcuts found.');
+        return;
+    }
+
+    // Ensure that the response has the correct structure
+    if (isset($shortcuts['shortcuts'])) {
+        error_log('Successfully retrieved shortcuts: ' . print_r($shortcuts['shortcuts'], true));
+        wp_send_json_success($shortcuts['shortcuts']);
+    } else {
+        error_log('Invalid response format from the API.');
+        wp_send_json_error('Invalid response format from the API.');
+    }
 }
 
 function shortcuts_hub_fetch_single_shortcut() {
@@ -86,59 +104,65 @@ function shortcuts_hub_fetch_single_shortcut() {
 function shortcuts_hub_update_shortcut() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
 
-    // Sanitize the inputs
+    // Sanitize and validate input
     $shortcut_id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
     $name = isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '';
     $headline = isset($_POST['headline']) ? sanitize_text_field($_POST['headline']) : '';
     $description = isset($_POST['description']) ? sanitize_text_field($_POST['description']) : '';
-    $website = isset($_POST['website']) ? sanitize_text_field($_POST['website']) : '';
+    $website = isset($_POST['website']) ? sanitize_text_field($_POST['website']) : ''; // Add website
+    $deleted = isset($_POST['deleted']) ? sanitize_text_field($_POST['deleted']) : '';
     $state = isset($_POST['state']) ? sanitize_text_field($_POST['state']) : '';
 
-    // Log the received shortcut ID and details
-    if (empty($shortcut_id)) {
-        error_log('Error: Shortcut ID is missing.');
+    // Log incoming data for debugging
+    error_log('Update request received. Data: ' . print_r(compact('shortcut_id', 'name', 'headline', 'description', 'website', 'deleted', 'state'), true));
+
+    // Check if shortcut ID is missing
+    if (!$shortcut_id) {
+        error_log('Shortcut ID is missing.');
         wp_send_json_error('Shortcut ID is missing');
         return;
     }
-    error_log("Updating shortcut ID: $shortcut_id with name: $name, headline: $headline, description: $description, website: $website, state: $state");
 
-    // Prepare the payload for the API request
+    // Prepare the payload for the update request, including the website
     $payload = array(
-        'name' => $name,
-        'headline' => $headline,
+        'name'        => $name,
+        'headline'    => $headline,
         'description' => $description,
-        'website' => $website,
-        'state' => $state,
+        'website'     => $website,  // Include the website in the payload
+        'deleted'     => $deleted,
+        'state'       => $state,
     );
 
-    // Log the payload being sent
-    error_log('Payload for updating shortcut: ' . print_r($payload, true));
+    // Log the payload
+    error_log('Payload being sent: ' . print_r($payload, true));
 
-    // Construct the endpoint using the reusable API function
-    $endpoint = '/shortcuts/' . $shortcut_id;
+    // Construct the API endpoint path
+    $api_path = '/shortcuts/' . $shortcut_id;
 
-    // Make the API call using the reusable function
-    $response = make_sb_api_call($endpoint, $payload, 'POST');
+    // Log the API path
+    error_log('API Path: ' . $api_path);
+
+    // Make the API call using the PATCH method
+    $response = make_sb_api_call($api_path, 'PATCH', [], $payload);
 
     // Log the response or error from the API call
     if (is_wp_error($response)) {
-        error_log('Error updating shortcut in API: ' . $response->get_error_message());
+        error_log('Error updating shortcut: ' . $response->get_error_message());
         wp_send_json_error('Failed to update shortcut: ' . $response->get_error_message());
         return;
     }
 
-    // Log the raw response data
-    error_log('Raw response from update shortcut API: ' . print_r($response, true));
-
-    // Decode the API response
+    // Parse the response body
     $updated_shortcut = json_decode(wp_remote_retrieve_body($response), true);
 
-    // Check if the update was successful
+    // Log the response from the API
+    error_log('API Response: ' . print_r($updated_shortcut, true));
+
+    // Check if the API response contains valid data
     if (!empty($updated_shortcut)) {
-        error_log('Shortcut updated successfully: ' . print_r($updated_shortcut, true));
         wp_send_json_success('Shortcut updated successfully!');
     } else {
-        error_log('Failed to update shortcut: Invalid or empty response.');
+        error_log('Failed to update shortcut - invalid response from API.');
         wp_send_json_error('Failed to update shortcut');
     }
 }

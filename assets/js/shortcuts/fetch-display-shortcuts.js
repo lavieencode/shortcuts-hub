@@ -40,19 +40,44 @@ function fetchShortcuts() {
             search: searchTerm
         },
         success: function(response) {
+            console.log('AJAX request successful. Response:', response);
+
             if (response.success) {
-                console.log('Shortcuts fetched successfully:', response.data.shortcuts);
-                displayShortcuts(response.data.shortcuts); // Pass the shortcuts array directly to the display function
+                displayShortcuts(response.data);  // Call the function to render shortcuts
             } else {
-                console.error('Error fetching shortcuts:', response.data.message);
+                console.error('Error from server:', response.data);
                 $('#shortcuts-container').html('<p>Error fetching shortcuts.</p>');
             }
         },
-        error: function(xhr) {
-            console.error('AJAX error fetching shortcuts.');
-            $('#shortcuts-container').html('<p>Error fetching shortcuts.</p>');
+        error: function(xhr, status, error) {
+            console.error('AJAX error fetching shortcuts. Status:', status, 'Error:', error, 'Response:', xhr.responseText);
         }
     });
+}
+
+// Function to dynamically render the shortcuts
+function displayShortcuts(shortcuts) {
+    const container = $('#shortcuts-container');
+    container.empty();
+
+    if (shortcuts.length > 0) {
+        shortcuts.forEach(function(shortcut) {
+            const element = `
+                <div class="shortcut-item">
+                    <h3>${shortcut.name}</h3>
+                    <p>${shortcut.headline || 'No headline'}</p>
+                    <button class="edit-button shortcuts-button" data-id="${shortcut.id}">Edit</button>
+                    <button class="versions-button shortcuts-button" data-shortcut-id="${shortcut.id}">Versions</button>
+                </div>`;
+            container.append(element);
+        });
+    } else {
+        container.append('<p>No shortcuts found.</p>');
+    }
+
+    // Attach event handlers to the dynamically created buttons
+    attachEditButtonHandlers();
+    attachVersionListButtonHandlers();
 }
 
 // Function to display shortcuts dynamically
@@ -124,47 +149,38 @@ function openEditModal(shortcutId) {
 
 // Function to populate the edit modal with fetched data
 function populateEditModal(data) {
-    // Log the data object to inspect its structure
     console.log('Populating Edit Modal with data:', data);
 
-    // Check if the data object is valid
-    if (!data) {
-        console.error('No data received.');
-        return;
-    }
-
-    // Since the data is not wrapped inside a 'shortcut' object, use data directly
-    const shortcut = data;
-
-    // Log the shortcut details to ensure it's correctly received
-    console.log('Shortcut details:', shortcut);
-
-    // Populate the modal fields with the shortcut data
-    $('#shortcut-name').val(shortcut.name || '');
-    $('#shortcut-description').val(shortcut.description || '');
-    $('#shortcut-headline').val(shortcut.headline || '');
-    $('#shortcut-website').val(shortcut.website || '');
-    
-    if (shortcut.state && shortcut.state.value !== undefined) {
-        $('#shortcut-status').val(shortcut.state.value);
+    // Populate the hidden field for shortcut ID
+    if (data.id) {
+        $('#shortcut-id').val(data.id); // Populate hidden field with shortcut ID
     } else {
-        console.error('No state value found for shortcut');
+        console.error('No shortcut ID found for the shortcut.');
+        return; // Exit if no ID is found
     }
 
-    console.log('Edit Modal populated successfully');
+    // Populate other fields in the modal
+    $('#shortcut-name').val(data.name || '');
+    $('#shortcut-description').val(data.description || '');
+    $('#shortcut-headline').val(data.headline || '');
+    $('#shortcut-website').val(data.website || '');
+    $('#shortcut-status').val(data.state ? data.state.value : '');
 }
 
 function setupModalButtons() {
     // Log setup of button handlers
     console.log('Setting up button handlers for the modal.');
 
-    // Attach event handlers for Save and Cancel buttons
+    // Attach event handler for form submission
     $('#edit-shortcut-form').on('submit', function(e) {
-        e.preventDefault();
+        e.preventDefault(); // Prevent default form submission behavior
         console.log('Submit button clicked, submitting the form...');
+
+        // Call the submitEditShortcutForm function
         submitEditShortcutForm();
     });
 
+    // Attach event handler for Cancel button
     $('.close-button').on('click', function() {
         console.log('Cancel button clicked, closing the modal.');
         $('#edit-modal').fadeOut();
@@ -174,9 +190,11 @@ function setupModalButtons() {
     console.log('Button handlers attached successfully.');
 }
 
-function submitEditShortcutForm() {
-    // Gather form data
+function submitEditShortcutForm(e) {
+
+    // Gather form data, including the shortcut ID
     var formData = {
+        id: $('#shortcut-id').val(), // Hidden field for shortcut ID
         name: $('#shortcut-name').val(),
         headline: $('#shortcut-headline').val(),
         description: $('#shortcut-description').val(),
@@ -198,13 +216,18 @@ function submitEditShortcutForm() {
         },
         success: function(response) {
             if (response.success) {
+                // Log that the shortcut was successfully updated
                 console.log('Shortcut updated successfully:', response);
 
-                // Log that modal will close on success
+                // Close the modal
                 console.log('Closing modal after successful update.');
-                $('#edit-modal').fadeOut(); // Close the modal on success
+                $('#edit-modal').fadeOut();
+
+                // Refresh the shortcuts list
+                console.log('Refreshing the shortcuts list...');
+                fetchShortcuts();  // Call the function to fetch and display the updated shortcuts
             } else {
-                // Log the error message from the server
+                // Log the server error message
                 console.error('Server returned an error while updating shortcut:', response.data.message);
             }
         },
@@ -214,6 +237,9 @@ function submitEditShortcutForm() {
         }
     });
 }
+
+// Attach submit handler to the edit form
+$('#edit-shortcut-form').on('submit', submitEditShortcutForm);
 
 // Log document ready state
 console.log('Document ready, setting up modal button handlers.');
