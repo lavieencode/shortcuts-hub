@@ -1,173 +1,95 @@
 <?php
-/**
- * Auth file for managing Switchblade API authentication
- */
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-function initialize_sb_token() {
-    if (!get_transient('SB_TOKEN')) {
-        return get_sb_token();
+/**
+ * Function to get or refresh the SB token
+ * It first checks if the token exists in the transient, and if not, it requests a new one.
+ *
+ * @return string|false The token if successful, false otherwise.
+ */
+function get_refresh_sb_token() {
+    // Check if a valid token is stored in the transient
+    $cached_token = get_transient('SB_TOKEN');
+    
+    if ($cached_token) {
+        // Token exists and is valid, return it
+        return $cached_token;
     }
-    return get_transient('SB_TOKEN');
-}
 
-add_action('init', 'initialize_sb_token');
-
-// Function to request and store the Switchblade token
-function get_sb_token() {
-    error_log('get_sb_token function triggered.');
-    // Retrieve the API credentials from the WordPress options
-    $API_USERNAME = get_option('SB_USERNAME');
-    $API_PASSWORD = get_option('SB_PASSWORD');
-    $API_URL = get_option('SB_URL') . '/login';  // Adjust to point to the login endpoint
-
-    // Make the request to the Switchblade login endpoint to get the token
-    $response = wp_remote_post($API_URL, [
+    // If no valid token, make an API request to fetch a new one
+    $api_url = SB_URL . '/login'; // SB_URL is set in wp-config.php
+    $response = wp_remote_post($api_url, [
         'body' => json_encode([
-            'username' => $API_USERNAME,
-            'password' => $API_PASSWORD
+            'username' => SB_USERNAME,  // SB_USERNAME is set in wp-config.php
+            'password' => SB_PASSWORD   // SB_PASSWORD is set in wp-config.php
         ]),
         'headers' => [
             'Content-Type' => 'application/json',
         ],
     ]);
 
-    // Handle errors if the response failed
+    // Handle errors in the response
     if (is_wp_error($response)) {
         error_log('Error fetching SB token: ' . $response->get_error_message());
-        return null;  // Return null if there was an error
+        return false;
     }
 
     // Parse the response body
     $body = wp_remote_retrieve_body($response);
     $data = json_decode($body, true);
 
-    // If a token is returned, store it as a transient
+    // Check if a token is returned and store it in the transient
     if (!empty($data['token'])) {
-        // Store the token with an expiration time (1 hour)
+        // Store the token in a transient with a 1-hour expiration
         set_transient('SB_TOKEN', $data['token'], HOUR_IN_SECONDS);
-        return $data['token'];  // Return the token
-    }
-
-    // Handle case where no token was returned
-    error_log('No token received from SB API.');
-    return null;
-}
-
-// Function to get the stored token or request a new one if expired
-function get_sb_token_from_storage() {
-    // Attempt to retrieve the stored token and expiration time from the database
-    $stored_token_data = get_option('SB_TOKEN');
-    
-    // Check if data exists and is in the expected format
-    if (!$stored_token_data || !isset($stored_token_data['token']) || !isset($stored_token_data['expires_at'])) {
-        error_log('SB token missing or malformed in database.');
+        
+        // Log for debugging
+        error_log('New SB token fetched and stored: ' . $data['token']);
+        
+        return $data['token'];  // Return the new token
+    } else {
+        error_log('Failed to retrieve SB token: ' . print_r($data, true));
         return false;
     }
-
-    // Check if the token is still valid based on the expiration time
-    $current_time = time();
-    if ($stored_token_data['expires_at'] <= $current_time) {
-        error_log('SB token has expired. A new token will be requested.');
-        return false;
-    }
-
-    // Token is valid, return the stored token
-    return $stored_token_data['token'];
-    error_log('Token retrieved: ' . $bearer_token);
-    error_log('API URL: ' . $api_url);
-    error_log('API Response: ' . print_r($response, true));
 }
 
-// Function to refresh the SB token
-function refresh_sb_token() {
-    // Make the API request to get a new token
-    $response = wp_remote_post(SB_URL . '/login', array(
-        'body' => json_encode(array(
-            'username' => SB_USERNAME,
-            'password' => SB_PASSWORD
-        )),
-        'headers' => array('Content-Type' => 'application/json')
-    ));
-
-    if (is_wp_error($response)) {
-        error_log('Error refreshing SB token: ' . $response->get_error_message());
-        return ''; // Handle error appropriately
-    }
-
-    $body = json_decode(wp_remote_retrieve_body($response), true);
-
-    if (isset($body['token'])) {
-        $new_token = $body['token'];
-        $expiration = time() + 3600; // Token expires in 1 hour
-
-        // Store the new token and expiration time in WordPress options
-        update_option('SB_TOKEN', array(
-            'token' => $new_token,
-            'expires_at' => $expiration
-        ));
-
-        error_log('Switchblade token refreshed successfully.');
-        return $new_token;
-    }
-
-    error_log('Failed to refresh SB token.');
-    return ''; // Handle error appropriately
-}
-
-// Example function to use the token in an API call
+/**
+ * Example function to make an authenticated API call using the SB token.
+ * This is where we inject the token into the API request.
+ *
+ * @param string $endpoint The API endpoint to call.
+ * @param array $params The parameters to send in the API request.
+ * @return array|false The API response or false on failure.
+ */
 function make_sb_api_call($endpoint, $params = []) {
-    $bearer_token = get_sb_token_from_storage();
+    // Get or refresh the token
+    $token = get_refresh_sb_token();
 
     if (!$token) {
-        error_log('No valid token found');
-        return new WP_Error('no_token', 'Unable to retrieve SB token.');
+        error_log('Unable to retrieve a valid SB token for API call.');
+        return false; // Fail if no token
     }
 
-    $api_url = get_option('SB_URL') . $endpoint;
+    // Construct the API URL
+    $api_url = SB_URL . $endpoint;
 
+    // Make the API request with the token
     $response = wp_remote_get($api_url, [
         'headers' => [
-            'Authorization' => 'Bearer ' . $bearer_token,
+            'Authorization' => 'Bearer ' . $token,
         ],
         'body' => $params,
     ]);
 
-    // Log the entire response for debugging
-    error_log('API URL: ' . $api_url);
-    error_log('Response: ' . print_r($response, true));
-
+    // Handle any errors in the response
     if (is_wp_error($response)) {
-        error_log('API Error: ' . $response->get_error_message());
-        return new WP_Error('api_error', 'Error in API request: ' . $response->get_error_message());
+        error_log('API call failed: ' . $response->get_error_message());
+        return false;
     }
 
-    // Log the response body for further checks
-    $response_body = wp_remote_retrieve_body($response);
-    error_log('Response Body: ' . $response_body);
-
-    return json_decode($response_body, true);
+    // Return the decoded response body
+    return json_decode(wp_remote_retrieve_body($response), true);
 }
-
-// Schedule the cron event when the plugin is activated
-function sb_schedule_token_refresh() {
-    if (!wp_next_scheduled('sb_refresh_token_event')) {
-        wp_schedule_event(time(), 'hourly', 'sb_refresh_token_event');
-    }
-}
-register_activation_hook(__FILE__, 'sb_schedule_token_refresh');
-
-// Clear the cron event when the plugin is deactivated
-function sb_clear_token_refresh_schedule() {
-    $timestamp = wp_next_scheduled('sb_refresh_token_event');
-    if ($timestamp) {
-        wp_unschedule_event($timestamp, 'sb_refresh_token_event');
-    }
-}
-register_deactivation_hook(__FILE__, 'sb_clear_token_refresh_schedule');
-
-// Define the action to refresh the token
-add_action('sb_refresh_token_event', 'refresh_sb_token');

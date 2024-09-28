@@ -1,5 +1,14 @@
 jQuery(document).ready(function($) {
-// Function to fetch versions using AJAX
+
+// Attach event handlers for the version edit buttons
+function attachVersionEditButtonHandlers() {
+    jQuery('.edit-version-button').on('click', function() {
+        const versionId = jQuery(this).data('version-id');
+        openVersionEditModal(versionId);  // Opens the version edit modal
+    });
+}
+
+    // Function to fetch versions using AJAX
 function fetchVersions(shortcutId, filters) {
     console.log("Fetching versions for shortcut ID: " + shortcutId);
     $.ajax({
@@ -50,11 +59,4 @@ function displayVersions(versions) {
     attachVersionEditButtonHandlers();
 }
 
-// Function to attach event handlers to the version edit buttons
-function attachVersionEditButtonHandlers() {
-    $('.edit-version-button').on('click', function() {
-        const versionId = $(this).data('version-id');
-        openVersionEditModal(versionId);
-    });
-}
 });

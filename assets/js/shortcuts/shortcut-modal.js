@@ -1,6 +1,4 @@
 jQuery(document).ready(function() {
-    // Attach event handlers for modals
-    attachShortcutModalHandlers();
 
 // Function to open the edit modal and fetch shortcut details
 function openEditModal(shortcutId) {
@@ -66,15 +64,4 @@ function closeModal() {
     $('#edit-shortcut-modal').fadeOut();
 }
 
-// Attach modal-related handlers
-function attachShortcutModalHandlers() {
-    jQuery('.edit-shortcut-button').on('click', function() {
-        const shortcutId = $(this).data('id');
-        openEditModal(shortcutId);
-    });
-
-    jQuery('#edit-shortcut-form').on('submit', submitEditShortcutForm);
-
-    jQuery('.close-modal').on('click', closeModal);
-}
 });

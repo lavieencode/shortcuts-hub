@@ -1,6 +1,25 @@
 jQuery(document).ready(function($) {
-    // Trigger fetching of shortcuts when the document is ready
-    fetchShortcuts();
+
+// Attach event handlers for the edit modal buttons
+function attachEditButtonHandlers() {
+    // Open the edit modal when the edit button is clicked
+    jQuery('.edit-button').on('click', function() {
+        const shortcutId = jQuery(this).data('id');
+        openEditModal(shortcutId);  // Opens the modal and fetches the data
+    });
+}
+
+function attachVersionListButtonHandlers() {
+    jQuery('.versions-button').on('click', function() {
+        const shortcutId = jQuery(this).data('shortcut-id');
+        console.log('Switching to versions list for Shortcut ID:', shortcutId);
+
+        fetchVersions(shortcutId);
+    });
+}
+
+// Trigger fetching of shortcuts when the document is ready
+fetchShortcuts();
 
 // Function to fetch and display the shortcuts
 function fetchShortcuts() {
@@ -22,8 +41,8 @@ function fetchShortcuts() {
         },
         success: function(response) {
             if (response.success) {
-                console.log('Shortcuts fetched successfully:', response.data);
-                displayShortcuts(response.data); // Call the display function
+                console.log('Shortcuts fetched successfully:', response.data.shortcuts); // Adjusted to log the shortcuts array
+                displayShortcuts(response.data.shortcuts); // Pass the shortcuts array directly to the display function
             } else {
                 console.error('Error fetching shortcuts:', response.data.message);
                 $('#shortcuts-container').html('<p>Error fetching shortcuts.</p>');
@@ -58,6 +77,6 @@ function displayShortcuts(shortcuts) {
 
     // Attach event handlers to newly created edit and version buttons
     attachEditButtonHandlers();
-    attachShortcutVersionsButtonHandlers();
+    attachVersionListButtonHandlers();
 }
 });

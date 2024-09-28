@@ -7,16 +7,20 @@ if (!defined('ABSPATH')) {
 function shortcuts_hub_fetch_shortcuts() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
 
+    // Fetch the SB token
+    $token = get_refresh_sb_token();
+
+    if (!$token) {
+        wp_send_json_error('Failed to retrieve SB token.');
+        return;
+    }
+
     // Get the filter values from the AJAX request
     $filter_status = isset($_POST['filter_status']) ? sanitize_text_field($_POST['filter_status']) : '';
     $filter_deleted = isset($_POST['filter_deleted']) ? sanitize_text_field($_POST['filter_deleted']) : '';
     $search_term = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
 
-    // Bearer token and API URL
-    $bearer_token = get_sb_token_from_storage();
-    $api_url = get_option('SB_URL') . '/shortcuts';
-
-    // Build the query parameters based on filters and search
+    // Build the query parameters for the API call
     $query_params = [];
     if (!empty($filter_status)) {
         $query_params['state'] = $filter_status;
@@ -28,34 +32,15 @@ function shortcuts_hub_fetch_shortcuts() {
         $query_params['search'] = $search_term;
     }
 
-    // Construct API URL with query parameters
-    if (!empty($query_params)) {
-        $api_url .= '?' . http_build_query($query_params);
-    }
+    // Make the API call using the token
+    $shortcuts = make_sb_api_call('/shortcuts', $query_params);
 
-    // Log the API URL for debugging
-    error_log('API Request URL: ' . $api_url);
-
-    // Make API request
-    $response = wp_remote_get($api_url, array(
-        'headers' => array(
-            'Authorization' => 'Bearer ' . $bearer_token,
-        )
-    ));
-
-    if (is_wp_error($response)) {
-        wp_send_json_error('Error fetching shortcuts');
+    if (!$shortcuts) {
+        wp_send_json_error('Error fetching shortcuts from the API.');
         return;
     }
 
-    // Parse the API response
-    $shortcuts_data = json_decode(wp_remote_retrieve_body($response), true);
-
-    if (!empty($shortcuts_data)) {
-        wp_send_json_success($shortcuts_data);
-    } else {
-        wp_send_json_error('No shortcuts found or invalid data structure.');
-    }
+    wp_send_json_success($shortcuts);
 }
 
 function shortcuts_hub_fetch_single_shortcut() {
