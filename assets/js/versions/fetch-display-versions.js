@@ -8,7 +8,7 @@ function attachVersionEditButtonHandlers() {
     });
 }
 
-    // Function to fetch versions using AJAX
+// Function to fetch versions using AJAX
 function fetchVersions(shortcutId, filters) {
     console.log("Fetching versions for shortcut ID: " + shortcutId);
     $.ajax({

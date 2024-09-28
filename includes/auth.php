@@ -57,39 +57,59 @@ function get_refresh_sb_token() {
 }
 
 /**
- * Example function to make an authenticated API call using the SB token.
- * This is where we inject the token into the API request.
+ * Function to make a SwitchBlade API call
  *
- * @param string $endpoint The API endpoint to call.
- * @param array $params The parameters to send in the API request.
- * @return array|false The API response or false on failure.
+ * @param string $endpoint - API endpoint path (e.g., '/shortcuts')
+ * @param array $query_params - Optional query parameters
+ * @return mixed - Decoded response body or WP_Error on failure
  */
-function make_sb_api_call($endpoint, $params = []) {
-    // Get or refresh the token
-    $token = get_refresh_sb_token();
-
-    if (!$token) {
-        error_log('Unable to retrieve a valid SB token for API call.');
-        return false; // Fail if no token
+function make_sb_api_call($endpoint, $query_params = array()) {
+    // Check if SB_URL is defined
+    if (!defined('SB_URL')) {
+        error_log('Error: SB_URL is not defined');
+        return new WP_Error('missing_url', 'API base URL is not defined.');
     }
 
-    // Construct the API URL
+    // Construct the full API URL
     $api_url = SB_URL . $endpoint;
 
-    // Make the API request with the token
-    $response = wp_remote_get($api_url, [
-        'headers' => [
-            'Authorization' => 'Bearer ' . $token,
-        ],
-        'body' => $params,
-    ]);
-
-    // Handle any errors in the response
-    if (is_wp_error($response)) {
-        error_log('API call failed: ' . $response->get_error_message());
-        return false;
+    // Append query parameters if available
+    if (!empty($query_params)) {
+        $api_url .= '?' . http_build_query($query_params);
     }
 
-    // Return the decoded response body
-    return json_decode(wp_remote_retrieve_body($response), true);
+    // Log the constructed API URL
+    error_log('Constructed API URL: ' . $api_url);
+
+    // Get the bearer token
+    $bearer_token = get_refresh_sb_token();
+
+    // Log the bearer token
+    error_log('Bearer Token Used: ' . $bearer_token);
+
+    // Make the API request
+    $response = wp_remote_get($api_url, array(
+        'headers' => array(
+            'Authorization' => 'Bearer ' . $bearer_token,
+        ),
+    ));
+
+    // Log the full response for debugging
+    error_log('Full API Response: ' . print_r($response, true));
+
+    // Handle potential errors
+    if (is_wp_error($response)) {
+        error_log('Error Message from API Request: ' . $response->get_error_message());
+        return $response;
+    }
+
+    // Retrieve and decode the body of the response
+    $body = wp_remote_retrieve_body($response);
+    $decoded_body = json_decode($body, true);
+
+    // Log the raw and decoded response body for debugging
+    error_log('Raw API Response Body: ' . $body);
+    error_log('Decoded API Response: ' . print_r($decoded_body, true));
+
+    return $decoded_body;
 }

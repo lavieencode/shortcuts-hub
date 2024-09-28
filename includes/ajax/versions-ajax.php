@@ -24,7 +24,7 @@ function shortcuts_hub_fetch_versions() {
     error_log('Filters received: ' . print_r(compact('search_term', 'status', 'deleted', 'required_update'), true));
 
     // Bearer Token and API URL
-    $bearer_token = get_sb_token_from_storage();
+    $bearer_token = get_refresh_sb_token();
     $api_url = get_option('SB_URL') . '/shortcuts/' . $shortcut_id . '/history';
 
     // Build query parameters for the API call
@@ -85,7 +85,7 @@ function shortcuts_hub_fetch_single_version() {
     }
 
     // Bearer token and API URL
-    $bearer_token = get_sb_token_from_storage();
+    $bearer_token = get_refresh_sb_token();
     $api_url = get_option('SB_URL') . '/shortcuts/' . $shortcut_id . '/version/' . $version_number;
 
     // Make the API request
@@ -129,7 +129,7 @@ function shortcuts_hub_edit_version() {
         return;
     }
 
-    $bearer_token = get_sb_token_from_storage();
+    $bearer_token = get_refresh_sb_token();
     $api_url = get_option('SB_URL') . '/versions/' . $version_id;
 
     // Prepare the request payload

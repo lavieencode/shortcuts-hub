@@ -78,15 +78,11 @@ function shortcuts_hub_enqueue_assets($hook) {
         'fetch-display-shortcuts-script',
         plugins_url('../assets/js/shortcuts/fetch-display-shortcuts.js', __FILE__),
         array('jquery'),
-        filemtime($fetch_display_shortcuts_js),
-        true
     );
     wp_enqueue_script(
         'shortcut-modal-script',
         plugins_url('../assets/js/shortcuts/shortcut-modal.js', __FILE__),
         array('jquery'),
-        filemtime($shortcut_modal_js),
-        true
     );
 
     // Enqueue Versions JavaScript files with cache busting
@@ -94,15 +90,11 @@ function shortcuts_hub_enqueue_assets($hook) {
         'fetch-display-versions-script',
         plugins_url('../assets/js/versions/fetch-display-versions.js', __FILE__),
         array('jquery'),
-        filemtime($fetch_display_versions_js),
-        true
     );
     wp_enqueue_script(
         'version-modal-script',
         plugins_url('../assets/js/versions/version-modal.js', __FILE__),
         array('jquery'),
-        filemtime($version_modal_js),
-        true
     );
 
     // Localize script for AJAX

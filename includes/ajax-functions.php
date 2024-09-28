@@ -24,7 +24,7 @@ function shortcuts_hub_fetch_versions() {
     error_log('Filters received: ' . print_r(compact('search_term', 'status', 'deleted', 'required_update'), true));
 
     // Bearer Token and API URL
-    $bearer_token = get_sb_token_from_storage();
+    $bearer_token = get_refresh_sb_token();
     $api_url = get_option('SB_URL') . '/shortcuts/' . $shortcut_id . '/history';
 
     // Build query parameters for the API call
@@ -85,7 +85,7 @@ function shortcuts_hub_fetch_single_version() {
     }
 
     // Bearer token and API URL
-    $bearer_token = get_sb_token_from_storage();
+    $bearer_token = get_refresh_sb_token();
     $api_url = get_option('SB_URL') . '/shortcuts/' . $shortcut_id . '/version/' . $version_number;
 
     // Make the API request
@@ -173,84 +173,71 @@ add_action('wp_ajax_edit_version', 'shortcuts_hub_edit_version');
 function shortcuts_hub_fetch_shortcuts() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
 
-    // Get the filter values from the AJAX request
+    error_log('Initiating fetch_shortcuts');
+
     $filter_status = isset($_POST['filter_status']) ? sanitize_text_field($_POST['filter_status']) : '';
     $filter_deleted = isset($_POST['filter_deleted']) ? sanitize_text_field($_POST['filter_deleted']) : '';
     $search_term = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
 
-    // Bearer token and API URL
-    $bearer_token = get_sb_token_from_storage();
+    $bearer_token = get_option('SB_TOKEN'); // Using the stored bearer token
     $api_url = get_option('SB_URL') . '/shortcuts';
 
-    // Build the query parameters based on filters and search
-    $query_params = [];
-    if (!empty($filter_status)) {
-        $query_params['state'] = $filter_status;
-    }
-    if (!empty($filter_deleted)) {
-        $query_params['deleted'] = $filter_deleted;
-    }
-    if (!empty($search_term)) {
-        $query_params['search'] = $search_term;
-    }
+    $query_params = [
+        'state' => $filter_status,
+        'deleted' => $filter_deleted,
+        'search' => $search_term,
+    ];
 
-    // Construct API URL with query parameters
-    if (!empty($query_params)) {
-        $api_url .= '?' . http_build_query($query_params);
-    }
+    $api_url_with_params = add_query_arg($query_params, $api_url);
+    error_log('API URL for fetching shortcuts: ' . $api_url_with_params);
 
-    // Log the API URL for debugging
-    error_log('API Request URL: ' . $api_url);
-
-    // Make API request
-    $response = wp_remote_get($api_url, array(
-        'headers' => array(
-            'Authorization' => 'Bearer ' . $bearer_token,
-        )
-    ));
+    $response = wp_remote_get($api_url_with_params, [
+        'headers' => ['Authorization' => 'Bearer ' . $bearer_token]
+    ]);
 
     if (is_wp_error($response)) {
-        wp_send_json_error('Error fetching shortcuts');
-        return;
-    }
-
-    // Parse the API response
-    $shortcuts_data = json_decode(wp_remote_retrieve_body($response), true);
-
-    if (!empty($shortcuts_data)) {
-        wp_send_json_success($shortcuts_data);
+        error_log('Error fetching shortcuts: ' . $response->get_error_message());
+        wp_send_json_error('Failed to fetch shortcuts');
     } else {
-        wp_send_json_error('No shortcuts found or invalid data structure.');
+        $shortcuts = json_decode(wp_remote_retrieve_body($response), true);
+        if (empty($shortcuts)) {
+            error_log('No shortcuts found or invalid response structure.');
+            wp_send_json_error('No shortcuts found');
+        } else {
+            error_log('Shortcuts fetched successfully: ' . print_r($shortcuts, true));
+            wp_send_json_success(['shortcuts' => $shortcuts]);
+        }
     }
 }
 
 function shortcuts_hub_fetch_single_shortcut() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
-    $shortcut_id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
 
-    if (!$shortcut_id) {
-        wp_send_json_error('Shortcut ID missing');
+    $shortcut_id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
+    if (empty($shortcut_id)) {
+        wp_send_json_error('Shortcut ID is missing');
+        return;
     }
 
-    $bearer_token = get_sb_token_from_storage();
-
+    $bearer_token = get_option('SB_TOKEN'); // Correct token retrieval
     $api_url = get_option('SB_URL') . '/shortcuts/' . $shortcut_id;
-    $response = wp_remote_get($api_url, array(
-        'headers' => array(
-            'Authorization' => 'Bearer ' . $bearer_token
-        )
-    ));
+
+    error_log('Fetching details for shortcut ID: ' . $shortcut_id);
+    $response = wp_remote_get($api_url, [
+        'headers' => ['Authorization' => 'Bearer ' . $bearer_token]
+    ]);
 
     if (is_wp_error($response)) {
-        wp_send_json_error('Failed to fetch shortcut');
+        error_log('Error fetching shortcut details: ' . $response->get_error_message());
+        wp_send_json_error('Failed to fetch shortcut details');
     } else {
-        $body = wp_remote_retrieve_body($response);
-        $shortcut = json_decode($body, true);
-
-        if (!empty($shortcut)) {
-            wp_send_json_success($shortcut);
-        } else {
+        $shortcut = json_decode(wp_remote_retrieve_body($response), true);
+        if (empty($shortcut)) {
+            error_log('No shortcut found or invalid response structure for ID: ' . $shortcut_id);
             wp_send_json_error('Shortcut not found');
+        } else {
+            error_log('Shortcut details retrieved successfully: ' . print_r($shortcut, true));
+            wp_send_json_success(['shortcut' => $shortcut]);
         }
     }
 }
@@ -269,7 +256,7 @@ function shortcuts_hub_update_shortcut() {
         wp_send_json_error('Shortcut ID is missing');
     }
 
-    $bearer_token = get_sb_token_from_storage();
+    $bearer_token = get_refresh_sb_token();
     $api_url = get_option('SB_URL') . '/shortcuts/' . $shortcut_id;
 
     // Send update to the API
