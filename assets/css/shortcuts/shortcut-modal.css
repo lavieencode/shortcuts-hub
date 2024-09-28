@@ -6,8 +6,8 @@
 
 /* Modal Styles for Shortcuts */
 #edit-modal {
-    filter: none; /* No blur on the modal itself */
-    z-index: 1000; /* Keep the modal in front */
+    filter: none;
+    z-index: 1000;
     pointer-events: auto;
     position: fixed;
     right: 0;

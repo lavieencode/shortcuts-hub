@@ -85,7 +85,7 @@ function shortcuts_hub_render_admin_page() {
             <div id="versions-container" style="display: none;"></div>
 
             <!-- Modal for Editing Shortcut -->
-            <div id="edit-modal" class="modal" style="display: none;">
+            <div id="edit-modal" class="modal">
                 <div class="modal-content">
                     <span class="close-button">&times;</span>
                     <h2>Edit Shortcut</h2>

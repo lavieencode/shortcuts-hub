@@ -82,7 +82,6 @@ function displayShortcuts(shortcuts) {
 
 // Function to open the edit modal and fetch shortcut details
 function openEditModal(shortcutId) {
-    // Log the shortcut ID being passed to the function
     console.log('Opening edit modal for Shortcut ID:', shortcutId);
 
     // Make sure we are sending a valid shortcutId
@@ -90,9 +89,6 @@ function openEditModal(shortcutId) {
         console.error('No shortcut ID provided.');
         return;
     }
-
-    // Log that the AJAX request is starting
-    console.log('Starting AJAX request to fetch single shortcut details.');
 
     $.ajax({
         url: shortcutsHubData.ajax_url,
@@ -103,23 +99,24 @@ function openEditModal(shortcutId) {
             security: shortcutsHubData.security
         },
         success: function(response) {
-            // Log the raw response from the server
             console.log('AJAX request successful. Raw response:', response);
 
             if (response.success) {
-                // Log the details of the fetched shortcut data
                 console.log('Fetched shortcut details successfully:', response.data);
 
-                // Call the populateEditModal function to fill in the modal
-                populateEditModal(response.data.shortcuts); 
-                $('#edit-modal').fadeIn(); // Show the modal
+                // Populate modal with shortcut details
+                populateEditModal(response.data.shortcut);
+
+                // Log to ensure this point is reached
+                console.log('Populating modal and showing it.');
+
+                // Add the active class to display the modal
+                $('#edit-modal').addClass('active').fadeIn();
             } else {
-                // Log a specific error message returned from the server
                 console.error('Error from server while fetching shortcut details:', response.data.message);
             }
         },
         error: function(xhr, status, error) {
-            // Log the specific details of the AJAX failure
             console.error('AJAX error fetching shortcut details. Status:', status, 'Error:', error, 'Response:', xhr.responseText);
         }
     });
@@ -127,64 +124,34 @@ function openEditModal(shortcutId) {
 
 // Function to populate the edit modal with fetched data
 function populateEditModal(data) {
-    // Log the data being used to populate the modal
-    console.log('Populating the edit modal with the following data:', data);
+    // Log the data object to inspect its structure
+    console.log('Populating Edit Modal with data:', data);
 
+    // Check if the data object is valid
     if (!data) {
-        // Log and exit if no data is provided
-        console.error('No data provided to populate the modal.');
+        console.error('No data received.');
         return;
     }
 
-    // Populate the modal fields with the fetched data
-    $('#shortcut-name').val(data.name || '');
-    $('#shortcut-headline').val(data.headline || '');
-    $('#shortcut-description').val(data.description || '');
-    $('#shortcut-website').val(data.website || '');
-    $('#shortcut-status').val(data.state ? data.state.value : '');
+    // Since the data is not wrapped inside a 'shortcut' object, use data directly
+    const shortcut = data;
 
-    // Log successful population of the modal
-    console.log('Modal populated successfully.');
-}
+    // Log the shortcut details to ensure it's correctly received
+    console.log('Shortcut details:', shortcut);
 
-// Function to populate the edit modal with fetched data
-function populateEditModal(data) {
-    // Log the start of the modal population process
-    console.log('Populating edit modal with data:', data);
-
-    // Ensure data exists and is valid
-    if (!data) {
-        console.error('No data provided to populate the modal.');
-        return;
+    // Populate the modal fields with the shortcut data
+    $('#shortcut-name').val(shortcut.name || '');
+    $('#shortcut-description').val(shortcut.description || '');
+    $('#shortcut-headline').val(shortcut.headline || '');
+    $('#shortcut-website').val(shortcut.website || '');
+    
+    if (shortcut.state && shortcut.state.value !== undefined) {
+        $('#shortcut-status').val(shortcut.state.value);
+    } else {
+        console.error('No state value found for shortcut');
     }
 
-    // Ensure that the required data fields are available
-    if (!data.name || !data.description || !data.state) {
-        console.error('Missing critical data fields for modal:', {
-            name: data.name,
-            description: data.description,
-            state: data.state
-        });
-    }
-
-    // Update form inputs with the data provided
-    $('#shortcut-name').val(data.name || '');
-    $('#shortcut-headline').val(data.headline || '');
-    $('#shortcut-description').val(data.description || '');
-    $('#shortcut-website').val(data.website || '');
-    $('#shortcut-status').val(data.state ? data.state.value : '');
-
-    // Log successful population
-    console.log('Modal populated successfully with:', {
-        name: data.name,
-        headline: data.headline,
-        description: data.description,
-        website: data.website,
-        state: data.state ? data.state.value : 'No state'
-    });
-
-    // Display the modal after populating the fields
-    $('#edit-modal').fadeIn();
+    console.log('Edit Modal populated successfully');
 }
 
 function setupModalButtons() {
