@@ -1,0 +1,83 @@
+/* Shortcuts Hub Page */
+.toplevel_page_shortcuts-hub #wpcontent {
+    background-color: #252525;
+}
+
+#shortcuts-hub-page {
+    background-color: #252525;
+    color: #CACACA;
+    font-family: 'Karla', sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Shortcuts Header */
+#shortcuts-hub-page h1 {
+    font-size: 34px;
+    color: #909CFE;
+    margin-bottom: 30px;
+}
+
+/* Search and Filter Bar */
+#shortcuts-header {
+    background-color: #373737;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 30px;
+}
+
+/* Input and Filter Fields */
+#search-input, #filter-status, #filter-deleted {
+    background-color: #252525;
+    color: #CACACA;
+    border: 1px solid #909CFE;
+    height: 50px;
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 0;
+    font-size: 15px;
+}
+
+#filter-status, #filter-deleted {
+    width: auto;
+}
+
+/* Reset Filters Button */
+#reset-filters {
+    background-color: #909CFE;
+    color: #252525;
+    font-weight: 600;
+    padding: 10px;
+    border: none;
+    height: 50px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+#reset-filters:hover {
+    background-color: #7b8ae6;
+}
+
+/* Shortcut Containers */
+#shortcuts-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+/* Paragraph Styles */
+#shortcuts-container .shortcut-item p {
+    font-size: 15px;
+    margin-top: 0;
+    line-height: 1.3em;
+}
+
+/* Heading Styles */
+#shortcuts-container .shortcut-item h3 {
+    font-size: 18px;
+    color: #909CFE;
+    margin-bottom: 10px;
+    height: 18px;
+}

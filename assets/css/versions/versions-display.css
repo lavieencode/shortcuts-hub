@@ -1,0 +1,68 @@
+/* Versions Container */
+#versions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0px;
+}
+
+/* Versions Filter/Search Bar */
+#versions-header-bar {
+    background-color: #373737;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+/* Input Fields for Versions Filter */
+#search-versions-input, #filter-version-status, #filter-version-date {
+    background-color: #252525;
+    color: #CACACA;
+    border: 1px solid #909CFE;
+    height: 50px;
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 0;
+    font-size: 15px;
+}
+
+#filter-version-status, #filter-version-date {
+    width: auto;
+}
+
+/* Reset Filters Button for Versions */
+#reset-version-filters {
+    background-color: #909CFE;
+    color: #252525;
+    font-weight: 600;
+    padding: 10px;
+    border: none;
+    height: 50px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+#reset-version-filters:hover {
+    background-color: #7b8ae6;
+}
+
+/* Align Input and Button Fields Horizontally */
+#versions-filters {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+/* Styles for version-specific filters */
+.version-filters {
+    background-color: #252525 !important;
+    color: #CACACA !important;
+    border: 1px solid #909CFE !important;
+    height: 50px;
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 0 !important;
+    font-size: 15px;
+}

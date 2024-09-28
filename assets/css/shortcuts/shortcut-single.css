@@ -1,0 +1,46 @@
+/* Shortcut name for versions page */
+#shortcut-name-display {
+    font-size: 20px;
+}
+
+/* Single Shortcut Item */
+.shortcut-item {
+    background-color: #373737;
+    padding: 15px;
+    border-radius: 0;
+    color: #CACACA;
+    position: relative;
+    min-height: 165px;
+}
+
+/* Edit Button */
+#shortcuts-container .shortcut-item .edit-button {
+    background-color: #909CFE;
+    color: #252525;
+    font-weight: 600;
+    font-size: 15px;
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    width: 100px;
+    border: none;
+    cursor: pointer;
+}
+
+#shortcuts-container .shortcut-item .edit-button:hover {
+    background-color: #7b8ae6;
+}
+
+.caret {
+    color: #cacaca;
+    font-size: 17px;
+    padding-top: 10px;
+    cursor: pointer;
+    float: right;
+    transition: transform 0.3s ease;
+}
+
+/* Rotate caret when expanded */
+.caret.expanded {
+    transform: rotate(90deg);
+}

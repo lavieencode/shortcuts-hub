@@ -1,0 +1,64 @@
+.version-item {
+    background-color: #373737;
+    padding: 15px;
+    color: #CACACA;
+    position: relative;
+    max-width: 600px;
+    height: auto !important;
+    padding: 0px;
+}
+
+.version-item h3 {
+    font-size: 18px;
+    color: #909CFE;
+    margin-bottom: 10px;
+}
+
+.version-item p {
+    font-size: 15px;
+    margin-top: 0;
+    line-height: 1.3em;
+}
+
+.version-item p strong {
+    color: #909cfe;
+}
+
+/* Edit Version Button */
+.version-item .edit-version-btn,
+.versions-button {
+    display: block;
+    background-color: #909CFE;
+    color: #252525;
+    font-weight: 600;
+    font-size: 15px;
+    position: absolute;
+    bottom: 15px;
+    left: 15px;
+    width: 100px;
+    border: none;
+    cursor: pointer;
+}
+
+.versions-button {
+    left: 130px;
+}
+
+.version-item .edit-version-btn:hover {
+    background-color: #7b8ae6;
+}
+
+/* Style for caret */
+.caret {
+    color: #cacaca;
+    font-size: 17px;
+    padding-top: 10px;
+    cursor: pointer;
+    float: right;
+    transition: transform 0.3s ease;
+}
+
+/* Rotate caret when expanded */
+.caret.expanded {
+    transform: rotate(90deg);
+}

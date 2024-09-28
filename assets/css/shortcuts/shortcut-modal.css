@@ -1,0 +1,69 @@
+/* Blurring the background when modal is open */
+.modal-active #shortcuts-hub-page {
+    pointer-events: none; /* Disable interaction with background elements */
+    transition: filter 0.3s ease;
+}
+
+/* Modal Styles for Shortcuts */
+#edit-modal {
+    filter: none; /* No blur on the modal itself */
+    z-index: 1000; /* Keep the modal in front */
+    pointer-events: auto;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 403px;
+    height: 100%;
+    padding: 20px;
+    padding-top: 30px;
+    background-color: #373737;
+    color: #CACACA;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out;
+}
+
+#edit-modal.active {
+    transform: translateX(0);
+}
+
+/* Modal Heading */
+#edit-modal h2 {
+    font-size: 26px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+/* Input, Textarea, Select Styles in Modal */
+#edit-modal input, #edit-modal textarea, #edit-modal select {
+    background-color: #252525;
+    color: #CACACA;
+    border: 1px solid #909CFE;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 0;
+    font-size: 15px;
+}
+
+/* Modal Buttons */
+#edit-modal button.shortcuts-button {
+    background-color: #909CFE;
+    color: #252525;
+    font-weight: 600;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    margin-top: 15px;
+}
+
+#edit-modal button.shortcuts-button:hover {
+    background-color: #7b8ae6;
+}
+
+/* Close Button in Modal */
+#edit-modal .close-button {
+    color: #252525;
+    font-weight: 600;
+    margin-left: 15px;
+}

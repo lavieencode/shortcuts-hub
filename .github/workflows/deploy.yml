@@ -1,0 +1,41 @@
+name: Deploy Shortcuts Hub to WordPress
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create .ssh directory
+        run: mkdir -p ~/.ssh
+
+      - name: Add server to known_hosts
+        run: ssh-keyscan -p 65002 ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Setup SSH
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 65002
+
+      - name: Deactivate plugin using REST API
+        run: |
+          curl -X POST https://www.debotchery.ai/wp-json/wp/v2/plugins/shortcuts-hub/deactivate \
+          -u ${{ secrets.WP_USER }}:${{ secrets.WP_CREDS }}
+
+      - name: Remove old plugin folder using SSH
+        run: ssh -p 65002 ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} 'rm -rf /public_html/wp-content/plugins/shortcuts-hub'
+
+      - name: Upload new plugin files using scp
+        run: scp -P 65002 -r ${{ github.workspace }}/shortcuts-hub/ ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:/public_html/wp-content/plugins/
+
+      - name: Reactivate plugin using REST API
+        run: |
+          curl -X POST https://www.debotchery.ai/wp-json/wp/v2/plugins/shortcuts-hub/activate \
+          -u ${{ secrets.WP_USER }}:${{ secrets.WP_CREDS }}
