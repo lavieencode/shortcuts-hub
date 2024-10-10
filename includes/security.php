@@ -21,6 +21,12 @@ function shortcuts_hub_sanitize_input($input, $type = 'text') {
             return sanitize_email($input);
         case 'url':
             return esc_url_raw($input);
+        case 'int':
+            return intval($input);
+        case 'bool':
+            return filter_var($input, FILTER_VALIDATE_BOOLEAN);
+        case 'array':
+            return is_array($input) ? array_map('sanitize_text_field', $input) : sanitize_text_field($input);
         default:
             return sanitize_text_field($input);
     }

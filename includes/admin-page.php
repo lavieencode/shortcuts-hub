@@ -1,10 +1,9 @@
 <?php
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
-// Add admin page
 function shortcuts_hub_add_admin_page() {
     add_menu_page(
         'Shortcuts Hub',
@@ -64,7 +63,6 @@ function shortcuts_hub_render_admin_page() {
 
                     <!-- Deleted Dropdown -->
                     <select id="filter-version-deleted" class="version-filters">
-                        <option value="">Any</option>
                         <option value="false">Not Deleted</option>
                         <option value="true">Deleted</option>
                     </select>

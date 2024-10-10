@@ -22,13 +22,13 @@ function shortcuts_hub_fetch_shortcuts() {
 
     // Build the query parameters for the API call
     $query_params = [];
-    if (!empty($filter_status)) {
+    if ($filter_status !== '') {
         $query_params['state'] = $filter_status;
     }
-    if (!empty($filter_deleted)) {
+    if ($filter_deleted !== '') {
         $query_params['deleted'] = $filter_deleted;
     }
-    if (!empty($search_term)) {
+    if ($search_term !== '') {
         $query_params['search'] = $search_term;
     }
 
@@ -40,23 +40,19 @@ function shortcuts_hub_fetch_shortcuts() {
 
     // Handle the case where no shortcuts are returned or there's an error
     if (is_wp_error($shortcuts)) {
-        error_log('Error fetching shortcuts: ' . $shortcuts->get_error_message());
         wp_send_json_error('Error fetching shortcuts from the API.');
         return;
     }
 
     if (empty($shortcuts)) {
-        error_log('No shortcuts found in the response.');
         wp_send_json_error('No shortcuts found.');
         return;
     }
 
     // Ensure that the response has the correct structure
     if (isset($shortcuts['shortcuts'])) {
-        error_log('Successfully retrieved shortcuts: ' . print_r($shortcuts['shortcuts'], true));
         wp_send_json_success($shortcuts['shortcuts']);
     } else {
-        error_log('Invalid response format from the API.');
         wp_send_json_error('Invalid response format from the API.');
     }
 }
@@ -67,36 +63,22 @@ function shortcuts_hub_fetch_single_shortcut() {
     // Retrieve and sanitize the shortcut ID
     $shortcut_id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
 
-    // Log the received shortcut ID
     if (empty($shortcut_id)) {
-        error_log('Error: Shortcut ID is missing in the request.');
         wp_send_json_error('Shortcut ID is missing');
         return;
     }
-    error_log('Received Shortcut ID: ' . $shortcut_id);
-
-    // Construct API endpoint for fetching single shortcut
-    $endpoint = '/shortcuts/' . $shortcut_id;
-
-    // Log the endpoint being used
-    error_log('Using API Endpoint: ' . $endpoint);
 
     // Make the API call using the reusable function
-    $shortcut = make_sb_api_call($endpoint);
+    $shortcut = make_sb_api_call('/shortcuts/' . $shortcut_id);
 
-    // Log the response or error from the API call
     if (is_wp_error($shortcut)) {
-        error_log('Error fetching shortcut from API: ' . $shortcut->get_error_message());
         wp_send_json_error($shortcut->get_error_message());
         return;
     }
 
-    // Log the success or failure of fetching the shortcut
     if (!empty($shortcut)) {
-        error_log('Successfully fetched shortcut data: ' . print_r($shortcut, true));
         wp_send_json_success($shortcut);
     } else {
-        error_log('Error: Shortcut data is empty or invalid.');
         wp_send_json_error('Shortcut not found');
     }
 }

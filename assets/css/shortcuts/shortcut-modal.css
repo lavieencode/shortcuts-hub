@@ -1,14 +1,14 @@
-/* Blurring the background when modal is open */
-.modal-active #shortcuts-hub-page {
+/* Deactivate interaction with the background when modal is open */
+body.modal-open #wpcontent {
     pointer-events: none; /* Disable interaction with background elements */
     transition: filter 0.3s ease;
 }
 
-/* Modal Styles for Shortcuts */
+/* Ensuring the modal is not affected and remains interactive */
 #edit-modal {
     filter: none;
-    z-index: 1000;
-    pointer-events: auto;
+    z-index: 1001; /* Higher than #wpcontent to ensure it's on top */
+    pointer-events: auto; /* Enable interactions with modal */
     position: fixed;
     right: 0;
     top: 0;
@@ -23,7 +23,7 @@
 }
 
 #edit-modal.active {
-    transform: translateX(0);
+    transform: translateX(0); /* Slide-in effect for the modal */
 }
 
 /* Modal Heading */
@@ -46,20 +46,20 @@
 }
 
 /* Modal form labels */
-#edit-shortcut-form label{
-    font-weight:600;
-    font-size:13px;
-    margin-bottom:0px;
-    padding-bottom:5px;
-    display:inline-block;
-    color:#252525;
-    background-color:#909cfe;
-    line-height:1.3em;
-    padding-top:5px;
-    padding-right:10px;
-    padding-left:10px;
-    margin-left:1px;
-   }
+#edit-modal label {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 0;
+    padding-bottom: 5px;
+    display: inline-block;
+    color: #252525;
+    background-color: #909CFE;
+    line-height: 1.3em;
+    padding-top: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-left: 1px;
+}
 
 /* Modal Buttons */
 #edit-modal button.shortcuts-button {
@@ -84,8 +84,19 @@
     margin-left: 15px;
 }
 
-.success-message {
-    color: #909cfe;
+/* Success and Error Message Styling */
+.success-message, .error-message {
+    color: #909CFE; /* For success messages */
     margin-top: 10px;
     font-weight: bold;
+    font-size: 14px;
+}
+
+.error-message {
+    color: #FF6B6B; /* For error messages */
+}
+
+/* Deactivate scrolling and interaction with the background when modal is open */
+body.modal-open {
+    overflow: hidden; /* Prevent background scrolling */
 }
