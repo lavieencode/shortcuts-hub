@@ -25,6 +25,8 @@ function shortcuts_hub_render_admin_page() {
 
             <!-- Main Header -->
             <h1 class="shortcuts-header">SHORTCUTS HUB</h1>
+            <button id="back-to-shortcuts" class="hub-btn" style="display: none;">Back to Shortcuts</button>
+            <p id="shortcut-name-display" style="display: none;"></p>
             
             <!-- Dynamic Shortcut Name (when viewing versions) -->
             <h2 id="shortcut-name-display" style="display: none;"></h2>
@@ -57,21 +59,22 @@ function shortcuts_hub_render_admin_page() {
                     <!-- Status Dropdown (Published or Draft) -->
                     <select id="filter-version-status" class="version-filters">
                         <option value="">Any</option>
-                        <option value="published">Published</option>
-                        <option value="draft">Draft</option>
+                        <option value="0">Published</option>
+                        <option value="1">Draft</option>
                     </select>
 
                     <!-- Deleted Dropdown -->
                     <select id="filter-version-deleted" class="version-filters">
-                        <option value="false">Not Deleted</option>
+                        <option value="">Any</option>
                         <option value="true">Deleted</option>
+                        <option value="false">Not Deleted</option>
                     </select>
 
                     <!-- Required Update Dropdown -->
                     <select id="filter-required-update" class="version-filters">
                         <option value="">Any</option>
-                        <option value="false">Optional</option>
                         <option value="true">Required</option>
+                        <option value="false">Not Required</option>
                     </select>
 
                     <!-- Reset Filters Button -->
@@ -124,45 +127,41 @@ function shortcuts_hub_render_admin_page() {
                 <div class="modal-content">
                     <span class="close-button">&times;</span>
                     <h2>Edit Version</h2>
+                    <p id="version-display"></p>
                     <form id="edit-version-form">
                         <input type="hidden" id="version-id" name="version_id">
-
-                        <!-- Version Name -->
-                        <label for="version-name">Version Name</label>
-                        <input type="text" id="version-name" name="version_name" class="version-input" required>
-
-                        <!-- Version Notes -->
-                        <label for="version-notes">Release Notes</label>
-                        <textarea id="version-notes" name="version_notes" class="version-textarea" required></textarea>
-
-                        <!-- Version URL -->
-                        <label for="version-url">Download URL</label>
-                        <input type="url" id="version-url" name="version_url" class="version-input" required>
-
-                        <!-- Status -->
-                        <label for="version-status">Status</label>
-                        <select id="version-status" name="version_status" class="version-select">
-                            <option value="0">Published</option>
-                            <option value="1">Draft</option>
-                        </select>
-
-                        <!-- Minimum iOS Version -->
-                        <label for="version-ios">Minimum iOS Version</label>
-                        <input type="text" id="version-ios" name="version_ios" class="version-input">
-
-                        <!-- Minimum Mac Version -->
-                        <label for="version-mac">Minimum macOS Version</label>
-                        <input type="text" id="version-mac" name="version_mac" class="version-input">
-
-                        <!-- Required Update -->
-                        <label for="version-required">Required Update</label>
-                        <select id="version-required" name="version_required" class="version-select">
-                            <option value="false">Optional</option>
-                            <option value="true">Required</option>
-                        </select>
-
-                        <!-- Save and Cancel Buttons -->
-                        <button type="submit" class="shortcuts-button">Save Changes</button>
+                        <input type="hidden" id="shortcut-id" name="shortcut_id">
+                        <div class="form-group">
+                            <label for="version-notes">Notes</label>
+                            <textarea id="version-notes" name="version_notes"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="version-url">URL</label>
+                            <input type="text" id="version-url" name="version_url">
+                        </div>
+                        <div class="form-group">
+                            <label for="version-status">Status</label>
+                            <select id="version-status" name="version_status">
+                                <option value="0">Published</option>
+                                <option value="1">Draft</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="version-ios">Minimum iOS</label>
+                            <input type="text" id="version-ios" name="version_ios">
+                        </div>
+                        <div class="form-group">
+                            <label for="version-mac">Minimum Mac</label>
+                            <input type="text" id="version-mac" name="version_mac">
+                        </div>
+                        <div class="form-group">
+                            <label for="version-required">Required Update</label>
+                            <select id="version-required" name="version_required">
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="shortcuts-button">Save</button>
                         <button type="button" class="shortcuts-button close-button">Cancel</button>
                     </form>
                 </div>

@@ -6,23 +6,26 @@ if (!defined('ABSPATH')) {
 
 function get_refresh_sb_token() {
     $cached_token = get_transient('SB_TOKEN');
-    
     if ($cached_token) {
         return $cached_token;
     }
-
+    
     $api_url = SB_URL . '/login';
+
+    $request_body = json_encode([
+        'username' => SB_USERNAME,
+        'password' => SB_PASSWORD
+    ]);
+
     $response = wp_remote_post($api_url, [
-        'body' => json_encode([
-            'username' => SB_USERNAME,
-            'password' => SB_PASSWORD
-        ]),
+        'body' => $request_body,
         'headers' => [
             'Content-Type' => 'application/json',
         ],
     ]);
 
     if (is_wp_error($response)) {
+        error_log('Error during login request: ' . $response->get_error_message());
         return false;
     }
 
@@ -34,6 +37,7 @@ function get_refresh_sb_token() {
         return $data['token'];
     }
 
+    error_log('Failed to retrieve token. Response: ' . $body);
     return false;
 }
 
@@ -49,8 +53,8 @@ function make_sb_api_call($endpoint, $method = 'GET', $query_params = array(), $
     }
 
     $bearer_token = get_refresh_sb_token();
-    if (is_wp_error($bearer_token)) {
-        return $bearer_token;
+    if (!$bearer_token) {
+        return new WP_Error('token_error', 'Failed to retrieve SB token.');
     }
 
     $args = array(

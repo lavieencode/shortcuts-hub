@@ -6,77 +6,75 @@ if (!defined('ABSPATH')) {
 
 // Fetch versions for a shortcut
 function shortcuts_hub_fetch_versions() {
-    // Check the security nonce
     check_ajax_referer('shortcuts_hub_nonce', 'security');
 
-    // Sanitize the input data
     $shortcut_id = isset($_POST['shortcut_id']) ? sanitize_text_field($_POST['shortcut_id']) : '';
     $search_term = isset($_POST['search_term']) ? sanitize_text_field($_POST['search_term']) : '';
     $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
     $deleted = isset($_POST['deleted']) ? sanitize_text_field($_POST['deleted']) : '';
-    $required_update = isset($_POST['required_update']) ? sanitize_text_field($_POST['required_update']) : '';
+    $required_update = isset($_POST['required_update']) ? filter_var($_POST['required_update'], FILTER_VALIDATE_BOOLEAN) : null;
 
-    // Check if the shortcut ID is provided
     if (empty($shortcut_id)) {
         wp_send_json_error('Shortcut ID is missing');
         return;
     }
 
-    // Prepare query parameters for the API call
     $query_params = array();
     if (!empty($search_term)) {
-        $query_params['term'] = $search_term;
+        $query_params['search'] = $search_term;
     }
     if ($status !== '') {
         $query_params['status'] = $status;
     }
     if ($deleted !== '') {
-        $query_params['deleted'] = $deleted;
+        $query_params['deleted'] = filter_var($deleted, FILTER_VALIDATE_BOOLEAN);
     }
-    if ($required_update !== '') {
+    if ($required_update !== null) {
         $query_params['required_update'] = $required_update;
     }
 
-    // Get the API bearer token and construct the API URL
-    $bearer_token = get_refresh_sb_token();
-    $api_url = get_option('SB_URL') . '/shortcuts/' . $shortcut_id . '/history';
+    $sb_url = defined('SB_URL') ? SB_URL : null;
+    if (!$sb_url) {
+        wp_send_json_error('Server URL not configured.');
+        return;
+    }
 
-    // Append query parameters if needed
+    $bearer_token = get_refresh_sb_token();
+    if (!$bearer_token) {
+        wp_send_json_error('Failed to retrieve SB token');
+        return;
+    }
+
+    $api_url = $sb_url . '/shortcuts/' . $shortcut_id . '/history';
     if (!empty($query_params)) {
         $api_url .= '?' . http_build_query($query_params);
     }
 
-    // Make the API request
     $response = wp_remote_get($api_url, array(
         'headers' => array(
             'Authorization' => 'Bearer ' . $bearer_token,
         ),
     ));
 
-    // Handle errors in the API response
     if (is_wp_error($response)) {
         wp_send_json_error('Error fetching versions: ' . $response->get_error_message());
         return;
     }
 
-    // Decode the response body
     $versions_data = json_decode(wp_remote_retrieve_body($response), true);
 
-    // Ensure that valid data is returned
     if (empty($versions_data)) {
         wp_send_json_error('No versions found or invalid data structure.');
         return;
     }
 
-    // Send the versions data as a success response
     wp_send_json_success(array('versions' => $versions_data));
 }
 
 // Fetch single version details
 function shortcuts_hub_fetch_single_version() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security'); // Verify nonce
+    check_ajax_referer('shortcuts_hub_nonce', 'security');
 
-    // Sanitize and validate input
     $shortcut_id = isset($_POST['shortcut_id']) ? sanitize_text_field($_POST['shortcut_id']) : '';
     $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
 
@@ -85,82 +83,62 @@ function shortcuts_hub_fetch_single_version() {
         return;
     }
 
-    // Get the bearer token and construct the API URL
+    $api_url = SB_URL . '/shortcuts/' . $shortcut_id . '/version/' . $version_id;
     $bearer_token = get_refresh_sb_token();
-    if (!$bearer_token) {
-        wp_send_json_error('Failed to retrieve SB token');
-        return;
-    }
 
-    $api_url = get_option('SB_URL') . '/shortcuts/' . $shortcut_id . '/version/' . $version_id;
-
-    // Make the API request
     $response = wp_remote_get($api_url, array(
         'headers' => array(
             'Authorization' => 'Bearer ' . $bearer_token,
         ),
     ));
 
-    // Handle API response errors
     if (is_wp_error($response)) {
         wp_send_json_error('Error fetching version details: ' . $response->get_error_message());
         return;
     }
 
-    // Decode the response body
     $version_data = json_decode(wp_remote_retrieve_body($response), true);
 
-    // Ensure valid data
     if (empty($version_data)) {
         wp_send_json_error('Version data not found or invalid response');
         return;
     }
 
-    // Send the version data as success
     wp_send_json_success(array('version' => $version_data));
 }
 
 // Edit an existing version
 function shortcuts_hub_edit_version() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security'); // Verify nonce
+    check_ajax_referer('shortcuts_hub_nonce', 'security');
 
-    // Sanitize and validate input fields
+    $shortcut_id = isset($_POST['shortcut_id']) ? sanitize_text_field($_POST['shortcut_id']) : '';
     $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
-    $version_name = isset($_POST['version_name']) ? sanitize_text_field($_POST['version_name']) : '';
     $notes = isset($_POST['version_notes']) ? sanitize_text_field($_POST['version_notes']) : '';
     $url = isset($_POST['version_url']) ? esc_url_raw($_POST['version_url']) : '';
-    $status = isset($_POST['version_status']) ? sanitize_text_field($_POST['version_status']) : '';
+    $status = isset($_POST['version_status']) ? (int) sanitize_text_field($_POST['version_status']) : 0;
     $minimum_ios = isset($_POST['version_ios']) ? sanitize_text_field($_POST['version_ios']) : '';
     $minimum_mac = isset($_POST['version_mac']) ? sanitize_text_field($_POST['version_mac']) : '';
-    $required_update = isset($_POST['version_required']) ? sanitize_text_field($_POST['version_required']) : '';
+    $required_update = isset($_POST['version_required']) ? filter_var($_POST['version_required'], FILTER_VALIDATE_BOOLEAN) : false;
 
-    if (!$version_id) {
-        wp_send_json_error('Version ID is missing');
-        return;
-    }
-
-    // Prepare payload
     $payload = array(
-        'version_name' => $version_name,
         'notes' => $notes,
         'url' => $url,
-        'status' => $status,
-        'minimum_ios' => $minimum_ios,
-        'minimum_mac' => $minimum_mac,
-        'required_update' => $required_update,
+        'state' => $status,
+        'minimumiOS' => $minimum_ios,
+        'minimumMac' => $minimum_mac,
+        'required' => $required_update
     );
 
-    // Get the bearer token and make API call
     $bearer_token = get_refresh_sb_token();
     if (!$bearer_token) {
-        wp_send_json_error('Failed to retrieve SB token');
+        wp_send_json_error(array('message' => 'Failed to retrieve SB token', 'submitted_payload' => $payload));
         return;
     }
 
-    $api_url = get_option('SB_URL') . '/versions/' . $version_id;
+    $api_url = SB_URL . '/shortcuts/' . $shortcut_id . '/version/' . $version_id;
 
-    $response = wp_remote_post($api_url, array(
-        'method' => 'POST',
+    $response = wp_remote_request($api_url, array(
+        'method' => 'PATCH',
         'headers' => array(
             'Authorization' => 'Bearer ' . $bearer_token,
             'Content-Type' => 'application/json',
@@ -168,20 +146,18 @@ function shortcuts_hub_edit_version() {
         'body' => json_encode($payload),
     ));
 
-    // Handle API response errors
     if (is_wp_error($response)) {
-        wp_send_json_error('Error updating version: ' . $response->get_error_message());
+        wp_send_json_error(array('message' => 'Error updating version', 'error' => $response->get_error_message(), 'submitted_payload' => $payload));
         return;
     }
 
-    // Decode the response body
-    $updated_version = json_decode(wp_remote_retrieve_body($response), true);
+    $raw_response_body = wp_remote_retrieve_body($response);
+    $updated_version = json_decode($raw_response_body, true);
 
-    // Ensure valid response
-    if (!empty($updated_version)) {
-        wp_send_json_success('Version updated successfully');
+    if (isset($updated_version['success']) && $updated_version['success']) {
+        wp_send_json_success(array('message' => 'Version updated successfully', 'version' => $updated_version));
     } else {
-        wp_send_json_error('Failed to update version');
+        wp_send_json_error(array('message' => 'Failed to update version', 'server_response' => $raw_response_body, 'submitted_payload' => $payload));
     }
 }
 

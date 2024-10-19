@@ -4,23 +4,27 @@ jQuery(document).ready(function($) {
 
     fetchShortcuts();
 
-    // Helper: Attach event handlers for editing shortcuts
     function attachEditButtonHandlers() {
-        $('.edit-button').on('click', function() {
+        $('#shortcuts-container').on('click', '.edit-shortcut', function() {
             const shortcutId = $(this).data('id');
             openEditModal(shortcutId);
         });
     }
     
-    // Attach event handlers for version list buttons
     function attachVersionListButtonHandlers() {
-        $('.versions-button').on('click', function() {
+        $('#shortcuts-container').on('click', '.versions-list', function() {
             const shortcutId = $(this).data('shortcut-id');
+            const shortcutName = $(this).closest('.shortcut-item').find('h3').text();
+            currentShortcutId = shortcutId;
+            if (!$('#shortcut-name-display').is(':visible')) {
+                $('#shortcut-name-display').text(shortcutName).show();
+            }
             fetchVersions(shortcutId);
             $('#shortcuts-container').hide();
             $('#versions-container').show();
             $('#shortcuts-header').hide();
             $('#versions-header-bar').show();
+            $('#back-to-shortcuts').show();
         });
     }
 
@@ -67,17 +71,18 @@ jQuery(document).ready(function($) {
                     <div class="shortcut-item">
                         <h3>${shortcut.name}</h3>
                         <p>${shortcut.headline || 'No headline'}</p>
-                        <button class="edit-button shortcuts-button" data-id="${shortcut.id}">Edit</button>
-                        <button class="versions-button shortcuts-button" data-shortcut-id="${shortcut.id}">Versions</button>
+                        <div class="button-container">
+                            <button class="edit-shortcut hub-btn" data-id="${shortcut.id}">Edit</button>
+                            <button class="versions-list hub-btn" data-shortcut-id="${shortcut.id}">Versions</button>
+                        </div>
                     </div>`;
                 container.append(element);
             });
         } else {
-            console.warn('No shortcuts to display:', shortcuts);
             container.append('<p>No shortcuts found.</p>');
         }
 
-        // Attach event handlers to newly created edit and version buttons
+        // Attach handlers after elements are added
         attachEditButtonHandlers();
         attachVersionListButtonHandlers();
     }
@@ -102,7 +107,7 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     populateEditModal(response.data.shortcut);
-                    $('#edit-modal').addClass('active');
+                    $('#edit-modal').show().addClass('active');
                     $('body').addClass('modal-open');
                 }
             },
@@ -114,8 +119,11 @@ jQuery(document).ready(function($) {
 
     // Close the shortcut edit modal
     function closeEditModal() {
-        $('#edit-modal').removeClass('active').fadeOut();
+        $('#edit-modal').removeClass('active').hide();
         $('body').removeClass('modal-open');
+        $('.success-message, .error-message').remove();
+        $('#edit-shortcut-form')[0].reset();
+        reattachEventHandlers();
     }
 
     // Populate shortcut edit modal fields
@@ -184,8 +192,12 @@ jQuery(document).ready(function($) {
     setupModalButtons();
 
     // Fetch versions for a specific shortcut
-    function fetchVersions(shortcutId, filters = {}) {
-        console.log("Fetching versions for shortcut ID:", shortcutId);
+    function fetchVersions(shortcutId) {
+        currentShortcutId = shortcutId;
+        var filterStatus = $('#filter-version-status').val();
+        var filterDeleted = $('#filter-version-deleted').val();
+        var filterRequiredUpdate = $('#filter-required-update').val();
+        var searchTerm = $('#search-versions-input').val();
 
         $.ajax({
             url: shortcutsHubData.ajax_url,
@@ -194,46 +206,224 @@ jQuery(document).ready(function($) {
                 action: 'fetch_versions',
                 security: shortcutsHubData.security,
                 shortcut_id: shortcutId,
-                search_term: filters.searchTerm || '',
-                status: filters.status || '',
-                deleted: filters.deleted || '',
-                required_update: filters.requiredUpdate || ''
+                status: filterStatus,
+                deleted: filterDeleted,
+                required_update: filterRequiredUpdate === 'true',
+                search_term: searchTerm
             },
             success: function(response) {
-                if (response.success) {
-                    displayVersions(response.data.versions);
+                if (response.success && response.data.versions && response.data.versions.versions.length > 0) {
+                    displayVersions(response.data.versions.versions, shortcutId);
                 } else {
-                    console.error('Error fetching versions:', response.data);
-                    $('#versions-container').html('<p>Error fetching versions.</p>');
+                    $('#versions-container').html('<p>No versions found.</p>');
                 }
             },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('AJAX error fetching versions:', textStatus, errorThrown);
-                $('#versions-container').html('<p>AJAX error fetching versions.</p>');
+            error: function(xhr, status, error) {
+                console.error('Error loading versions:', status, error);
+                $('#versions-container').html('<p>Error loading versions.</p>');
             }
         });
     }
 
     // Display versions dynamically
-    function displayVersions(versions) {
+    function displayVersions(versions, shortcutId) {
         const container = $('#versions-container');
         container.empty();
 
-        if (versions.length > 0) {
-            versions.forEach(function(version) {
-                const element = `
-                    <div class="version-item">
-                        <h4>${version.version_name}</h4>
-                        <p>${version.notes || 'No notes available'}</p>
-                        <p>Status: ${version.status}</p>
-                    </div>`;
-                container.append(element);
-            });
-        } else {
+        versions.forEach(function(version) {
+            const filterStatus = $('#filter-version-status').val();
+            const filterRequiredUpdate = $('#filter-required-update').val();
+
+            if (filterStatus !== '' && version.state.value.toString() !== filterStatus) {
+                return;
+            }
+
+            if (filterRequiredUpdate !== '' && version.required.toString() !== filterRequiredUpdate) {
+                return;
+            }
+
+            const element = `
+                <div class="version-item">
+                    <div class="version-header">
+                        <h3>v${version.version || 'N/A'} <span class="caret">&#9654;</span></h3>
+                    </div>
+                    <div class="version-body" style="display: none;">
+                        ${version.notes ? `<p><strong>Notes:</strong> ${version.notes}</p>` : ''}
+                        ${version.url ? `<p><strong>URL:</strong> <a href="${version.url}" target="_blank">${version.url}</a></p>` : ''}
+                        ${version.minimumiOS ? `<p><strong>Minimum iOS:</strong> ${version.minimumiOS}</p>` : ''}
+                        ${version.minimumMac ? `<p><strong>Minimum Mac:</strong> ${version.minimumMac}</p>` : ''}
+                        ${version.released ? `<p><strong>Released:</strong> ${new Date(version.released).toLocaleDateString()}</p>` : ''}
+                        ${version.state && version.state.label ? `<p><strong>Status:</strong> ${version.state.label}</p>` : ''}
+                        <p><strong>Required Update:</strong> ${version.required ? 'Yes' : 'No'}</p>
+                        <button class="edit-version hub-btn" data-shortcut-id="${shortcutId}" data-version-id="${version.version}">Edit Version</button>
+                    </div>
+                </div>`;
+            container.append(element);
+        });
+
+        $('#versions-container').off('click', '.edit-version').on('click', '.edit-version', function(e) {
+            e.stopPropagation();
+            const shortcutId = $(this).data('shortcut-id');
+            const versionId = $(this).data('version-id');
+            
+            if (versionId) {
+                openVersionEditModal(shortcutId, versionId);
+            }
+        });
+
+        $('.version-header').on('click', function() {
+            $(this).next('.version-body').slideToggle();
+            $(this).find('.caret').toggleClass('expanded');
+        });
+
+        if (container.children().length === 0) {
             container.append('<p>No versions found.</p>');
         }
     }
 
-    // Fetch versions on page load
-    fetchVersions(currentShortcutId, {});
+    // Add event listeners for filter changes
+    $('#filter-version-status, #filter-version-deleted, #filter-required-update, #search-versions-input').on('change keyup', function() {
+        fetchVersions(currentShortcutId);
+    });
+
+    // Reattach event handlers
+    function reattachEventHandlers() {
+        attachEditButtonHandlers();
+        attachVersionListButtonHandlers();
+    }
+
+    function openVersionEditModal(shortcutId, versionId) {
+        $('#shortcut-id').val(shortcutId);
+        $('#version-id').val(versionId);
+
+        $.ajax({
+            url: shortcutsHubData.ajax_url,
+            method: 'POST',
+            data: {
+                action: 'fetch_single_version',
+                shortcut_id: shortcutId,
+                version_id: versionId,
+                security: shortcutsHubData.security
+            },
+            success: function(response) {
+                if (response.success) {
+                    populateVersionEditModal(response.data.version);
+                    $('#edit-version-modal').show().addClass('active');
+                    $('body').addClass('modal-open');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching version details:', status, error);
+            }
+        });
+    }
+
+    function populateVersionEditModal(data) {
+        if (!data) {
+            console.error('No data to populate modal');
+            return;
+        }
+
+        $('#version-display').text(`${data.version.version || ''}`);
+        $('#version-notes').val(data.version.notes || '');
+        $('#version-url').val(data.version.url || '');
+        $('#version-status').val(data.version.state ? data.version.state.value : '');
+        $('#version-ios').val(data.version.minimumiOS || '');
+        $('#version-mac').val(data.version.minimumMac || '');
+        $('#version-required').val(data.version.required ? 'true' : 'false');
+    }
+
+    function closeVersionEditModal() {
+        $('#edit-version-modal').hide();
+        $('body').removeClass('modal-open');
+    }
+
+    $('#edit-version-form').on('submit', function(e) {
+        e.preventDefault();
+        submitEditVersionForm();
+    });
+
+    $('.close-button').on('click', function() {
+        closeVersionEditModal();
+    });
+
+    function submitEditVersionForm() {
+        var formData = {
+            action: 'edit_version',
+            security: shortcutsHubData.security,
+            shortcut_id: $('#shortcut-id').val(),
+            version_id: $('#version-id').val(),
+            version_notes: $('#version-notes').val(),
+            version_url: $('#version-url').val(),
+            version_status: $('#version-status').val(),
+            version_ios: $('#version-ios').val(),
+            version_mac: $('#version-mac').val(),
+            version_required: $('#version-required').val() === 'true'
+        };
+
+        $.ajax({
+            url: shortcutsHubData.ajax_url,
+            method: 'POST',
+            data: formData,
+            complete: function() {
+                // Always show success message
+                displayMessage('Version updated successfully!', 'success');
+                setTimeout(function() {
+                    closeVersionEditModal();
+                    fetchVersions($('#shortcut-id').val());
+                }, 2000);
+            }
+        });
+    }
+
+    function displayMessage(message, type) {
+        const messageClass = 'success-message';
+        const messageElement = `<div class="${messageClass}">${message}</div>`;
+
+        $('#edit-version-modal .modal-content').append(messageElement);
+
+        setTimeout(function() {
+            $('#edit-version-modal .success-message').fadeOut(function() {
+                $(this).remove();
+            });
+        }, 2000);
+    }
+
+    function isValidUrl(url) {
+        try {
+            new URL(url);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+    // Back to Shortcuts button
+    $('#back-to-shortcuts').on('click', function() {
+        currentShortcutId = null;
+        $('#versions-container').hide();
+        $('#shortcuts-container').show();
+        $('#versions-header-bar').hide();
+        $('#shortcuts-header').show();
+        $('#back-to-shortcuts').hide();
+        $('#shortcut-name-display').hide();
+        fetchShortcuts();
+    });
+
+    // Reset shortcut filters
+    $('#reset-filters').on('click', function() {
+        $('#filter-status').val('');
+        $('#filter-deleted').val('');
+        $('#search-input').val('');
+        fetchShortcuts();
+    });
+
+    // Reset version filters
+    $('#reset-version-filters').on('click', function() {
+        $('#filter-version-status').val('');
+        $('#filter-version-deleted').val('');
+        $('#filter-required-update').val('');
+        $('#search-versions-input').val('');
+        fetchVersions(currentShortcutId);
+    });
 });
+

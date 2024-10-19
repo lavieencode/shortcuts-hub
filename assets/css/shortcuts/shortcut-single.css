@@ -3,7 +3,12 @@
     font-size: 20px;
 }
 
-/* Single Shortcut Item */
+#shortcuts-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
 .shortcut-item {
     background-color: #373737;
     padding: 15px;
@@ -11,36 +16,61 @@
     color: #CACACA;
     position: relative;
     min-height: 165px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-/* Edit Button */
-#shortcuts-container .shortcut-item .edit-button {
+.shortcut-item h3 {
+    margin-bottom: 10px;
+}
+
+.shortcut-item p {
+    margin-bottom: 15px;
+    flex-grow: 1;
+}
+
+.shortcut-item .button-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: auto;
+}
+
+.hub-btn {
     background-color: #909CFE;
     color: #252525;
     font-weight: 600;
     font-size: 15px;
-    position: absolute;
-    bottom: 15px;
-    left: 15px;
-    width: 100px;
     border: none;
     cursor: pointer;
+    width: 100px;
+    height: 40px;
+    display: inline-block;
+    text-align: center;
+    line-height: 40px;
 }
 
-#shortcuts-container .shortcut-item .edit-button:hover {
+.hub-btn:hover {
     background-color: #7b8ae6;
 }
 
-.caret {
-    color: #cacaca;
-    font-size: 17px;
-    padding-top: 10px;
-    cursor: pointer;
-    float: right;
-    transition: transform 0.3s ease;
+#shortcuts-container .shortcut-item .edit-shortcut {
+    left: 15px;
 }
 
-/* Rotate caret when expanded */
-.caret.expanded {
-    transform: rotate(90deg);
+#shortcuts-container .shortcut-item .versions-list {
+    right: 15px;
+}
+
+@media (max-width: 1200px) {
+    #shortcuts-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    #shortcuts-container {
+        grid-template-columns: 1fr;
+    }
 }

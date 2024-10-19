@@ -1,64 +1,71 @@
 .version-item {
+    background-color: #2c2c2c;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.version-header {
     background-color: #373737;
     padding: 15px;
-    color: #CACACA;
-    position: relative;
-    max-width: 600px;
-    height: auto !important;
-    padding: 0px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.version-item h3 {
-    font-size: 18px;
+.version-header h3 {
+    font-size: 22px;
     color: #909CFE;
-    margin-bottom: 10px;
+    margin: 0;
+    flex-grow: 1;
 }
 
-.version-item p {
+.version-body {
+    padding: 15px;
+    display: none;
+}
+
+.version-body p {
     font-size: 15px;
     margin-top: 0;
-    line-height: 1.3em;
+    line-height: 1.2em;
 }
 
-.version-item p strong {
-    color: #909cfe;
+.version-body p strong {
+    color: #909CFE;
+    font-weight: bold;
 }
 
-/* Edit Version Button */
-.version-item .edit-version-btn,
-.versions-button {
-    display: block;
+.hub-btn {
     background-color: #909CFE;
     color: #252525;
     font-weight: 600;
     font-size: 15px;
-    position: absolute;
-    bottom: 15px;
-    left: 15px;
-    width: 100px;
     border: none;
     cursor: pointer;
+    width: 100px;
+    height: 40px;
+    display: inline-block;
+    text-align: center;
+    line-height: 40px;
 }
 
-.versions-button {
-    left: 130px;
-}
-
-.version-item .edit-version-btn:hover {
+.hub-btn:hover {
     background-color: #7b8ae6;
 }
 
-/* Style for caret */
 .caret {
     color: #cacaca;
     font-size: 17px;
-    padding-top: 10px;
-    cursor: pointer;
-    float: right;
     transition: transform 0.3s ease;
+    margin-left: auto;
 }
 
-/* Rotate caret when expanded */
+#versions-container h3 span{
+    color:#545454;
+    margin-left:3px;
+   }
+
 .caret.expanded {
     transform: rotate(90deg);
 }
