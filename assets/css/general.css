@@ -1,0 +1,83 @@
+body {
+    background-color: #252525;
+    color: #CACACA;
+    font-family: 'Karla', sans-serif;
+    min-height: 100vh;
+}
+
+#wpcontent {
+    padding: 20px;
+}
+
+/* Headers */
+h1 {
+    font-size: 34px;
+    color: #909CFE;
+    margin-bottom: 30px;
+}
+
+/* Form Labels */
+label {
+    display: inline-block;
+    font-weight: bold;
+    color: #252525;
+    background-color: #909CFE;
+    padding: 5px 20px;
+    width: auto;
+    border: none;
+}
+
+/* Form Elements */
+input[type="text"],
+input[type="color"],
+textarea,
+select {
+    background-color: #252525;
+    color: #CACACA;
+    border: 1px solid #909CFE;
+    padding: 10px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+    font-size: 15px;
+    border-radius: 0;
+    display: block;
+}
+
+input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Button Styles */
+button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #909CFE;
+    color: #252525;
+    font-weight: 600;
+    font-size: 15px;
+    border: none;
+    border-radius: 0 !important;
+    cursor: pointer;
+    width: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+    height: 40px;
+    text-align: center;
+}
+
+/* Link Styles */
+a {
+    font-weight: 600;
+    color: #909CFE;
+    text-decoration: none;
+}
+
+.shortcuts-page-title {
+    font-size: 34px;
+    color: #909CFE;
+    margin-bottom: 30px;
+}

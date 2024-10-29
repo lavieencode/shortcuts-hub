@@ -4,6 +4,11 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+if (!defined('SB_URL') || !defined('SB_USERNAME') || !defined('SB_PASSWORD')) {
+    error_log('Switchblade API credentials are not defined.', 0);
+    return new WP_Error('missing_credentials', 'API credentials are not defined.');
+}
+
 function get_refresh_sb_token() {
     $cached_token = get_transient('SB_TOKEN');
     if ($cached_token) {
@@ -22,10 +27,11 @@ function get_refresh_sb_token() {
         'headers' => [
             'Content-Type' => 'application/json',
         ],
+        'timeout' => 15,
     ]);
 
     if (is_wp_error($response)) {
-        error_log('Error during login request: ' . $response->get_error_message());
+        error_log('Error during login request: ' . $response->get_error_message(), 0);
         return false;
     }
 
@@ -37,51 +43,7 @@ function get_refresh_sb_token() {
         return $data['token'];
     }
 
-    error_log('Failed to retrieve token. Response: ' . $body);
+    error_log('Failed to retrieve token. Response: ' . $body, 0);
     return false;
 }
 
-function make_sb_api_call($endpoint, $method = 'GET', $query_params = array(), $body = null) {
-    if (!defined('SB_URL')) {
-        return new WP_Error('missing_url', 'API base URL is not defined.');
-    }
-
-    $api_url = SB_URL . $endpoint;
-
-    if (!empty($query_params) && $method === 'GET') {
-        $api_url .= '?' . http_build_query($query_params);
-    }
-
-    $bearer_token = get_refresh_sb_token();
-    if (!$bearer_token) {
-        return new WP_Error('token_error', 'Failed to retrieve SB token.');
-    }
-
-    $args = array(
-        'method'  => $method,
-        'headers' => array(
-            'Authorization' => 'Bearer ' . $bearer_token,
-            'Content-Type'  => 'application/json',
-        ),
-        'timeout' => 15,
-    );
-
-    if ($method !== 'GET' && !empty($body)) {
-        $args['body'] = json_encode($body);
-    }
-
-    $response = wp_remote_request($api_url, $args);
-
-    if (is_wp_error($response)) {
-        return $response;
-    }
-
-    $raw_body = wp_remote_retrieve_body($response);
-    $decoded_body = json_decode($raw_body, true);
-
-    if (empty($decoded_body) || !is_array($decoded_body)) {
-        return new WP_Error('invalid_response', 'Invalid response structure from API.');
-    }
-
-    return $decoded_body;
-}

@@ -61,8 +61,8 @@ body.modal-open #wpcontent {
     margin-left: 1px;
 }
 
-/* Modal Buttons */
 #edit-modal button.shortcuts-button {
+    display: inline-block;
     background-color: #909CFE;
     color: #252525;
     font-weight: 600;
@@ -73,12 +73,8 @@ body.modal-open #wpcontent {
     margin-top: 15px;
 }
 
-#edit-modal button.shortcuts-button:hover {
-    background-color: #7b8ae6;
-}
-
-/* Close Button in Modal */
 #edit-modal .close-button {
+    display: inline-block;
     color: #252525;
     font-weight: 600;
     margin-left: 15px;

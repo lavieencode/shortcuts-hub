@@ -15,7 +15,7 @@
 
 .version-header h3 {
     font-size: 22px;
-    color: #909CFE;
+    color: #909CFE !important;
     margin: 0;
     flex-grow: 1;
 }
@@ -36,24 +36,6 @@
     font-weight: bold;
 }
 
-.hub-btn {
-    background-color: #909CFE;
-    color: #252525;
-    font-weight: 600;
-    font-size: 15px;
-    border: none;
-    cursor: pointer;
-    width: 100px;
-    height: 40px;
-    display: inline-block;
-    text-align: center;
-    line-height: 40px;
-}
-
-.hub-btn:hover {
-    background-color: #7b8ae6;
-}
-
 .caret {
     color: #cacaca;
     font-size: 17px;
@@ -68,4 +50,24 @@
 
 .caret.expanded {
     transform: rotate(90deg);
+}
+
+.version-body .delete-version {
+    background-color: #e46e6e;
+    color: #252525;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 0px;
+}
+
+.deleted-badge {
+    background-color: #ff4d4d;
+    color: #252525;
+    padding: 2px 6px;
+    border-radius: 0px;
+    font-size: 13px;
+    float: right;
+    margin-left: 10px;
 }

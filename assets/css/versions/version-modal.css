@@ -47,6 +47,7 @@
 }
 
 #edit-version-modal button.shortcuts-button {
+    display: inline-block;
     background-color: #909CFE;
     color: #252525;
     font-weight: 600;
@@ -55,14 +56,11 @@
     cursor: pointer;
     font-size: 15px;
     margin-top: 15px;
+    margin-right: 5px;
 }
 
-#edit-version-modal button.shortcuts-button:hover {
-    background-color: #7b8ae6;
-}
-
-/* Close Button in Modal */
 #edit-version-modal .close-button {
+    display: inline-block;
     color: #252525;
     font-weight: 600;
     margin-left: 15px;
@@ -85,4 +83,35 @@
 
 .version-edit-error {
     margin-top: 20px !important;
+}
+
+#edit-version-modal .draft-button,
+#edit-version-modal .publish-button {
+    background-color: transparent;
+    color: #909CFE;
+    border: 2px solid #252525;
+    border-radius: 0;
+    padding: 10px;
+    margin-right: 5px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#edit-version-modal .delete-button {
+    background-color: #FF6B6B !important;
+    color: #252525 !important;
+    font-weight: 600;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    margin-right: 5px;
+}
+
+#version-feedback-message {
+    display: none;
+    color: #909CFE !important;
+    font-size: 14px;
+    margin-top: 10px;
+    font-weight: bold;
 }
