@@ -78,7 +78,6 @@
     padding-top: 5px;
     padding-right: 10px;
     padding-left: 10px;
-    margin-left: 1px;
 }
 
 .version-edit-error {
@@ -114,4 +113,10 @@
     font-size: 14px;
     margin-top: 10px;
     font-weight: bold;
+}
+
+#edit-version-modal .switch-to-draft-button {
+    background-color: transparent !important;
+    border: 2px solid #909CFE !important;
+    color: #909CFE !important;
 }

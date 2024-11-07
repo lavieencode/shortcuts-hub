@@ -22,6 +22,7 @@ label {
     font-weight: bold;
     color: #252525;
     background-color: #909CFE;
+    border-radius: 0 !important;
     padding: 5px 20px;
     width: auto;
     border: none;
@@ -37,6 +38,7 @@ select {
     border: 1px solid #909CFE;
     padding: 10px;
     margin-top: 0;
+    margin-left: 0 !important;
     margin-bottom: 15px;
     width: 100%;
     max-width: 500px;

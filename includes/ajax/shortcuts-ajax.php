@@ -1,249 +1,253 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// Fetch all WordPress shortcuts with filtering options
-function fetch_wp_shortcuts() {
+function fetch_shortcuts() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
+
+    $filter = isset($_POST['filter']) ? sanitize_text_field($_POST['filter']) : '';
     $args = array(
         'post_type' => 'shortcut',
-        'post_status' => 'any',
-        'numberposts' => -1
+        'numberposts' => -1,
     );
 
-    if (!empty($_POST['search'])) {
-        $args['s'] = sanitize_text_field($_POST['search']);
+    if (!empty($filter)) {
+        $args['s'] = $filter;
     }
 
-    $posts = get_posts($args);
-    $shortcuts_data = array();
+    $shortcuts = get_posts($args);
+    $data = array();
 
-    foreach ($posts as $post) {
-        $shortcuts_data[] = array(
-            'id' => $post->ID,
-            'name' => get_the_title($post),
-            'headline' => get_post_meta($post->ID, 'headline', true),
-            'description' => get_post_meta($post->ID, 'description', true),
-            'input' => get_post_meta($post->ID, 'input', true),
-            'result' => get_post_meta($post->ID, 'result', true),
-            'color' => get_post_meta($post->ID, 'color', true),
-            'icon' => get_post_meta($post->ID, 'icon', true),
-            'actions' => get_post_meta($post->ID, 'actions', true),
-            'deleted' => get_post_status($post->ID) === 'trash'
+    foreach ($shortcuts as $shortcut) {
+        $data[] = array(
+            'ID' => $shortcut->ID,
+            'shortcut_name' => $shortcut->post_title,
+            'headline' => get_post_meta($shortcut->ID, 'headline', true),
+            'description' => get_post_meta($shortcut->ID, 'description', true),
+            'color' => get_post_meta($shortcut->ID, 'color', true),
+            'icon' => get_post_meta($shortcut->ID, 'icon', true),
+            'input' => get_post_meta($shortcut->ID, 'input', true),
+            'result' => get_post_meta($shortcut->ID, 'result', true),
+            'sb_id' => get_post_meta($shortcut->ID, 'sb_id', true),
+            'post_date' => $shortcut->post_date,
+            'deleted' => get_post_meta($shortcut->ID, 'deleted', true),
+            'draft' => get_post_meta($shortcut->ID, 'draft', true),
         );
     }
 
-    wp_send_json_success($shortcuts_data);
+    wp_send_json_success($data);
 }
 
-// Fetch a specific WordPress shortcut
-function fetch_wp_shortcut() {
+function fetch_shortcut() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
-    $shortcut_id = intval($_POST['shortcut_id']);
-    $post = get_post($shortcut_id);
 
-    if (!$post || $post->post_type !== 'shortcut') {
-        wp_send_json_error('Shortcut not found');
+    $shortcut_id = intval($_POST['shortcut_id']);
+    $shortcut = get_post($shortcut_id);
+
+    if ($shortcut) {
+        $meta_data = get_post_meta($shortcut_id); // Fetch all meta data
+        $response = array(
+            'success' => true,
+            'data' => array(
+                'id' => $shortcut->ID,
+                'name' => $shortcut->post_title,
+                'headline' => get_post_meta($shortcut_id, 'headline', true),
+                'description' => get_post_meta($shortcut_id, 'description', true),
+                'color' => get_post_meta($shortcut_id, 'color', true),
+                'icon' => get_post_meta($shortcut_id, 'icon', true),
+                'input' => get_post_meta($shortcut_id, 'input', true),
+                'result' => get_post_meta($shortcut_id, 'result', true),
+                'sb_id' => get_post_meta($shortcut_id, 'sb_id', true),
+                'post_date' => $shortcut->post_date,
+                'deleted' => get_post_meta($shortcut_id, 'deleted', true),
+                'draft' => get_post_meta($shortcut_id, 'draft', true),
+            )
+        );
+    } else {
+        $response = array('success' => false, 'message' => 'Shortcut not found.');
+    }
+
+    wp_send_json($response);
+}
+
+function create_shortcut() {
+    check_ajax_referer('shortcuts_hub_nonce', 'security');
+
+    $shortcut_data = isset($_POST['shortcut_data']) ? $_POST['shortcut_data'] : [];
+
+    if (empty($shortcut_data['name']) || empty($shortcut_data['headline'])) {
+        wp_send_json_error(array('message' => 'Required fields are missing.'));
         return;
     }
 
-    $shortcut_data = array(
-        'id' => $post->ID,
-        'name' => get_the_title($post),
-        'headline' => get_post_meta($post->ID, 'headline', true),
-        'description' => get_post_meta($post->ID, 'description', true),
-        'input' => get_post_meta($post->ID, 'input', true),
-        'result' => get_post_meta($post->ID, 'result', true),
-        'color' => get_post_meta($post->ID, 'color', true),
-        'icon' => get_post_meta($post->ID, 'icon', true),
-        'actions' => get_post_meta($post->ID, 'actions', true),
-        'deleted' => get_post_status($post->ID) === 'trash'
+    $state = isset($shortcut_data['state']) && $shortcut_data['state'] === 'draft' ? 1 : 0;
+
+    $sb_data = array(
+        'name' => sanitize_text_field($shortcut_data['name']),
+        'headline' => sanitize_text_field($shortcut_data['headline']),
+        'description' => isset($shortcut_data['description']) ? sanitize_textarea_field($shortcut_data['description']) : '',
+        'state' => $state,
     );
 
-    wp_send_json_success($shortcut_data);
-}
+    $endpoint = 'shortcuts';
+    $api_url = SB_URL . '/' . ltrim($endpoint, '/');
+    error_log('Sending shortcut request to URL: ' . $api_url);
 
-// Create a WordPress shortcut
-function create_wp_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    $sb_response = sb_api_call($endpoint, 'POST', [], $sb_data);
+    
+    if (is_wp_error($sb_response)) {
+        wp_send_json_error(array('message' => 'Failed to create shortcut in Switchblade: ' . $sb_response->get_error_message()));
+        return;
+    }
 
-    $shortcut_data = $_POST['shortcut_data'];
+    error_log('Switchblade API response: ' . print_r($sb_response, true));
+
+    $sb_id = isset($sb_response['shortcut']['id']) ? $sb_response['shortcut']['id'] : null;
+
+    if (!$sb_id) {
+        wp_send_json_error(array('message' => 'Switchblade did not return a valid ID.'));
+        return;
+    }
+
     $post_data = array(
         'post_title'   => sanitize_text_field($shortcut_data['name']),
-        'post_content' => sanitize_textarea_field($shortcut_data['description']),
-        'post_status'  => $shortcut_data['state'] ? 'draft' : 'publish',
+        'post_content' => '',
+        'post_status'  => $state === 1 ? 'draft' : 'publish',
         'post_type'    => 'shortcut',
-        'meta_input'   => array(
-            'headline' => sanitize_text_field($shortcut_data['headline']),
-            'input'    => sanitize_text_field($shortcut_data['input']),
-            'result'   => sanitize_text_field($shortcut_data['result']),
-            'color'    => sanitize_hex_color($shortcut_data['color']),
-            'icon'     => esc_url_raw($shortcut_data['icon']),
-            'actions'  => array_map('sanitize_text_field', $shortcut_data['actions']),
-            'sb_id'    => sanitize_text_field($shortcut_data['sb_id'])
-        )
     );
 
     $post_id = wp_insert_post($post_data);
 
-    if (is_wp_error($post_id)) {
-        wp_send_json_error(array('message' => $post_id->get_error_message()));
+    if (!is_wp_error($post_id)) {
+        update_post_meta($post_id, 'headline', sanitize_text_field($shortcut_data['headline']));
+        update_post_meta($post_id, 'description', isset($shortcut_data['description']) ? sanitize_textarea_field($shortcut_data['description']) : '');
+        update_post_meta($post_id, 'color', isset($shortcut_data['color']) ? sanitize_hex_color($shortcut_data['color']) : '');
+        update_post_meta($post_id, 'icon', isset($shortcut_data['icon']) ? sanitize_text_field($shortcut_data['icon']) : '');
+        update_post_meta($post_id, 'input', isset($shortcut_data['input']) ? sanitize_text_field($shortcut_data['input']) : '');
+        update_post_meta($post_id, 'result', isset($shortcut_data['result']) ? sanitize_text_field($shortcut_data['result']) : '');
+        update_post_meta($post_id, 'sb_id', sanitize_text_field($sb_id));
+        update_post_meta($post_id, 'shortcut_name', sanitize_text_field($shortcut_data['name']));
+        
+        if (isset($shortcut_data['actions']) && is_array($shortcut_data['actions'])) {
+            update_post_meta($post_id, 'actions', $shortcut_data['actions']);
+        }
+
+        wp_send_json_success(array('message' => 'Shortcut created successfully.', 'post_id' => $post_id, 'sb_id' => $sb_id));
+    } else {
+        wp_send_json_error(array('message' => 'Failed to create shortcut in WordPress.'));
+    }
+}
+
+function update_shortcut() {
+    check_ajax_referer('shortcuts_hub_nonce', 'security');
+
+    $shortcut_data = $_POST['shortcut_data'];
+    $post_id = intval($shortcut_data['id']);
+
+    if (!isset($shortcut_data['state'])) {
+        wp_send_json_error(array('message' => 'State is required.'));
         return;
     }
 
-    wp_send_json_success(array('post_id' => $post_id));
-}
-
-// Update a WordPress shortcut
-function update_wp_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
-
-    $shortcut_id = intval($_POST['shortcut_id']);
-    $shortcut_data = $_POST['shortcut_data'];
+    $state = $shortcut_data['state'] === 'draft' ? 1 : 0;
 
     $post_data = array(
-        'ID'           => $shortcut_id,
-        'post_title'   => sanitize_text_field($shortcut_data['name']),
-        'post_content' => sanitize_textarea_field($shortcut_data['description']),
-        'post_status'  => $shortcut_data['state'] ? 'draft' : 'publish',
+        'ID' => $post_id,
+        'post_title' => sanitize_text_field($shortcut_data['name']),
+        'post_status' => $state === 1 ? 'draft' : 'publish',
     );
 
-    $post_id = wp_update_post($post_data);
+    $updated_post_id = wp_update_post($post_data);
 
-    if (is_wp_error($post_id)) {
-        wp_send_json_error(array('message' => $post_id->get_error_message()));
-        return;
+    if (!is_wp_error($updated_post_id)) {
+        update_post_meta($updated_post_id, 'shortcut_name', sanitize_text_field($shortcut_data['name']));
+        update_post_meta($updated_post_id, 'headline', sanitize_text_field($shortcut_data['headline']));
+        update_post_meta($updated_post_id, 'description', sanitize_textarea_field($shortcut_data['description']));
+        update_post_meta($updated_post_id, 'color', sanitize_hex_color($shortcut_data['color']));
+        update_post_meta($updated_post_id, 'icon', sanitize_text_field($shortcut_data['icon']));
+        update_post_meta($updated_post_id, 'input', sanitize_text_field($shortcut_data['input']));
+        update_post_meta($updated_post_id, 'result', sanitize_text_field($shortcut_data['result']));
+        update_post_meta($updated_post_id, 'sb_id', sanitize_text_field($shortcut_data['sb_id']));
+        update_post_meta($updated_post_id, 'shortcut_name', sanitize_text_field($shortcut_data['name']));
+
+        error_log('Updated custom fields for post ID ' . $updated_post_id . ': ' . print_r(array(
+            'headline' => $shortcut_data['headline'],
+            'description' => $shortcut_data['description'],
+            'color' => $shortcut_data['color'],
+            'icon' => $shortcut_data['icon'],
+            'input' => $shortcut_data['input'],
+            'result' => $shortcut_data['result'],
+            'sb_id' => $shortcut_data['sb_id'],
+            'shortcut_name' => $shortcut_data['name']
+        ), true));
+
+        wp_send_json_success(array('message' => 'Shortcut updated successfully.'));
+    } else {
+        wp_send_json_error(array('message' => 'Failed to update shortcut.'));
     }
-
-    update_post_meta($shortcut_id, 'headline', sanitize_text_field($shortcut_data['headline']));
-    update_post_meta($shortcut_id, 'input', sanitize_text_field($shortcut_data['input']));
-    update_post_meta($shortcut_id, 'result', sanitize_text_field($shortcut_data['result']));
-    update_post_meta($shortcut_id, 'color', sanitize_hex_color($shortcut_data['color']));
-    update_post_meta($shortcut_id, 'icon', esc_url_raw($shortcut_data['icon']));
-    update_post_meta($shortcut_id, 'actions', array_map('sanitize_text_field', $shortcut_data['actions']));
-
-    wp_send_json_success(array('post_id' => $post_id));
 }
 
-// Delete a WordPress shortcut
-function delete_wp_shortcut() {
+function toggle_draft() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
+
     $shortcut_id = intval($_POST['shortcut_id']);
-    if (wp_trash_post($shortcut_id)) {
-        wp_send_json_success();
+    $current_status = get_post_status($shortcut_id);
+    $new_status = $current_status === 'draft' ? 'publish' : 'draft';
+
+    $post_data = array(
+        'ID' => $shortcut_id,
+        'post_status' => $new_status,
+    );
+
+    error_log('Toggling draft status for shortcut ID: ' . $shortcut_id . ' to ' . $new_status);
+
+    $updated_post_id = wp_update_post($post_data);
+
+    if (is_wp_error($updated_post_id)) {
+        wp_send_json_error(array('message' => $updated_post_id->get_error_message()));
+        return;
+    }
+
+    $sb_id = get_post_meta($shortcut_id, 'sb_id', true);
+    $sb_response = sb_api_call('/shortcuts/' . $sb_id, 'PATCH', [], array(
+        'state' => $new_status
+    ));
+
+    if (is_wp_error($sb_response)) {
+        wp_send_json_error(array('message' => $sb_response->get_error_message()));
+        return;
+    }
+
+    wp_send_json_success(array('new_status' => $new_status));
+}
+
+function toggle_delete() {
+    check_ajax_referer('shortcuts_hub_nonce', 'security');
+
+    $shortcut_id = isset($_POST['shortcut_id']) ? intval($_POST['shortcut_id']) : 0;
+
+    if ($shortcut_id > 0) {
+        error_log('Deleting shortcut ID: ' . $shortcut_id);
+        $deleted = wp_trash_post($shortcut_id);
+
+        // Fetch the sb_id from the metadata
+        $sb_id = get_post_meta($shortcut_id, 'sb_id', true);
+
+        // Return the sb_id in the response
+        wp_send_json_success(array('message' => 'Shortcut deleted successfully.', 'sb_id' => $sb_id));
     } else {
-        wp_send_json_error('Failed to delete shortcut');
+        wp_send_json_error(array('message' => 'Invalid shortcut ID.'));
     }
 }
 
-// Restore a WordPress shortcut
-function restore_wp_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
-    $shortcut_id = intval($_POST['shortcut_id']);
-    if (wp_untrash_post($shortcut_id)) {
-        wp_send_json_success();
-    } else {
-        wp_send_json_error('Failed to restore shortcut');
-    }
-}
-
-// Fetch all Switchblade shortcuts
-function fetch_sb_shortcuts() {
-    $response = sb_fetch_shortcuts();
-    if (is_wp_error($response)) {
-        wp_send_json_error('Error fetching SB shortcuts');
-    } else {
-        wp_send_json_success($response);
-    }
-}
-
-// Fetch a specific Switchblade shortcut
-function fetch_sb_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
-    $shortcut_id = sanitize_text_field($_POST['shortcut_id']);
-    $response = sb_fetch_single_shortcut($shortcut_id);
-
-    if (is_wp_error($response)) {
-        wp_send_json_error('Error fetching SB shortcut: ' . $response->get_error_message());
-        return;
-    }
-
-    wp_send_json_success($response);
-}
-
-// Create a Switchblade shortcut
-function create_sb_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
-
-    $shortcut_data = $_POST['shortcut_data'];
-    $response = sb_api_call('/shortcuts', 'POST', [], $shortcut_data);
-
-    if (is_wp_error($response)) {
-        wp_send_json_error(array('message' => $response->get_error_message()));
-        return;
-    }
-
-    wp_send_json_success($response);
-}
-
-// Update a Switchblade shortcut
-function update_sb_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
-
-    $shortcut_id = sanitize_text_field($_POST['shortcut_id']);
-    $shortcut_data = $_POST['shortcut_data'];
-    $response = sb_update_shortcut($shortcut_id, $shortcut_data);
-
-    if (is_wp_error($response)) {
-        wp_send_json_error(array('message' => $response->get_error_message()));
-        return;
-    }
-
-    wp_send_json_success($response);
-}
-
-// Delete a Switchblade shortcut
-function delete_sb_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
-
-    $shortcut_id = sanitize_text_field($_POST['shortcut_id']);
-    $response = sb_delete_shortcut($shortcut_id);
-
-    if (is_wp_error($response)) {
-        wp_send_json_error(array('message' => $response->get_error_message()));
-        return;
-    }
-
-    wp_send_json_success(array('message' => 'Shortcut marked as deleted'));
-}
-
-// Restore a Switchblade shortcut
-function restore_sb_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
-
-    $shortcut_id = sanitize_text_field($_POST['shortcut_id']);
-    $response = sb_restore_shortcut($shortcut_id);
-
-    if (is_wp_error($response)) {
-        wp_send_json_error(array('message' => $response->get_error_message()));
-        return;
-    }
-
-    wp_send_json_success(array('message' => 'Shortcut restored successfully'));
-}
-
-add_action('wp_ajax_fetch_wp_shortcuts', 'fetch_wp_shortcuts');
-add_action('wp_ajax_fetch_wp_shortcut', 'fetch_wp_shortcut');
-add_action('wp_ajax_create_wp_shortcut', 'create_wp_shortcut');
-add_action('wp_ajax_update_wp_shortcut', 'update_wp_shortcut');
-add_action('wp_ajax_delete_wp_shortcut', 'delete_wp_shortcut');
-add_action('wp_ajax_restore_wp_shortcut', 'restore_wp_shortcut');
-
-add_action('wp_ajax_fetch_sb_shortcuts', 'fetch_sb_shortcuts');
-add_action('wp_ajax_fetch_sb_shortcut', 'fetch_sb_shortcut');
-add_action('wp_ajax_create_sb_shortcut', 'create_sb_shortcut');
-add_action('wp_ajax_update_sb_shortcut', 'update_sb_shortcut');
-add_action('wp_ajax_delete_sb_shortcut', 'delete_sb_shortcut');
-add_action('wp_ajax_restore_sb_shortcut', 'restore_sb_shortcut');
+add_action('wp_ajax_fetch_shortcuts', 'fetch_shortcuts');
+add_action('wp_ajax_fetch_shortcut', 'fetch_shortcut');
+add_action('wp_ajax_create_shortcut', 'create_shortcut');
+add_action('wp_ajax_update_shortcut', 'update_shortcut');
+add_action('wp_ajax_toggle_draft', 'toggle_draft');
+add_action('wp_ajax_toggle_delete', 'toggle_delete');

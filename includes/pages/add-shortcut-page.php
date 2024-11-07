@@ -7,9 +7,10 @@ if (!defined('ABSPATH')) {
 function shortcuts_hub_render_add_shortcut_page() {
     ?>
     <div id="add-shortcut-page" class="wrap">
-        <h1><?php esc_html_e('Add New Shortcut', 'plugin-name'); ?></h1>
+        <h1><?php esc_html_e('Add New Shortcut', 'shortcuts-hub'); ?></h1>
         <form id="add-shortcut-form" class="form-container">
             <input type="hidden" id="shortcut-state" name="state" value="published">
+            <input type="hidden" id="shortcut-sb-id" name="sb_id" value="">
             <div class="form-columns">
                 <div class="form-column">
                     <div class="form-group">
@@ -41,12 +42,15 @@ function shortcuts_hub_render_add_shortcut_page() {
                     
                     <div class="form-group">
                         <label for="shortcut-color">Color</label>
-                        <input type="color" id="shortcut-color" name="color">
+                        <div class="color-input-wrapper">
+                            <input type="text" id="shortcut-color" name="color" value="" class="color-picker" readonly />
+                        </div>
+                        <div id="color-picker-container"></div>
                     </div>
                     
                     <div class="form-group">
                         <label for="shortcut-icon">Icon</label>
-                        <input type="text" id="shortcut-icon" name="icon" readonly>
+                        <input type="text" id="shortcut-icon" name="icon" value="" readonly />
                     </div>
                 </div>
             </div>
@@ -64,26 +68,5 @@ function shortcuts_hub_render_add_shortcut_page() {
         </form>
         <div id="feedback-message"></div>
     </div>
-    <script>
-        jQuery(document).ready(function($) {
-            $('#shortcut-icon').on('click', function(e) {
-                e.preventDefault();
-                var frame = wp.media({
-                    title: 'Select or Upload Icon',
-                    button: {
-                        text: 'Use this icon'
-                    },
-                    multiple: false
-                });
-
-                frame.on('select', function() {
-                    var attachment = frame.state().get('selection').first().toJSON();
-                    $('#shortcut-icon').val(attachment.url);
-                });
-
-                frame.open();
-            });
-        });
-    </script>
     <?php
 }

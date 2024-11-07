@@ -26,11 +26,7 @@ function shortcuts_hub_render_shortcuts_list_page() {
             <button id="reset-filters" class="shortcuts-button">Reset filters</button>
         </div>
 
-        <h2 class="section-title">SWITCHBLADE</h2>
-        <div id="switchblade-shortcuts-container" class="shortcuts-container"></div>
-
-        <h2 class="section-title">WORDPRESS</h2>
-        <div id="wp-shortcuts-container" class="shortcuts-container"></div>
+        <div id="shortcuts-container" class="shortcuts-container"></div>
 
         <div id="versions-header-bar" style="display: none;">
             <div id="versions-filters">

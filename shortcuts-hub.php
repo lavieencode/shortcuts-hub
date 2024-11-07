@@ -24,6 +24,7 @@ require_once SHORTCUTS_HUB_PATH . 'includes/pages/shortcuts-list-page.php'; // S
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-shortcut-page.php'; // Add shortcut page logic
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-shortcut-page.php'; // Edit shortcut page logic
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/settings.php'; // Settings page logic
+require_once SHORTCUTS_HUB_PATH . 'core/elementor-dynamic-fields.php'; // Custom dynamic fields for Elementor
 
 function register_shortcuts_post_type() {
     $labels = array(
@@ -67,68 +68,91 @@ function register_shortcuts_post_type() {
         'exclude_from_search'   => false,
         'publicly_queryable'    => true,
         'show_ui'               => true,
-        'show_in_menu'          => false, // Do not show in the admin menu
-        'show_in_admin_bar'     => false,
-        'show_in_nav_menus'     => false,
+        'show_in_menu'          => true,
+        'show_in_admin_bar'     => true,
+        'show_in_nav_menus'     => true,
         'show_in_rest'          => true,
         'rest_base'             => 'shortcut',
         'menu_icon'             => 'dashicons-admin-post',
-        'supports'              => array('title', 'thumbnail', 'custom-fields'),
+        'supports'              => array('title', 'editor', 'thumbnail', 'custom-fields'),
         'taxonomies'            => array('shortcut-category'),
-        'has_archive'           => false,
+        'has_archive'           => true,
         'rewrite'               => array('with_front' => false),
         'can_export'            => true,
         'delete_with_user'      => false,
     );
 
-    register_post_type('shortcuts', $args);
+    register_post_type('shortcut', $args);
 }
-
 add_action('init', 'register_shortcuts_post_type');
 
-function shortcuts_hub_admin_menu() {
-    // Add top-level menu page (no actual page linked)
+function register_shortcuts_menu() {
+    remove_menu_page('shortcuts-hub');
+
     add_menu_page(
-        __('Shortcuts Hub', 'shortcuts-hub'), // Page title
-        __('Shortcuts Hub', 'shortcuts-hub'), // Menu title
-        'manage_options',                     // Capability
-        'shortcuts-hub',                      // Menu slug
-        '__return_null',                      // No function to display a page
-        'dashicons-admin-generic',            // Icon URL
-        6                                     // Position
+        'Shortcuts Hub', 
+        'Shortcuts Hub ', 
+        'manage_options', 
+        'shortcuts-hub', 
+        'shortcuts_hub_render_shortcuts_list_page', 
+        'dashicons-list-view', 
+        6 
     );
 
-    // Add submenu for Shortcuts List
     add_submenu_page(
-        'shortcuts-hub',                      // Parent slug
-        __('Shortcuts List', 'shortcuts-hub'),// Page title
-        __('Shortcuts List', 'shortcuts-hub'),// Menu title
-        'manage_options',                     // Capability
-        'shortcuts-list',                     // Menu slug
-        'shortcuts_hub_render_shortcuts_list_page' // Function to display the page
+        'shortcuts-hub', 
+        'Shortcuts List', 
+        'Shortcuts List', 
+        'manage_options', 
+        'shortcuts-list', 
+        'shortcuts_hub_render_shortcuts_list_page' 
     );
 
-    // Add submenu for Add Shortcut
     add_submenu_page(
-        'shortcuts-hub',                      // Parent slug
-        __('Add Shortcut', 'shortcuts-hub'),  // Page title
-        __('Add Shortcut', 'shortcuts-hub'),  // Menu title
-        'manage_options',                     // Capability
-        'add-shortcut',                       // Menu slug
-        'shortcuts_hub_render_add_shortcut_page' // Function to display the page
+        'shortcuts-hub', 
+        'Add Shortcut', 
+        'Add Shortcut', 
+        'manage_options', 
+        'add-shortcut', 
+        'shortcuts_hub_render_add_shortcut_page' 
     );
+
+    add_submenu_page(
+        'shortcuts-hub', 
+        'Edit Shortcut', 
+        'Edit Shortcut', 
+        'manage_options', 
+        'edit-shortcut', 
+        'shortcuts_hub_render_edit_shortcut_page' 
+    );
+
+    global $submenu;
+    unset($submenu['shortcuts-hub'][0]);
 }
-
-add_action('admin_menu', 'shortcuts_hub_admin_menu');
+add_action('admin_menu', 'register_shortcuts_menu');
 
 function shortcuts_hub_admin_body_class($classes) {
     $screen = get_current_screen();
     
-    if ($screen && $screen->id === 'shortcuts-hub_page_shortcuts-list') {
-        $classes .= ' shortcuts-hub_page_shortcuts-list';
+    if ($screen) {
+        $page_slug = $screen->id;
+
+        if (strpos($page_slug, 'shortcuts-hub_page_') === 0) {
+            $classes .= ' shortcuts-hub_page';
+
+            if ($page_slug === 'shortcuts-hub_page_shortcuts-list') {
+                $classes .= ' shortcuts-hub_page_shortcuts-list';
+            } elseif ($page_slug === 'shortcuts-hub_page_add-shortcut') {
+                $classes .= ' shortcuts-hub_page_add-shortcut';
+            } elseif ($page_slug === 'shortcuts-hub_page_edit-shortcut') {
+                $classes .= ' shortcuts-hub_page_edit-shortcut';
+            } elseif ($page_slug === 'shortcuts-hub_page_shortcuts-settings') {
+                $classes .= ' shortcuts-hub_page_shortcuts-settings';
+            }
+        }
     }
     
     return $classes;
 }
-
 add_filter('admin_body_class', 'shortcuts_hub_admin_body_class');
+
