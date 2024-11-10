@@ -1,4 +1,4 @@
-jQuery(document).ready(function() {
+jQuery(document).ready(function($) {
     const urlParams = new URLSearchParams(window.location.search);
     const view = urlParams.get('view');
     const shortcutId = urlParams.get('id');
@@ -6,9 +6,16 @@ jQuery(document).ready(function() {
     if (view === 'versions' && shortcutId) {
         fetchVersions(shortcutId);
     }
+
+    if (shortcutsHubData.shortcut_id) {
+        fetchVersion(shortcutsHubData.shortcut_id, true);
+    }
 });
 
 function fetchVersions(shortcutId, retries = 3) {
+    jQuery('#versions-container').hide();
+    jQuery('#shortcut-name-display').hide();
+
     const filterStatus = jQuery('#filter-version-status').val();
     const filterDeleted = jQuery('#filter-version-deleted').val();
     const filterRequiredUpdate = jQuery('#filter-required-update').val();
@@ -18,40 +25,61 @@ function fetchVersions(shortcutId, retries = 3) {
         action: 'fetch_versions',
         security: shortcutsHubData.security,
         shortcut_id: shortcutId,
+        search_term: searchTerm,
         status: filterStatus,
-        required_update: filterRequiredUpdate === 'true',
-        search_term: searchTerm
+        deleted: filterDeleted === 'true',
+        required_update: filterRequiredUpdate === 'true'
     };
 
-    if (filterDeleted === 'true') {
-        data.deleted = true;
-    } else if (filterDeleted === 'false') {
-        data.deleted = false;
+    jQuery.post(shortcutsHubData.ajax_url, data, function(response) {
+        if (response.success) {
+            renderVersions(response.data, shortcutId);
+            jQuery('#shortcut-name-display').text(response.data.shortcut.name).show();
+            jQuery('#versions-container').show();
+        } else {
+            console.error('Error fetching versions:', response.data.message);
+            jQuery('#versions-container').html('<p>Error loading versions. Please try again later.</p>').show();
+        }
+    }).fail(function(xhr, status, error) {
+        console.error('AJAX error loading versions:', status, error);
+        if (retries > 0) {
+            console.log(`Retrying... (${3 - retries + 1})`);
+            fetchVersions(shortcutId, retries - 1);
+        } else {
+            jQuery('#versions-container').html('<p>Error loading versions. Please try again later.</p>').show();
+        }
+    });
+}
+
+function fetchVersion(shortcutId, versionId, latest = false) {
+    const data = {
+        action: 'fetch_version',
+        security: shortcutsHubData.security,
+        shortcut_id: shortcutId
+    };
+
+    if (versionId) {
+        data.version_id = versionId;
     }
 
-    console.log('Sending AJAX request with data:', data);
+    if (latest) {
+        data.latest = true;
+    }
 
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
         data: data,
         success: function(response) {
-            console.log('AJAX response:', response);
-            if (response.success && Array.isArray(response.data.versions)) {
-                renderVersions(response.data.versions, shortcutId);
+            if (response.success && response.data) {
+                populateEditVersionForm(response.data);
             } else {
-                console.error('No versions found or unexpected response:', response);
-                jQuery('#versions-container').html('<p>No versions found.</p>');
+                console.error('Error fetching version:', response.data ? response.data.message : 'Unknown error');
             }
         },
         error: function(xhr, status, error) {
-            console.error('Error loading versions:', status, error);
-            if (retries > 0) {
-                console.log(`Retrying... (${3 - retries + 1})`);
-                fetchVersions(shortcutId, retries - 1);
-            } else {
-                jQuery('#versions-container').html('<p>Error loading versions. Please try again later.</p>');
-            }
+            console.error('AJAX error fetching version:', status, error);
+            console.error('Response Text:', xhr.responseText);
         }
     });
 }

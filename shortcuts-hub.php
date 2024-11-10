@@ -14,16 +14,18 @@ if (!defined('ABSPATH')) {
 define('SHORTCUTS_HUB_PATH', plugin_dir_path(__FILE__));
 
 // Include separate modular PHP files
-require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php'; // Enqueue scripts/styles
+require_once SHORTCUTS_HUB_PATH . 'includes/security.php'; // Security & nonce
 require_once SHORTCUTS_HUB_PATH . 'core/enqueue-core.php'; // Enqueue core functionalities
+require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php'; // Enqueue scripts/styles
 require_once SHORTCUTS_HUB_PATH . 'includes/ajax/shortcuts-ajax.php'; // Shortcuts-related AJAX handlers
 require_once SHORTCUTS_HUB_PATH . 'includes/ajax/versions-ajax.php'; // Version-related AJAX handlers
 require_once SHORTCUTS_HUB_PATH . 'includes/sb-api.php'; // Switchblade integration and API calls
 require_once SHORTCUTS_HUB_PATH . 'includes/auth.php'; // Authorization & token management
-require_once SHORTCUTS_HUB_PATH . 'includes/security.php'; // Security & nonce
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/shortcuts-list-page.php'; // Shortcuts list page logic
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-shortcut-page.php'; // Add shortcut page logic
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-shortcut-page.php'; // Edit shortcut page logic
+require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-version-page.php'; // Add version page logic
+require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-version-page.php'; // Edit version page logic
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/settings.php'; // Settings page logic
 
 function register_shortcuts_post_type() {
@@ -91,7 +93,7 @@ function register_shortcuts_menu() {
 
     add_menu_page(
         'Shortcuts Hub', 
-        'Shortcuts Hub ', 
+        'Shortcuts Hub', 
         'manage_options', 
         'shortcuts-hub', 
         'shortcuts_hub_render_shortcuts_list_page', 
@@ -124,6 +126,24 @@ function register_shortcuts_menu() {
         'manage_options', 
         'edit-shortcut', 
         'shortcuts_hub_render_edit_shortcut_page' 
+    );
+
+    add_submenu_page(
+        'shortcuts-hub', 
+        'Add Version', 
+        'Add Version', 
+        'manage_options', 
+        'add-version', 
+        'shortcuts_hub_render_add_version_page' 
+    );
+
+    add_submenu_page(
+        'shortcuts-hub', 
+        'Edit Version', 
+        'Edit Version', 
+        'manage_options', 
+        'edit-version', 
+        'shortcuts_hub_render_edit_version_page' 
     );
 
     global $submenu;

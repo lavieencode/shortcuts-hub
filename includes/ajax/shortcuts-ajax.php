@@ -11,65 +11,91 @@ function fetch_shortcuts() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
 
     $filter = isset($_POST['filter']) ? sanitize_text_field($_POST['filter']) : '';
-    $args = array(
-        'post_type' => 'shortcut',
-        'numberposts' => -1,
-    );
+    $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'WP'; // Default to WP
 
-    if (!empty($filter)) {
-        $args['s'] = $filter;
-    }
-
-    $shortcuts = get_posts($args);
-    $data = array();
-
-    foreach ($shortcuts as $shortcut) {
-        $data[] = array(
-            'ID' => $shortcut->ID,
-            'shortcut_name' => $shortcut->post_title,
-            'headline' => get_post_meta($shortcut->ID, 'headline', true),
-            'description' => get_post_meta($shortcut->ID, 'description', true),
-            'color' => get_post_meta($shortcut->ID, 'color', true),
-            'icon' => get_post_meta($shortcut->ID, 'icon', true),
-            'input' => get_post_meta($shortcut->ID, 'input', true),
-            'result' => get_post_meta($shortcut->ID, 'result', true),
-            'sb_id' => get_post_meta($shortcut->ID, 'sb_id', true),
-            'post_date' => $shortcut->post_date,
-            'deleted' => get_post_meta($shortcut->ID, 'deleted', true),
-            'draft' => get_post_meta($shortcut->ID, 'draft', true),
+    if ($source === 'WP') {
+        $args = array(
+            'post_type' => 'shortcut',
+            'numberposts' => -1,
         );
-    }
 
-    wp_send_json_success($data);
+        if (!empty($filter)) {
+            $args['s'] = $filter;
+        }
+
+        $shortcuts = get_posts($args);
+        $data = array();
+
+        foreach ($shortcuts as $shortcut) {
+            $data[] = array(
+                'ID' => $shortcut->ID,
+                'shortcut_name' => $shortcut->post_title,
+                'headline' => get_post_meta($shortcut->ID, 'headline', true),
+                'description' => get_post_meta($shortcut->ID, 'description', true),
+                'color' => get_post_meta($shortcut->ID, 'color', true),
+                'icon' => get_post_meta($shortcut->ID, 'icon', true),
+                'input' => get_post_meta($shortcut->ID, 'input', true),
+                'result' => get_post_meta($shortcut->ID, 'result', true),
+                'sb_id' => get_post_meta($shortcut->ID, 'sb_id', true),
+                'post_date' => $shortcut->post_date,
+                'deleted' => get_post_meta($shortcut->ID, 'deleted', true),
+                'draft' => get_post_meta($shortcut->ID, 'draft', true),
+            );
+        }
+
+        wp_send_json_success($data);
+    } elseif ($source === 'SB') {
+        // Call to Switchblade API
+        $sb_response = sb_api_call('/shortcuts', 'GET', ['filter' => $filter]); // Adjust the endpoint as needed
+        if (is_wp_error($sb_response)) {
+            wp_send_json_error(['message' => 'Error fetching from Switchblade: ' . $sb_response->get_error_message()]);
+            return;
+        }
+
+        wp_send_json_success($sb_response);
+    } else {
+        wp_send_json_error(['message' => 'Invalid source specified.']);
+    }
 }
 
 function fetch_shortcut() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
 
     $shortcut_id = intval($_POST['shortcut_id']);
-    $shortcut = get_post($shortcut_id);
+    $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'WP';
 
-    if ($shortcut) {
-        $meta_data = get_post_meta($shortcut_id); // Fetch all meta data
-        $response = array(
-            'success' => true,
-            'data' => array(
-                'id' => $shortcut->ID,
-                'name' => $shortcut->post_title,
-                'headline' => get_post_meta($shortcut_id, 'headline', true),
-                'description' => get_post_meta($shortcut_id, 'description', true),
-                'color' => get_post_meta($shortcut_id, 'color', true),
-                'icon' => get_post_meta($shortcut_id, 'icon', true),
-                'input' => get_post_meta($shortcut_id, 'input', true),
-                'result' => get_post_meta($shortcut_id, 'result', true),
-                'sb_id' => get_post_meta($shortcut_id, 'sb_id', true),
-                'post_date' => $shortcut->post_date,
-                'deleted' => get_post_meta($shortcut_id, 'deleted', true),
-                'draft' => get_post_meta($shortcut_id, 'draft', true),
-            )
-        );
+    if ($source === 'WP') {
+        $shortcut = get_post($shortcut_id);
+        if ($shortcut) {
+            $response = array(
+                'success' => true,
+                'data' => array(
+                    'id' => $shortcut->ID,
+                    'name' => $shortcut->post_title,
+                    'headline' => get_post_meta($shortcut_id, 'headline', true),
+                    'description' => get_post_meta($shortcut_id, 'description', true),
+                    'color' => get_post_meta($shortcut_id, 'color', true),
+                    'icon' => get_post_meta($shortcut_id, 'icon', true),
+                    'input' => get_post_meta($shortcut_id, 'input', true),
+                    'result' => get_post_meta($shortcut_id, 'result', true),
+                    'sb_id' => get_post_meta($shortcut_id, 'sb_id', true),
+                    'post_date' => $shortcut->post_date,
+                    'deleted' => get_post_meta($shortcut_id, 'deleted', true),
+                    'draft' => get_post_meta($shortcut_id, 'draft', true),
+                )
+            );
+        } else {
+            $response = array('success' => false, 'message' => 'Shortcut not found.');
+        }
+    } elseif ($source === 'SB') {
+        $sb_response = sb_api_call($sb_id);
+        if (is_wp_error($sb_response)) {
+            $response = array('success' => false, 'message' => 'Error fetching from Switchblade: ' . $sb_response->get_error_message());
+        } else {
+            $response = array('success' => true, 'data' => $sb_response);
+        }
     } else {
-        $response = array('success' => false, 'message' => 'Shortcut not found.');
+        $response = array('success' => false, 'message' => 'Invalid source specified.');
     }
 
     wp_send_json($response);
@@ -235,10 +261,7 @@ function toggle_delete() {
         error_log('Deleting shortcut ID: ' . $shortcut_id);
         $deleted = wp_trash_post($shortcut_id);
 
-        // Fetch the sb_id from the metadata
         $sb_id = get_post_meta($shortcut_id, 'sb_id', true);
-
-        // Return the sb_id in the response
         wp_send_json_success(array('message' => 'Shortcut deleted successfully.', 'sb_id' => $sb_id));
     } else {
         wp_send_json_error(array('message' => 'Invalid shortcut ID.'));

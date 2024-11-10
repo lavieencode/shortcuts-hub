@@ -1,3 +1,9 @@
 jQuery(document).ready(function($) {
-    // JavaScript logic for the button
+    $('#download-button').on('click', function(e) {
+        var redirectUrl = $(this).attr('href');
+        if (redirectUrl.includes('/shortcuts-gallery/login/')) {
+            e.preventDefault();
+            window.location.href = redirectUrl;
+        }
+    });
 });

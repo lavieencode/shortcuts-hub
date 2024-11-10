@@ -7,6 +7,11 @@ jQuery(document).ready(function() {
 function initializeShortcutButtons() {
     jQuery('.version-button').on('click', function() {
         const sbId = jQuery(this).data('sb-id');
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set('view', 'versions');
+        urlParams.set('id', sbId);
+        window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
+        
         toggleVersionsView(true);
         fetchVersions(sbId);
     });

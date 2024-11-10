@@ -1,10 +1,26 @@
 jQuery(document).ready(function() {
+    checkUrlParameters();
 });
 
-function renderVersions(versions, shortcutId) {
+function checkUrlParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const view = urlParams.get('view');
+    const id = urlParams.get('id');
+
+    if (view !== 'versions' || !id) {
+        console.error('Not in versions view or ID is missing.');
+        return;
+    }
+
+    // Fetch and render versions if the view is correct
+    fetchVersions(id);
+}
+
+function renderVersions(data, id) {
     const container = jQuery('#versions-container');
     container.empty();
 
+    const versions = data.versions;
     for (let i = 0; i < versions.length; i++) {
         const version = versions[i];
         const versionElement = jQuery(`
@@ -22,11 +38,11 @@ function renderVersions(versions, shortcutId) {
                     ${version.state && version.state.label ? `<p><strong>Status:</strong> ${version.state.label}</p>` : ''}
                     <p><strong>Required Update:</strong> ${version.required ? 'Yes' : 'No'}</p>
                     <div class="button-container">
-                        <button class="edit-version" data-shortcut-id="${shortcutId}" data-version-id="${version.version}">Edit Version</button>
+                        <button class="edit-version" data-id="${id}" data-version-id="${version.version}">Edit Version</button>
                         ${version.deleted ? `
-                            <button class="restore-version" data-shortcut-id="${shortcutId}" data-version-id="${version.version}">Restore Version</button>
+                            <button class="restore-version" data-id="${id}" data-version-id="${version.version}">Restore Version</button>
                         ` : `
-                            <button class="delete-version" data-shortcut-id="${shortcutId}" data-version-id="${version.version}">Delete Version</button>
+                            <button class="delete-version" data-id="${id}" data-version-id="${version.version}">Delete Version</button>
                         `}
                     </div>
                 </div>
@@ -34,4 +50,6 @@ function renderVersions(versions, shortcutId) {
         `);
         container.append(versionElement);
     }
+
+    container.show();
 }

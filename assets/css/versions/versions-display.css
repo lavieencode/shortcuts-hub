@@ -5,6 +5,10 @@
     padding: 0px;
 }
 
+.versions-page-title {
+    margin-bottom: 10px !important;
+}  
+
 #versions-header-bar {
     display: flex;
     justify-content: flex-start;
@@ -27,6 +31,7 @@
 
 #shortcut-name-display {
     color: #CACACA;
+    font-size: 28px !important;
     font-weight: 500;
     margin-top: 5px;
 }

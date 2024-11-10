@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 function shortcuts_hub_enqueue_assets($hook) {
     wp_enqueue_script('jquery');
 
-    if (in_array($hook, ['shortcuts-hub_page_shortcuts-list', 'shortcuts-hub_page_add-shortcut', 'shortcuts-hub_page_edit-shortcut', 'shortcuts-hub_page_shortcuts-settings'])) {
+    if (in_array($hook, ['shortcuts-hub_page_shortcuts-list', 'shortcuts-hub_page_add-shortcut', 'shortcuts-hub_page_edit-shortcut', 'shortcuts-hub_page_shortcuts-settings', 'shortcuts-hub_page_add-version', 'shortcuts-hub_page_edit-version'])) {
         wp_enqueue_style(
             'general-styles',
             plugins_url('../assets/css/general.css', __FILE__),
@@ -78,6 +78,32 @@ function shortcuts_hub_enqueue_assets($hook) {
 
         case 'shortcuts-hub_page_shortcuts-settings':
             wp_enqueue_style('settings-style', plugins_url('../assets/css/settings.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/settings.css'));
+            break;
+
+        case 'shortcuts-hub_page_add-version':
+            wp_enqueue_style('add-version-style', plugins_url('../assets/css/pages/add-version.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/pages/add-version.css'));
+            wp_enqueue_script('add-version-script', plugins_url('../assets/js/pages/add-version.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/pages/add-version.js'), true);
+            
+            wp_enqueue_script('versions-fetch-script', plugins_url('../assets/js/versions/versions-fetch.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/versions/versions-fetch.js'), true);
+            wp_enqueue_script('versions-render-script', plugins_url('../assets/js/versions/versions-render.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/versions/versions-render.js'), true);
+            
+            wp_localize_script('add-version-script', 'shortcutsHubData', array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'security' => wp_create_nonce('shortcuts_hub_nonce'),
+                'site_url' => get_site_url()
+            ));
+            break;
+
+        case 'shortcuts-hub_page_edit-version':
+            wp_enqueue_style('edit-version-style', plugins_url('../assets/css/pages/edit-version.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/pages/edit-version.css'));
+            wp_enqueue_script('edit-version-script', plugins_url('../assets/js/pages/edit-version.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/pages/edit-version.js'), true);
+            wp_enqueue_script('versions-fetch-script', plugins_url('../assets/js/versions/versions-fetch.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/versions/versions-fetch.js'), true);
+
+            wp_localize_script('edit-version-script', 'shortcutsHubData', array(
+                'ajax_url' => admin_url('admin-ajax.php'),
+                'security' => wp_create_nonce('shortcuts_hub_nonce'),
+                'site_url' => get_site_url()
+            ));
             break;
     }
 }

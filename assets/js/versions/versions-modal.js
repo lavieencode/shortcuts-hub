@@ -1,7 +1,7 @@
 jQuery(document).ready(function() {
 });
 
-function openVersionEditModal(shortcutId, versionId) {
+function openVersionEditModal(shortcutId, versionId, latest = false) {
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
@@ -9,7 +9,8 @@ function openVersionEditModal(shortcutId, versionId) {
             action: 'fetch_version',
             security: shortcutsHubData.security,
             shortcut_id: shortcutId,
-            version_id: versionId
+            version_id: versionId,
+            latest: latest
         },
         success: function(response) {
             if (response.success && response.data) {
