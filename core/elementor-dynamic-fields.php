@@ -1,15 +1,12 @@
 <?php
-if ( ! defined( 'ELEMENTOR_VERSION' ) ) {
-    return;
-}
 
-class Shortcut_Name_Field_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
+class Name_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
     public function get_name() {
-        return 'shortcut_name_field_dynamic_tag';
+        return 'name';
     }
 
     public function get_title() {
-        return 'Shortcut Name';
+        return __('Name', 'shortcuts-hub');
     }
 
     public function get_group() {
@@ -17,464 +14,263 @@ class Shortcut_Name_Field_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
     }
 
     public function get_categories() {
-        return [ \Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY ];
+        return [\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY];
     }
 
-    protected function register_controls() {
-        $this->end_controls_section();
-        $this->start_controls_section(
-            'settings',
-            [
-                'label' => 'Settings',
-            ]
-        );
+    public function get_content(array $options = []) {
+        $post_id = get_the_ID();
+        $name = get_post_meta($post_id, 'shortcut_name', true);
 
-        $this->add_control(
-            'before',
-            [
-                'label' => 'Before',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => 'After',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => 'Fallback',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->end_controls_section();
+        return !empty($name) ? esc_html($name) : '';
     }
 
     public function render() {
-        $before = $this->get_settings('before');
-        $after = $this->get_settings('after');
-        $fallback = $this->get_settings('fallback');
+        echo $this->get_content();
+    }
+}
 
-        $value = get_post_meta( get_the_ID(), 'shortcut_name', true );
+class Headline_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
+    public function get_name() {
+        return 'headline';
+    }
 
-        if (!is_null($value)) {
-            echo esc_html($before . $value . $after);
-        } else {
-            echo esc_html($fallback);
+    public function get_title() {
+        return __('Headline', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
+    }
+
+    public function get_categories() {
+        return [\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY];
+    }
+
+    public function get_content(array $options = []) {
+        $post_id = get_the_ID();
+        $headline = get_post_meta($post_id, 'headline', true);
+
+        return !empty($headline) ? esc_html($headline) : '';
+    }
+
+    public function render() {
+        echo $this->get_content();
+    }
+}
+
+class Description_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
+    public function get_name() {
+        return 'description';
+    }
+
+    public function get_title() {
+        return __('Description', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
+    }
+
+    public function get_categories() {
+        return [\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY];
+    }
+
+    public function get_content(array $options = []) {
+        $post_id = get_the_ID();
+        $description = get_post_meta($post_id, 'description', true);
+
+        return !empty($description) ? esc_html($description) : '';
+    }
+
+    public function render() {
+        echo $this->get_content();
+    }
+}
+
+class Color_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
+    public function get_name() {
+        return 'color';
+    }
+
+    public function get_title() {
+        return __('Color', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
+    }
+
+    public function get_categories() {
+        return [\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY];
+    }
+
+    public function get_content(array $options = []) {
+        $post_id = get_the_ID();
+        $color = get_post_meta($post_id, 'color', true);
+
+        return !empty($color) ? esc_html($color) : '';
+    }
+
+    public function render() {
+        echo $this->get_content();
+    }
+}
+
+class Icon_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
+    public function get_name() {
+        return 'icon';
+    }
+
+    public function get_title() {
+        return __('Icon', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
+    }
+
+    public function get_categories() {
+        return [\Elementor\Modules\DynamicTags\Module::IMAGE_CATEGORY];
+    }
+
+    public function get_content(array $options = []) {
+        $post_id = get_the_ID();
+        $icon_url = get_post_meta($post_id, 'icon', true);
+
+        return !empty($icon_url) ? '<img src="' . esc_url($icon_url) . '" alt="' . esc_attr__('Icon', 'shortcuts-hub') . '">' : '';
+    }
+
+    public function render() {
+        echo $this->get_content();
+    }
+}
+
+class Input_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
+    public function get_name() {
+        return 'input';
+    }
+
+    public function get_title() {
+        return __('Input', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
+    }
+
+    public function get_categories() {
+        return [\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY];
+    }
+
+    public function get_content(array $options = []) {
+        $post_id = get_the_ID();
+        $input = get_post_meta($post_id, 'input', true);
+
+        return !empty($input) ? esc_html($input) : '';
+    }
+
+    public function render() {
+        echo $this->get_content();
+    }
+}
+
+class Result_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
+    public function get_name() {
+        return 'result';
+    }
+
+    public function get_title() {
+        return __('Result', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
+    }
+
+    public function get_categories() {
+        return [\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY];
+    }
+
+    public function get_content(array $options = []) {
+        $post_id = get_the_ID();
+        $result = get_post_meta($post_id, 'result', true);
+
+        return !empty($result) ? esc_html($result) : '';
+    }
+
+    public function render() {
+        echo $this->get_content();
+    }
+}
+
+class Latest_Version_URL_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
+    public function get_name() {
+        return 'latest_version_url';
+    }
+
+    public function get_title() {
+        return __('Latest Version URL', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
+    }
+
+    public function get_categories() {
+        return [\Elementor\Modules\DynamicTags\Module::URL_CATEGORY];
+    }
+
+    public function get_content(array $options = []) {
+        $post_id = get_the_ID();
+        $shortcut_id = get_post_meta($post_id, 'sb_id', true);
+
+        if (!empty($shortcut_id)) {
+            $response = sb_api_call("shortcuts/{$shortcut_id}/version/latest", 'GET');
+            return (!is_wp_error($response) && isset($response['url'])) ? esc_url($response['url']) : '';
         }
-    }
-}
 
-class Shortcut_Headline_Field_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
-    public function get_name() {
-        return 'shortcut_headline_field_dynamic_tag';
-    }
-
-    public function get_title() {
-        return 'Shortcut Headline';
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
-    }
-
-    public function get_categories() {
-        return [ \Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY ];
-    }
-
-    protected function register_controls() {
-        $this->end_controls_section();
-        $this->start_controls_section(
-            'settings',
-            [
-                'label' => 'Settings',
-            ]
-        );
-
-        $this->add_control(
-            'before',
-            [
-                'label' => 'Before',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => 'After',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => 'Fallback',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->end_controls_section();
+        return '';
     }
 
     public function render() {
-        $before = $this->get_settings('before');
-        $after = $this->get_settings('after');
-        $fallback = $this->get_settings('fallback');
-
-        $value = get_post_meta( get_the_ID(), 'headline', true );
-
-        echo !empty($value) ? esc_html( $before . $value . $after ) : esc_html( $fallback );
+        echo $this->get_content();
     }
 }
 
-class Shortcut_Description_Field_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
-    public function get_name() {
-        return 'shortcut_description_field_dynamic_tag';
+function register_shortcut_dynamic_tags($dynamic_tags_manager) {
+    if (class_exists('Name_Dynamic_Tag')) {
+        $dynamic_tags_manager->register(new Name_Dynamic_Tag());
     }
-
-    public function get_title() {
-        return 'Shortcut Description';
+    if (class_exists('Headline_Dynamic_Tag')) {
+        $dynamic_tags_manager->register(new Headline_Dynamic_Tag());
     }
-
-    public function get_group() {
-        return 'shortcut_fields';
+    if (class_exists('Description_Dynamic_Tag')) {
+        $dynamic_tags_manager->register(new Description_Dynamic_Tag());
     }
-
-    public function get_categories() {
-        return [ \Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY ];
+    if (class_exists('Color_Dynamic_Tag')) {
+        $dynamic_tags_manager->register(new Color_Dynamic_Tag());
     }
-
-    protected function register_controls() {
-        $this->end_controls_section();
-        $this->start_controls_section(
-            'settings',
-            [
-                'label' => 'Settings',
-            ]
-        );
-
-        $this->add_control(
-            'before',
-            [
-                'label' => 'Before',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => 'After',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => 'Fallback',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->end_controls_section();
+    if (class_exists('Icon_Dynamic_Tag')) {
+        $dynamic_tags_manager->register(new Icon_Dynamic_Tag());
     }
-
-    public function render() {
-        $before = $this->get_settings('before');
-        $after = $this->get_settings('after');
-        $fallback = $this->get_settings('fallback');
-
-        $value = get_post_meta( get_the_ID(), 'description', true );
-
-        echo !empty($value) ? esc_html( $before . $value . $after ) : esc_html( $fallback );
+    if (class_exists('Input_Dynamic_Tag')) {
+        $dynamic_tags_manager->register(new Input_Dynamic_Tag());
+    }
+    if (class_exists('Result_Dynamic_Tag')) {
+        $dynamic_tags_manager->register(new Result_Dynamic_Tag());
+    }
+    if (class_exists('Latest_Version_URL_Dynamic_Tag')) {
+        $dynamic_tags_manager->register(new Latest_Version_URL_Dynamic_Tag());
     }
 }
 
-class Shortcut_Icon_Field_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
-    public function get_name() {
-        return 'shortcut_icon_field_dynamic_tag';
-    }
+add_action('elementor/dynamic_tags/register', 'register_shortcut_dynamic_tags');
 
-    public function get_title() {
-        return 'Shortcut Icon';
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
-    }
-
-    public function get_categories() {
-        return [ \Elementor\Modules\DynamicTags\Module::IMAGE_CATEGORY ];
-    }
-
-    protected function register_controls() {
-        $this->end_controls_section();
-        $this->start_controls_section(
-            'settings',
-            [
-                'label' => 'Settings',
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => 'Fallback',
-                'type' => \Elementor\Controls_Manager::MEDIA,
-                'default' => [
-                    'url' => \Elementor\Utils::get_placeholder_image_src(),
-                ],
-            ]
-        );
-
-        $this->end_controls_section();
-    }
-
-    public function render() {
-        $fallback = $this->get_settings('fallback');
-        $value = get_post_meta( get_the_ID(), 'icon', true );
-
-        if (!empty($value)) {
-            echo esc_url($value);
-        } else {
-            echo esc_url($fallback['url']);
-        }
-    }
-}
-
-class Shortcut_Color_Field_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
-    public function get_name() {
-        return 'shortcut_color_field_dynamic_tag';
-    }
-
-    public function get_title() {
-        return 'Shortcut Color';
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
-    }
-
-    public function get_categories() {
-        return [ \Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY ];
-    }
-
-    protected function register_controls() {
-        $this->end_controls_section();
-        $this->start_controls_section(
-            'settings',
-            [
-                'label' => 'Settings',
-            ]
-        );
-
-        $this->add_control(
-            'before',
-            [
-                'label' => 'Before',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => 'After',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => 'Fallback',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->end_controls_section();
-    }
-
-    public function render() {
-        $before = $this->get_settings('before');
-        $after = $this->get_settings('after');
-        $fallback = $this->get_settings('fallback');
-
-        $value = get_post_meta( get_the_ID(), 'color', true );
-
-        echo !empty($value) ? esc_html( $before . $value . $after ) : esc_html( $fallback );
-    }
-}
-
-class Shortcut_Input_Field_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
-    public function get_name() {
-        return 'shortcut_input_field_dynamic_tag';
-    }
-
-    public function get_title() {
-        return 'Shortcut Input';
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
-    }
-
-    public function get_categories() {
-        return [ \Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY ];
-    }
-
-    protected function register_controls() {
-        $this->end_controls_section();
-        $this->start_controls_section(
-            'settings',
-            [
-                'label' => 'Settings',
-            ]
-        );
-
-        $this->add_control(
-            'before',
-            [
-                'label' => 'Before',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => 'After',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => 'Fallback',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->end_controls_section();
-    }
-
-    public function render() {
-        $before = $this->get_settings('before');
-        $after = $this->get_settings('after');
-        $fallback = $this->get_settings('fallback');
-
-        $value = get_post_meta( get_the_ID(), 'input', true );
-
-        echo !empty($value) ? esc_html( $before . $value . $after ) : esc_html( $fallback );
-    }
-}
-
-class Shortcut_Result_Field_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
-    public function get_name() {
-        return 'shortcut_result_field_dynamic_tag';
-    }
-
-    public function get_title() {
-        return 'Shortcut Result';
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
-    }
-
-    public function get_categories() {
-        return [ \Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY ];
-    }
-
-    protected function register_controls() {
-        $this->end_controls_section();
-        $this->start_controls_section(
-            'settings',
-            [
-                'label' => 'Settings',
-            ]
-        );
-
-        $this->add_control(
-            'before',
-            [
-                'label' => 'Before',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => 'After',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => 'Fallback',
-                'type' => \Elementor\Controls_Manager::TEXT,
-                'default' => '',
-            ]
-        );
-
-        $this->end_controls_section();
-    }
-
-    public function render() {
-        $before = $this->get_settings('before');
-        $after = $this->get_settings('after');
-        $fallback = $this->get_settings('fallback');
-
-        $value = get_post_meta( get_the_ID(), 'result', true );
-
-        echo !empty($value) ? esc_html( $before . $value . $after ) : esc_html( $fallback );
-    }
-}
-
-function register_shortcut_dynamic_tags( $dynamic_tags_manager ) {
-    $dynamic_tags_manager->register( new \Shortcut_Name_Field_Dynamic_Tag() );
-    $dynamic_tags_manager->register( new \Shortcut_Headline_Field_Dynamic_Tag() );
-    $dynamic_tags_manager->register( new \Shortcut_Description_Field_Dynamic_Tag() );
-    $dynamic_tags_manager->register( new \Shortcut_Icon_Field_Dynamic_Tag() );
-    $dynamic_tags_manager->register( new \Shortcut_Color_Field_Dynamic_Tag() );
-    $dynamic_tags_manager->register( new \Shortcut_Input_Field_Dynamic_Tag() );
-    $dynamic_tags_manager->register( new \Shortcut_Result_Field_Dynamic_Tag() );
-}
-
-add_action( 'elementor/dynamic_tags/register', 'register_shortcut_dynamic_tags' );
-
-add_action( 'elementor/dynamic_tags/register_tags', function( $dynamic_tags_manager ) {
-    $dynamic_tags_manager->register_group( 'shortcut_fields', [
-        'title' => 'Shortcut Fields',
-    ]);
+add_action('elementor/dynamic_tags/register', function($dynamic_tags_manager) {
+    $dynamic_tags_manager->register_group(
+        'shortcut_fields',
+        [
+            'title' => esc_html__('Shortcut Fields', 'shortcuts-hub'),
+        ]
+    );
 });
