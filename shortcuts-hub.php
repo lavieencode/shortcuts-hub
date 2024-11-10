@@ -15,6 +15,7 @@ define('SHORTCUTS_HUB_PATH', plugin_dir_path(__FILE__));
 
 // Include separate modular PHP files
 require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php'; // Enqueue scripts/styles
+require_once SHORTCUTS_HUB_PATH . 'core/enqueue-core.php'; // Enqueue core functionalities
 require_once SHORTCUTS_HUB_PATH . 'includes/ajax/shortcuts-ajax.php'; // Shortcuts-related AJAX handlers
 require_once SHORTCUTS_HUB_PATH . 'includes/ajax/versions-ajax.php'; // Version-related AJAX handlers
 require_once SHORTCUTS_HUB_PATH . 'includes/sb-api.php'; // Switchblade integration and API calls
@@ -24,7 +25,6 @@ require_once SHORTCUTS_HUB_PATH . 'includes/pages/shortcuts-list-page.php'; // S
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-shortcut-page.php'; // Add shortcut page logic
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-shortcut-page.php'; // Edit shortcut page logic
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/settings.php'; // Settings page logic
-require_once SHORTCUTS_HUB_PATH . 'core/elementor-dynamic-fields.php'; // Custom dynamic fields for Elementor
 
 function register_shortcuts_post_type() {
     $labels = array(
