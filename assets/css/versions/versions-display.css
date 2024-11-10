@@ -14,6 +14,7 @@
     justify-content: flex-start;
     align-items: center;
     margin-bottom: 30px;
+    gap: 10px;
 }
 
 #back-to-shortcuts {
@@ -36,14 +37,14 @@
     margin-top: 5px;
 }
 
-#search-versions-input, #filter-version-status, #filter-version-date {
+#search-versions-input, #filter-version-status, #filter-version-deleted, #filter-required-update {
     background-color: #252525;
     color: #CACACA;
     border: 1px solid #909CFE;
     height: 50px;
     padding: 10px;
     gap: 10;
-    margin: 0;
+    margin: 0 !important;
     border-radius: 0;
     font-size: 15px;
 }
@@ -87,8 +88,37 @@
     font-size: 15px;
     border: none;
     cursor: pointer;
-    min-width: 100px !important;
+    min-width: 120px;
+    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-left: 10px;
+}
+
+.delete-button {
+    background-color: #f44336;
+    color: #252525;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+}
+
+.add-version-button {
+    width: 80px;
+    height: 80px;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #909CFE;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
 }
