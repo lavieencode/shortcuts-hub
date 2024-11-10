@@ -11,15 +11,11 @@ function toggleVersionDeletion(shortcutId, versionId, isRestore) {
         _method: 'PATCH'
     };
 
-    console.log('Sending request to server:', requestData);
-
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
         data: requestData,
         success: function(response) {
-            console.log('Response from server:', response);
-
             if (response.success) {
                 const versionElement = jQuery(`.version-item[data-version-id="${versionId}"]`);
                 const button = versionElement.find('.delete-version, .restore-version');

@@ -1,5 +1,10 @@
 jQuery(document).ready(function() {
-    fetchShortcuts();
+    const urlParams = new URLSearchParams(window.location.search);
+    const view = urlParams.get('view');
+
+    if (view !== 'versions') {
+        fetchShortcuts();
+    }
 });
 
 function fetchShortcuts() {

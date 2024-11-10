@@ -101,7 +101,7 @@ class Color_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
     }
 
     public function get_categories() {
-        return [\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY];
+        return [\Elementor\Modules\DynamicTags\Module::COLOR_CATEGORY];
     }
 
     public function get_content(array $options = []) {

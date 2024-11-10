@@ -8,15 +8,14 @@ function checkUrlParameters() {
     const id = urlParams.get('id');
 
     if (view !== 'versions' || !id) {
-        console.error('Not in versions view or ID is missing.');
         return;
     }
 
-    // Fetch and render versions if the view is correct
     fetchVersions(id);
 }
 
 function renderVersions(data, id) {
+    const sbId = id; // Set ID to SB_ID
     const container = jQuery('#versions-container');
     container.empty();
 
@@ -38,11 +37,11 @@ function renderVersions(data, id) {
                     ${version.state && version.state.label ? `<p><strong>Status:</strong> ${version.state.label}</p>` : ''}
                     <p><strong>Required Update:</strong> ${version.required ? 'Yes' : 'No'}</p>
                     <div class="button-container">
-                        <button class="edit-version" data-id="${id}" data-version-id="${version.version}">Edit Version</button>
+                        <button class="edit-version" data-id="${sbId}" data-version-id="${version.version}">Edit Version</button>
                         ${version.deleted ? `
-                            <button class="restore-version" data-id="${id}" data-version-id="${version.version}">Restore Version</button>
+                            <button class="restore-button" data-version-id="${version.version}" data-shortcut-id="${sbId}">Restore Version</button>
                         ` : `
-                            <button class="delete-version" data-id="${id}" data-version-id="${version.version}">Delete Version</button>
+                            <button class="delete-button" data-version-id="${version.version}" data-shortcut-id="${sbId}">Delete Version</button>
                         `}
                     </div>
                 </div>
@@ -50,6 +49,4 @@ function renderVersions(data, id) {
         `);
         container.append(versionElement);
     }
-
-    container.show();
 }

@@ -26,14 +26,9 @@ function attachVersionHandlers() {
     });
 
     jQuery(document).on('click', '.edit-version', function() {
-        const id = jQuery(this).data('id');
+        const shortcutId = jQuery(this).data('id');
         const versionId = jQuery(this).data('version-id');
-
-        console.log('Shortcut ID:', id);
-        console.log('Version ID:', versionId);
-
-        const editUrl = `/wp-admin/admin.php?page=edit-version&id=${id}&version_id=${versionId}`;
-        window.location.href = editUrl;
+        openVersionEditModal(shortcutId, versionId);
     });
 
     jQuery('#edit-version-modal .save-button').on('click', function(event) {
@@ -46,20 +41,14 @@ function attachVersionHandlers() {
         updateVersion('publish');
     });
 
-    jQuery('#edit-version-modal .draft-button').on('click', function(event) {
+    jQuery('#edit-version-modal .delete-button').on('click', function(event) {
         event.preventDefault();
-        updateVersion('draft');
+        toggleVersionDeletion(jQuery('#edit-version-form #shortcut-id').val(), jQuery('#edit-version-form #version-id').val(), false);
     });
 
-    jQuery('#edit-version-modal .switch-to-draft-button').on('click', function(event) {
-        event.preventDefault();
-        updateVersion('switch_to_draft');
-    });
-
-    jQuery('#edit-version-modal .close-button').on('click', function() {
+    jQuery('#edit-version-modal .cancel-button').on('click', function() {
         jQuery('#edit-version-modal').removeClass('active').hide();
         jQuery('body').removeClass('modal-open');
-        jQuery('#version-feedback-message').hide();
     });
 
     jQuery(document).on('click', '.delete-version, .restore-version', function() {

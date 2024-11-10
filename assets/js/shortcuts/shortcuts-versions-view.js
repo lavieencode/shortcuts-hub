@@ -1,12 +1,14 @@
-jQuery('.version-button').on('click', function() {
-    const sbId = jQuery(this).data('sb-id');
+jQuery(document).ready(function() {
     const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('view', 'versions');
-    urlParams.set('id', sbId);
-    window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
-    
-    toggleVersionsView(true);
-    fetchVersions(sbId);
+    const view = urlParams.get('view');
+    const shortcutId = urlParams.get('id');
+
+    if (view === 'versions' && shortcutId) {
+        toggleVersionsView(true);
+        fetchVersions(shortcutId);
+    } else {
+        toggleVersionsView(false);
+    }
 });
 
 function toggleVersionsView(show) {

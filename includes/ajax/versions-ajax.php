@@ -163,8 +163,6 @@ function version_toggle_delete() {
     $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
     $is_restore = isset($_POST['is_restore']) ? filter_var($_POST['is_restore'], FILTER_VALIDATE_BOOLEAN) : false;
 
-    error_log("Toggling delete for version ID: $version_id for shortcut ID: $shortcut_id, is_restore: $is_restore");
-
     if (empty($shortcut_id) || empty($version_id)) {
         wp_send_json_error(['message' => 'Shortcut ID or version ID is missing']);
         return;
@@ -173,12 +171,10 @@ function version_toggle_delete() {
     $response = sb_api_call('/shortcuts/' . $shortcut_id . '/version/' . $version_id, 'PATCH', [], ['deleted' => !$is_restore]);
 
     if (is_wp_error($response)) {
-        error_log("Error toggling delete for version: " . $response->get_error_message());
         wp_send_json_error(['message' => 'Error toggling delete for version: ' . $response->get_error_message()]);
         return;
     }
 
-    error_log("Successfully toggled delete for version");
     wp_send_json_success(['message' => 'Version toggled successfully']);
 }
 
@@ -191,8 +187,6 @@ function version_toggle_draft() {
     $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
     $new_state = isset($_POST['new_state']) ? intval($_POST['new_state']) : null;
 
-    error_log("Toggling state for version ID: $version_id for shortcut ID: $shortcut_id to state: $new_state");
-
     if (empty($shortcut_id) || empty($version_id) || $new_state === null) {
         wp_send_json_error(['message' => 'Shortcut ID, version ID, or new state is missing']);
         return;
@@ -201,12 +195,10 @@ function version_toggle_draft() {
     $response = sb_api_call('/shortcuts/' . $shortcut_id . '/version/' . $version_id, 'PATCH', [], ['state' => $new_state]);
 
     if (is_wp_error($response)) {
-        error_log("Error toggling version state: " . $response->get_error_message());
         wp_send_json_error(['message' => 'Error toggling version state: ' . $response->get_error_message()]);
         return;
     }
 
-    error_log("Successfully toggled version state");
     wp_send_json_success(['message' => 'Version state toggled successfully']);
 }
 

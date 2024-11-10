@@ -74,3 +74,11 @@
     justify-content: center;
     box-sizing: border-box;
 }
+
+#shortcuts-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    background-color: transparent;
+}

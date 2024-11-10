@@ -53,8 +53,8 @@
     transform: rotate(90deg);
 }
 
-.version-body .delete-version {
-    background-color: #f44336;
+.version-body .delete-button {
+    background-color: #e46e6e;
     color: #373737;
     border: 2px solid #e46e6e;
     padding: 10px;
@@ -63,10 +63,10 @@
     border-radius: 0px;
 }
 
-.version-body .restore-version {
+.version-body .restore-button {
     background-color: transparent;
     color: #f44336;
-    border: 2px solid #f44336;
+    border: 2px solid #e46e6e;
     padding: 10px;
     cursor: pointer;
     font-size: 14px;
@@ -78,7 +78,7 @@
     right: 10px;
     top: 50%;
     transform: translateY(-50%);
-    background-color: #f44336;
+    background-color: #e46e6e;
     color: transparent;
     padding: 5px 10px;
     border-radius: 0px;

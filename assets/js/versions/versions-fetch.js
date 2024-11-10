@@ -37,13 +37,10 @@ function fetchVersions(shortcutId, retries = 3) {
             jQuery('#shortcut-name-display').text(response.data.shortcut.name).show();
             jQuery('#versions-container').show();
         } else {
-            console.error('Error fetching versions:', response.data.message);
             jQuery('#versions-container').html('<p>Error loading versions. Please try again later.</p>').show();
         }
     }).fail(function(xhr, status, error) {
-        console.error('AJAX error loading versions:', status, error);
         if (retries > 0) {
-            console.log(`Retrying... (${3 - retries + 1})`);
             fetchVersions(shortcutId, retries - 1);
         } else {
             jQuery('#versions-container').html('<p>Error loading versions. Please try again later.</p>').show();
