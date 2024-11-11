@@ -12,14 +12,6 @@ function shortcuts_hub_include_files() {
         return;
     }
 
-    // Include the registration webhooks file to ensure it's loaded everywhere
-    $registration_webhooks_path = SHORTCUTS_HUB_PATH . 'core/registration-webhooks.php';
-    if (file_exists($registration_webhooks_path)) {
-        require_once $registration_webhooks_path;
-    } else {
-        error_log('Registration webhooks file not found: ' . $registration_webhooks_path);
-    }
-
     // Include the registration flow file
     $registration_flow_path = SHORTCUTS_HUB_PATH . 'core/registration-flow.php';
     if (file_exists($registration_flow_path)) {
