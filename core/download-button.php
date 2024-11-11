@@ -3,7 +3,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly.
 }
 
-// Register the custom widget category first
 function register_shortcuts_hub_category( $elements_manager ) {
     $elements_manager->add_category(
         'shortcuts-hub',
@@ -15,7 +14,6 @@ function register_shortcuts_hub_category( $elements_manager ) {
 }
 add_action( 'elementor/elements/categories_registered', 'register_shortcuts_hub_category' );
 
-// Define the Shortcuts Download Button widget
 class Shortcuts_Download_Button extends \Elementor\Widget_Base {
 
     public function get_name() {
@@ -166,7 +164,11 @@ class Shortcuts_Download_Button extends \Elementor\Widget_Base {
                 echo '<div class="elementor-alert elementor-alert-warning">Download link not available.</div>';
             }
         } else {
-            $login_url = add_query_arg('sb_id', $shortcut_id, 'https://debotchery.ai/shortcuts-gallery/login');
+            $login_url = add_query_arg(array(
+                'sb_id' => $shortcut_id,
+                'id' => get_the_ID()
+            ), 'https://debotchery.ai/shortcuts-gallery/login');
+
             echo '<a href="' . esc_url($login_url) . '" class="elementor-button elementor-size-md">';
             echo esc_html__('Login to Download', 'shortcuts-hub');
             echo '</a>';

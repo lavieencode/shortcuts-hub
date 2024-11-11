@@ -66,12 +66,10 @@ function shortcuts_hub_render_edit_shortcut_page() {
                         <input type="text" id="shortcut-result" name="result" value="<?php echo esc_attr($result); ?>">
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group color-input-wrapper">
                         <label for="shortcut-color">Color</label>
-                        <div class="color-input-wrapper">
-                            <input type="text" id="shortcut-color" name="color" value="<?php echo esc_attr($color); ?>" class="color-picker" readonly />
-                            <div id="color-picker-container"></div>
-                        </div>
+                        <input type="text" id="shortcut-color" class="color-picker" name="color" value="<?php echo esc_attr($color); ?>">
+                        <div id="color-picker-container"></div>
                     </div>
                     
                     <div class="form-group">
@@ -93,9 +91,10 @@ function shortcuts_hub_render_edit_shortcut_page() {
                 </select>
             </div>
             
-            <div style="margin-top: 20px; display: flex; gap: 10px;">
-                <button type="button" class="delete-button" id="delete-shortcut">Delete</button>
-                <button type="submit" id="save-shortcut">Save</button>
+            <div class="button-container">
+                <button type="submit" id="publish-shortcut" class="publish-button">Publish</button>
+                <button type="button" id="delete-shortcut" class="delete-button">Delete</button>
+                <button type="button" class="cancel-button">Cancel</button>
             </div>
         </form>
         <div id="feedback-message"></div>

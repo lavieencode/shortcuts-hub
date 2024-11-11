@@ -1,20 +1,31 @@
-jQuery(document).ready(function($) {
+jQuery(document).ready(function(jQuery) {
     const urlParams = new URLSearchParams(window.location.search);
-    const shortcutId = urlParams.get('id') || $('#shortcut-id').val();
-    loadShortcutFields(shortcutId);
+    const shortcutId = urlParams.get('id');
+    if (shortcutId) {
+        loadShortcutFields(shortcutId);
+    }
 
-    $('#shortcut-color').on('click', function() {
-        $('#color-picker-container').wpColorPicker('open');
+    jQuery('#shortcut-color').on('input', function() {
+        var color = jQuery(this).val();
+        console.log('Color changed to:', color);
+        jQuery(this).css('background-color', color);
     });
 
-    $('#color-picker-container').wpColorPicker({
+    // Manually trigger the input event when setting the value programmatically
+    jQuery('#shortcut-color').val('#ff5733').trigger('input');
+
+    jQuery('#shortcut-color').on('click', function() {
+        jQuery('#color-picker-container').wpColorPicker('open');
+    });
+
+    jQuery('#color-picker-container').wpColorPicker({
         change: function(event, ui) {
             var color = ui.color.toString();
-            $('#shortcut-color').val(color).css('background-color', color);
+            jQuery('#shortcut-color').val(color);
         }
     });
 
-    $('#shortcut-icon').on('click', function(e) {
+    jQuery('#shortcut-icon').on('click', function(e) {
         e.preventDefault();
         var mediaUploader;
 
@@ -33,61 +44,72 @@ jQuery(document).ready(function($) {
 
         mediaUploader.on('select', function() {
             var attachment = mediaUploader.state().get('selection').first().toJSON();
-            $('#shortcut-icon').val(attachment.filename);
+            jQuery('#shortcut-icon').val(attachment.filename);
         });
 
         mediaUploader.open();
     });
 
-    $('#save-shortcut').on('click', function(event) {
+    jQuery('#publish-shortcut').on('click', function(event) {
         event.preventDefault();
         saveShortcutFormData();
+    });
+
+    jQuery('#delete-shortcut').on('click', function(event) {
+        event.preventDefault();
+        // Add delete functionality here
+    });
+
+    jQuery('input[type="color"]').on('click', function() {
+        this.select();
     });
 });
 
 function loadShortcutFields(shortcutId) {
-    $.ajax({
+    jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
         data: {
             action: 'fetch_shortcut',
-            security: shortcutsHubData.security,
-            shortcut_id: shortcutId
+            shortcut_id: shortcutId,
+            security: shortcutsHubData.security
         },
         success: function(response) {
             if (response.success) {
                 const shortcutData = response.data;
-                $('#shortcut-name').val(shortcutData.name);
-                $('#shortcut-headline').val(shortcutData.headline);
-                $('#shortcut-description').val(shortcutData.description);
-                $('#shortcut-color').val(shortcutData.color).css('background-color', shortcutData.color);
-                $('#shortcut-icon').val(shortcutData.icon);
-                $('#sb-id').val(shortcutData.sb_id);
-                $('#edit-shortcut-title').text(shortcutData.name);
-                $('#shortcut-status').val(shortcutData.state === 'draft' ? 1 : 0);
+                console.log('Shortcut Data:', shortcutData);
+                jQuery('#shortcut-name').val(shortcutData.name);
+                jQuery('#shortcut-headline').val(shortcutData.headline);
+                jQuery('#shortcut-description').val(shortcutData.description);
+                jQuery('#shortcut-color').val(shortcutData.color).css('background-color', shortcutData.color);
+                jQuery('#shortcut-icon').val(shortcutData.icon);
+                jQuery('#sb-id').val(shortcutData.sb_id);
+                jQuery('#edit-shortcut-title').text(shortcutData.name);
+                jQuery('#shortcut-status').val(shortcutData.state === 'draft' ? 1 : 0);
             } else {
-                console.error('Error loading shortcut data:', response.data.message);
+                console.error('Error fetching shortcut:', response.data.message);
             }
         },
         error: function(xhr, status, error) {
-            console.error('AJAX error loading shortcut data:', xhr.responseText);
+            console.error('AJAX error:', status, error);
+            console.error('Response Text:', xhr.responseText);
         }
     });
 }
 
 function saveShortcutFormData() {
     const shortcutData = {
-        id: $('#shortcut-id').val(),
-        name: $('#shortcut-name').val(),
-        headline: $('#shortcut-headline').val(),
-        description: $('#shortcut-description').val(),
-        color: $('#shortcut-color').val(),
-        icon: $('#shortcut-icon').val(),
-        sb_id: $('#sb-id').val(),
-        state: $('#shortcut-status').val()
+        id: jQuery('#shortcut-id').val(),
+        name: jQuery('#shortcut-name').val(),
+        headline: jQuery('#shortcut-headline').val(),
+        description: jQuery('#shortcut-description').val(),
+        color: jQuery('#shortcut-color').val(),
+        icon: jQuery('#shortcut-icon').val(),
+        sb_id: jQuery('#sb-id').val(),
+        state: jQuery('#shortcut-status').val()
     };
 
-    $.ajax({
+    jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
         data: {
@@ -103,4 +125,13 @@ function saveShortcutFormData() {
             }
         }
     });
+}
+
+function getContrastYIQ(hexcolor){
+    hexcolor = hexcolor.replace("#", "");
+    var r = parseInt(hexcolor.substr(0,2),16);
+    var g = parseInt(hexcolor.substr(2,2),16);
+    var b = parseInt(hexcolor.substr(4,2),16);
+    var yiq = ((r*299)+(g*587)+(b*114))/1000;
+    return (yiq >= 128) ? 'black' : 'white';
 }

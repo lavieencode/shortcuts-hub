@@ -14,8 +14,6 @@ function add_shortcuts_user_role() {
             'delete_posts' => false,
         )
     );
-
-    echo "<script>console.log('User role loaded');</script>";
 }
 
 add_action('init', 'add_shortcuts_user_role');

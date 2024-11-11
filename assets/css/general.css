@@ -69,6 +69,56 @@ button {
     padding-right: 15px;
     height: 40px;
     text-align: center;
+    text-decoration: none;
+    margin: 0;
+}
+
+.delete-button {
+    background-color: #ff4d4d !important;
+    color: #252525;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    transition-duration: 0.4s;
+}
+
+.restore-button {
+    background-color: #909CFE;
+    color: #252525;
+    border: none;
+}
+
+.revert-button {
+    border: 2px solid #909CFE;
+    background-color: transparent;
+    color: #909CFE;
+    display: inline-block;
+    font-size: 16px;
+    transition-duration: 0.4s;
+}
+
+.publish-button {
+    background-color: #909CFE;
+    color: #252525;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition-duration: 0.4s;
+}
+
+.cancel-button {
+    background-color: #b1b1b1;
+    color: #252525;
+    border: none;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
 }
 
 /* Link Styles */

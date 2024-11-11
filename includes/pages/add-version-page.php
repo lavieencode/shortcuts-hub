@@ -62,9 +62,9 @@ function shortcuts_hub_render_add_version_page() {
                     <option value="true">Required</option>
                 </select>
             </div>
-            <div class="button-container" style="display: flex; gap: 10px;">
-                <button type="submit" class="save-button" name="action" value="save_draft">Save Draft</button>
-                <button type="submit" class="publish-button" name="action" value="publish">Publish</button>
+            <div class="button-container" style="display: flex; gap: 10px; align-items: center;">
+                <button type="submit" id="save-version" name="action" value="save_draft">Save Draft</button>
+                <button type="submit" id="publish-version" class="publish-button" name="action" value="publish">Publish</button>
                 <button type="button" class="cancel-button" onclick="window.history.back();">Cancel</button>
             </div>
         </form>

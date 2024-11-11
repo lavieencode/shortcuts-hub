@@ -34,19 +34,32 @@ h1 {
     margin-bottom: 15px;
 }
 
-#color-picker-container {
-    display: inline-block;
+input[type="text"],
+input[type="color"],
+textarea,
+select {
+    background-color: #252525;
+    color: #CACACA;
+    border: 1px solid #909CFE;
+    padding: 10px;
+    margin-top: 0;
+    margin-bottom: 15px;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+    font-size: 15px;
+    border-radius: 0;
+    display: block;
 }
 
 .color-input-wrapper {
-    display: flex;
+    display: block;
     align-items: center;
     margin: 0;
 }
 
 .color-picker {
     background-color: transparent;
-    border: 1px solid #ccc;
     padding: 5px;
     width: 100px !important;
     margin: 0 !important;
@@ -54,46 +67,44 @@ h1 {
     height: 50px;
 }
 
-.delete-button {
-    background-color: #ff4d4d !important;
-    color: #252525;
-    border: none !important;
-    padding: 10px 20px;
+#color-picker-button {
+    height: 50px !important;
+    padding: 0 10px;
     cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
 }
 
-.delete-button:hover {
-    background-color: #ff4d4d !important;
-    color: #252525;
-    border: none !important;
-    padding: 10px 20px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
+#color-picker-container {
+    display: block;
 }
 
-.revert-to-draft-button {
-    border: 2px solid #909CFE;
-    background-color: transparent;
-    color: #909CFE;
-    padding: 10px 20px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
+.wp-picker-container {
+    background: none !important;
+    margin-bottom: 20px !important;
+}
+
+.wp-picker-container .wp-color-result {
+    background-color: #909cfe !important;
+    background: #909cfe !important;
+}
+
+.wp-picker-container .wp-color-result:hover {
+    background-color: #909cfe !important;
+    background: #909cfe !important;
+}
+
+.wp-picker-input-wrap label{
+    background: none !important;
+    background-color: transparent !important;
+}
+
+.wp-picker-input-wrap input[type=button]{
+    border-radius: 0 !important;
+}
+
+.iris-picker {
+    background: none !important;
+    background-color: transparent !important;
+    border: none !important;
 }
 
 #shortcut-actions {
@@ -105,4 +116,10 @@ h1 {
     width: 100%;
     box-sizing: border-box;
     font-size: 15px;
+}
+
+#shortcut-color {
+    margin-bottom: 0 !important;
+    border: none !important;
+    outline: none !important;
 }
