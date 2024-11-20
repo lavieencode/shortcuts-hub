@@ -19,11 +19,14 @@ function renderVersions(data, id) {
     const container = jQuery('#versions-container');
     container.empty();
 
-    const versions = data.versions;
+    const versions = data;
+    if (!versions || versions.length === 0) {
+        console.error('No versions data available to render.');
+        return;
+    }
+
     for (let i = 0; i < versions.length; i++) {
         const version = versions[i];
-        console.log('Rendering version:', version);
-        console.log('Shortcut ID:', id);
 
         // Create the version element
         const versionElement = jQuery(`

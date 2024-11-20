@@ -45,8 +45,9 @@ function fetchVersions(sb_id, retries = 3) {
             jQuery('#shortcut-name-display').text(shortcutName).show();
             sessionStorage.setItem('shortcutName', shortcutName);
             const sb_id = shortcutData.id || sb_id;  
-            if (response.data && response.data.length > 0) {
-                renderVersions(response.data, sb_id);
+            if (response.data && response.data.versions && response.data.versions.length > 0) {
+                jQuery('#versions-container').empty();
+                renderVersions(response.data.versions, sb_id);
                 jQuery('#versions-container').show();
             } else {
                 jQuery('#versions-container').html('<p>No versions to list.</p>').show();
