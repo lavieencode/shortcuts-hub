@@ -1,20 +1,19 @@
 jQuery(document).ready(function(jQuery) {
     const urlParams = new URLSearchParams(window.location.search);
-    const shortcutId = urlParams.get('id');
-    if (shortcutId) {
-        loadShortcutFields(shortcutId);
+    const id = urlParams.get('id');
+    if (id) {
+        loadShortcutFields(id);
     }
 
-    jQuery('#shortcut-color').on('input', function() {
+    jQuery('#color').on('input', function() {
         var color = jQuery(this).val();
         console.log('Color changed to:', color);
         jQuery(this).css('background-color', color);
     });
 
-    // Manually trigger the input event when setting the value programmatically
-    jQuery('#shortcut-color').val('#ff5733').trigger('input');
+    jQuery('#color').val('#ff5733').trigger('input');
 
-    jQuery('#shortcut-color').on('click', function() {
+    jQuery('#color').on('click', function() {
         jQuery('#color-picker-container').wpColorPicker('open');
     });
 
@@ -25,7 +24,7 @@ jQuery(document).ready(function(jQuery) {
         }
     });
 
-    jQuery('#shortcut-icon').on('click', function(e) {
+    jQuery('#icon').on('click', function(e) {
         e.preventDefault();
         var mediaUploader;
 
@@ -57,7 +56,6 @@ jQuery(document).ready(function(jQuery) {
 
     jQuery('#delete-shortcut').on('click', function(event) {
         event.preventDefault();
-        // Add delete functionality here
     });
 
     jQuery('input[type="color"]').on('click', function() {
@@ -65,27 +63,27 @@ jQuery(document).ready(function(jQuery) {
     });
 });
 
-function loadShortcutFields(shortcutId) {
+function loadShortcutFields(id) {
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
         data: {
             action: 'fetch_shortcut',
-            shortcut_id: shortcutId,
+            id: id,
             security: shortcutsHubData.security
         },
         success: function(response) {
             if (response.success) {
                 const shortcutData = response.data;
-                console.log('Shortcut Data:', shortcutData);
-                jQuery('#shortcut-name').val(shortcutData.name);
-                jQuery('#shortcut-headline').val(shortcutData.headline);
-                jQuery('#shortcut-description').val(shortcutData.description);
-                jQuery('#shortcut-color').val(shortcutData.color).css('background-color', shortcutData.color);
-                jQuery('#shortcut-icon').val(shortcutData.icon);
-                jQuery('#sb-id').val(shortcutData.sb_id);
+                jQuery('#name').val(shortcutData.name);
+                jQuery('#headline').val(shortcutData.headline);
+                jQuery('#description').val(shortcutData.description);
+                jQuery('#color').val(shortcutData.color).css('background-color', shortcutData.color);
+                jQuery('#icon').val(shortcutData.icon);
+                jQuery('#id').val(shortcutData.id);
+                jQuery('#state').val(shortcutData.state === 'draft' ? 1 : 0);
                 jQuery('#edit-shortcut-title').text(shortcutData.name);
-                jQuery('#shortcut-status').val(shortcutData.state === 'draft' ? 1 : 0);
+
             } else {
                 console.error('Error fetching shortcut:', response.data.message);
             }
@@ -99,14 +97,14 @@ function loadShortcutFields(shortcutId) {
 
 function saveShortcutFormData() {
     const shortcutData = {
-        id: jQuery('#shortcut-id').val(),
-        name: jQuery('#shortcut-name').val(),
-        headline: jQuery('#shortcut-headline').val(),
-        description: jQuery('#shortcut-description').val(),
-        color: jQuery('#shortcut-color').val(),
-        icon: jQuery('#shortcut-icon').val(),
-        sb_id: jQuery('#sb-id').val(),
-        state: jQuery('#shortcut-status').val()
+        post_id: jQuery('#post_id').val(),
+        sb_id: jQuery('#sb_id').val(),
+        name: jQuery('#name').val(),
+        headline: jQuery('#headline').val(),
+        description: jQuery('#description').val(),
+        color: jQuery('#color').val(),
+        icon: jQuery('#icon').val(),
+        state: jQuery('#state').val()
     };
 
     jQuery.ajax({
@@ -125,13 +123,4 @@ function saveShortcutFormData() {
             }
         }
     });
-}
-
-function getContrastYIQ(hexcolor){
-    hexcolor = hexcolor.replace("#", "");
-    var r = parseInt(hexcolor.substr(0,2),16);
-    var g = parseInt(hexcolor.substr(2,2),16);
-    var b = parseInt(hexcolor.substr(4,2),16);
-    var yiq = ((r*299)+(g*587)+(b*114))/1000;
-    return (yiq >= 128) ? 'black' : 'white';
 }

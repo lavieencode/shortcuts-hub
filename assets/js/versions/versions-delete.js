@@ -1,12 +1,18 @@
-function toggleVersionDeletion(shortcutId, versionId, isRestore) {
-    const action = isRestore ? 'restore_version' : 'delete_version';
-    const deletedState = isRestore ? false : true;
+jQuery(document).on('click', '.delete-version, .restore-version', function() {
+    const shortcutId = jQuery(this).data('shortcut-id');
+    const versionId = jQuery(this).data('version-id');
+    const isRestore = jQuery(this).hasClass('restore-version');
 
+    toggleVersionDelete(shortcutId, versionId, isRestore);
+});
+
+function toggleVersionDelete(id, versionId, isRestore) {
+    const action = 'version_toggle_delete';
     const requestData = {
-        action: 'update_version',
-        shortcut_id: shortcutId,
+        action: action,
+        id: id,
         version_id: versionId,
-        version_data: { deleted: deletedState },
+        is_restore: isRestore,
         security: shortcutsHubData.security,
         _method: 'PATCH'
     };
@@ -21,9 +27,9 @@ function toggleVersionDeletion(shortcutId, versionId, isRestore) {
                 const button = versionElement.find('.delete-version, .restore-version');
                 const badge = versionElement.find('.badge');
 
-                if (deletedState) {
+                if (!isRestore) {
                     button.text('Restore Version').removeClass('delete-version').addClass('restore-version');
-                    if (badge.length === 0) {
+                    if (badge.length === 0 || !badge.hasClass('deleted-badge')) {
                         versionElement.find('.version-header').append('<span class="badge deleted-badge">Deleted</span>');
                     }
                 } else {

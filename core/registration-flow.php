@@ -16,7 +16,7 @@ add_action('elementor_pro/forms/process', function($record, $ajax_handler) {
     $email = sanitize_email($fields['email']['value']);
     $password = $fields['password']['value'];
     $password_confirm = $fields['password_confirm']['value'];
-    $sb_id = sanitize_text_field($fields['sb_id']['value'] ?? '');
+    $id = sanitize_text_field($fields['id']['value'] ?? '');
     $post_id = intval($fields['post_id']['value'] ?? 0);
 
     // Custom validation
@@ -75,13 +75,12 @@ add_action('elementor_pro/forms/process', function($record, $ajax_handler) {
     // Determine the redirect URL
     $redirect_url = home_url('/my-account'); // Default redirect to My Account page
 
-    if (!empty($sb_id)) {
-        // Fetch the latest version URL if sb_id is present
+    if (!empty($id)) {
         $fetch_response = wp_remote_post(admin_url('admin-ajax.php'), [
             'body' => [
                 'action' => 'fetch_latest_version',
                 'security' => wp_create_nonce('shortcuts_hub_nonce'),
-                'shortcut_id' => $sb_id
+                'id' => $id
             ]
         ]);
 
@@ -91,6 +90,15 @@ add_action('elementor_pro/forms/process', function($record, $ajax_handler) {
 
             if (is_array($response_data) && isset($response_data['version']['url'])) {
                 $redirect_url = $response_data['version']['url'];
+                $shortcut_name = $response_data['shortcut']['name'];
+                $version = $response_data['version']['number'];
+
+                // Log the download
+                log_shortcut_download($shortcut_name, $version, $redirect_url);
+
+                // Redirect to the iCloud link
+                wp_redirect($redirect_url);
+                exit;
             } else {
                 $ajax_handler->add_error_message('Failed to retrieve the latest version URL.');
                 return;

@@ -28,7 +28,7 @@ function attachVersionHandlers() {
     jQuery(document).on('click', '.edit-version', function() {
         const shortcutId = jQuery(this).data('id');
         const versionId = jQuery(this).data('version-id');
-        openVersionEditModal(shortcutId, versionId);
+        handleVersionEditModal(shortcutId, versionId);
     });
 
     jQuery('#edit-version-modal .save-button').on('click', function(event) {
@@ -43,7 +43,7 @@ function attachVersionHandlers() {
 
     jQuery('#edit-version-modal .delete-button').on('click', function(event) {
         event.preventDefault();
-        toggleVersionDeletion(jQuery('#edit-version-form #shortcut-id').val(), jQuery('#edit-version-form #version-id').val(), false);
+        toggleVersionDelete(jQuery('#edit-version-form #shortcut-id').val(), jQuery('#edit-version-form #version-id').val(), false);
     });
 
     jQuery('#edit-version-modal .cancel-button').on('click', function() {
@@ -52,10 +52,10 @@ function attachVersionHandlers() {
     });
 
     jQuery(document).on('click', '.delete-version, .restore-version', function() {
-        const shortcutId = jQuery(this).data('shortcut-id');
-        const versionId = jQuery(this).data('version-id');
+        const shortcutId = jQuery(this).closest('.version-item').data('shortcut-id');
+        const versionId = jQuery(this).closest('.version-item').data('version-id');
         const isRestore = jQuery(this).hasClass('restore-version');
-        toggleVersionDeletion(shortcutId, versionId, isRestore);
+        toggleVersionDelete(shortcutId, versionId, isRestore);
     });
 
     jQuery('#back-to-shortcuts').on('click', function() {
@@ -65,4 +65,14 @@ function attachVersionHandlers() {
         window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
         toggleVersionsView(false);
     });
+
+    jQuery('#edit-version-modal .save-as-draft-button').on('click', function(event) {
+        event.preventDefault();
+        updateVersion('save');
+    });
+
+    function handleVersionEditModal(shortcutId, versionId) {
+        jQuery('#edit-version-modal').addClass('active').show();
+        // rest of the function remains the same
+    }
 }

@@ -8,31 +8,25 @@ function shortcuts_hub_render_add_version_page() {
         wp_die(__('You do not have sufficient permissions to access this page.'));
     }
 
-    $shortcut_id = isset($_GET['id']) ? esc_attr($_GET['id']) : '';
-    $sb_id = isset($_GET['sb_id']) ? esc_attr($_GET['sb_id']) : '';
+    $id = isset($_GET['id']) ? esc_attr($_GET['id']) : '';
+    // Removed logging for debugging purposes
 
-    global $wpdb;
-    $table_name = $wpdb->prefix . 'shortcuts';
+    $response = sb_api_call("/shortcuts/{$id}", 'GET');
+    // Removed logging for debugging purposes
 
-    $shortcut = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE ID = %d", $shortcut_id), ARRAY_A);
-
-    if ($shortcut === null) {
-        error_log("No shortcut found for WordPress ID: $shortcut_id");
+    if (is_wp_error($response) || empty($response['name'])) {
         $shortcut_name = 'Shortcut not found';
     } else {
-        if ($shortcut['sb_id'] !== $sb_id) {
-            error_log("SB_ID mismatch: expected {$shortcut['sb_id']}, got $sb_id");
-        }
-        $shortcut_name = isset($shortcut['name']) ? $shortcut['name'] : 'Shortcut not found';
+        $shortcut_name = $response['name'];
+        // Removed logging for debugging purposes
     }
 
     ?>
     <div class="wrap">
         <h1>Add New Version</h1>
-        <h2 id="shortcut-name-display" class="shortcuts-page-title"><?php echo esc_html($shortcut_name); ?></h2>
+        <h2 id="shortcut-name-display"><?php echo esc_html($shortcut_name); ?></h2>
         <form id="add-version-form">
-            <input type="hidden" id="shortcut-id" name="shortcut_id" value="<?php echo esc_attr($shortcut_id); ?>">
-            <input type="hidden" id="sb-id" name="sb_id" value="<?php echo esc_attr($sb_id); ?>">
+            <input type="hidden" id="id" name="id" value="<?php echo esc_attr($id); ?>">
             
             <div class="form-group">
                 <label for="version">Version</label>
@@ -62,8 +56,8 @@ function shortcuts_hub_render_add_version_page() {
                     <option value="true">Required</option>
                 </select>
             </div>
-            <div class="button-container" style="display: flex; gap: 10px; align-items: center;">
-                <button type="submit" id="save-version" name="action" value="save_draft">Save Draft</button>
+            <div class="button-container">
+                <button type="submit" id="save-version" name="action" value="save">Save Draft</button>
                 <button type="submit" id="publish-version" class="publish-button" name="action" value="publish">Publish</button>
                 <button type="button" class="cancel-button" onclick="window.history.back();">Cancel</button>
             </div>

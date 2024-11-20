@@ -4,7 +4,7 @@ function openEditModal(shortcutId) {
         method: 'POST',
         data: {
             action: 'fetch_shortcut',
-            shortcut_id: shortcutId,
+            id: id,
             security: shortcutsHubData.security
         },
         success: function(response) {
@@ -13,7 +13,7 @@ function openEditModal(shortcutId) {
 
                 populateEditModal(shortcutData);
 
-                jQuery('#edit-modal').addClass('active').show();
+                jQuery('#edit-modal').addClass('active').css('transform', 'translateX(0)');
                 jQuery('body').addClass('modal-open');
             } else {
                 const errorMessage = response.data ? response.data.message : 'Unknown error fetching WordPress shortcut data.';

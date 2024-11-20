@@ -38,3 +38,29 @@ function fetchShortcuts() {
         }
     });
 }
+
+function fetchShortcut(shortcutId) {
+    const data = {
+        action: 'fetch_shortcut',
+        security: shortcutsHubData.security,
+        id: shortcutId
+    };
+
+    jQuery.ajax({
+        url: shortcutsHubData.ajax_url,
+        method: 'POST',
+        data: data,
+        success: function(response) {
+            if (response.success) {
+                populateEditModal(response.data);
+            } else {
+                console.error('Error fetching shortcut:', response.data.message);
+                alert('Error fetching shortcut. Please try again later.');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error loading shortcut:', status, error);
+            alert('Error loading shortcut. Please try again later.');
+        }
+    });
+}

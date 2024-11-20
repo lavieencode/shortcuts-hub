@@ -43,11 +43,6 @@ function sb_api_call($endpoint, $method = 'GET', $query_params = array(), $body 
         'body'    => $body ? json_encode($body, JSON_PRETTY_PRINT) : null,
     );
 
-    error_log("API Request: $method $api_url");
-    if ($body) {
-        error_log("Request Body: " . json_encode($body, JSON_PRETTY_PRINT));
-    }
-
     $response = wp_remote_request($api_url, $args);
 
     if (is_wp_error($response)) {
@@ -57,9 +52,6 @@ function sb_api_call($endpoint, $method = 'GET', $query_params = array(), $body 
 
     $response_code = wp_remote_retrieve_response_code($response);
     $raw_body = wp_remote_retrieve_body($response);
-
-    error_log("API Response Code: $response_code");
-    error_log("API Response Body: $raw_body");
 
     $decoded_body = json_decode($raw_body, true);
 

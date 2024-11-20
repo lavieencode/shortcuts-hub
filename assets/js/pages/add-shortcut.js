@@ -7,15 +7,15 @@ jQuery(document).ready(function($) {
     $('#color-picker-container').wpColorPicker({
         change: function(event, ui) {
             var color = ui.color.toString();
-            $('#shortcut-color').val(color).css('background-color', color);
+            $('#color').val(color).css('background-color', color);
         }
     });
 
-    $('#shortcut-color').on('click', function() {
+    $('#color').on('click', function() {
         $('#color-picker-container').wpColorPicker('open');
     });
 
-    $('#shortcut-icon').on('click', function(e) {
+    $('#icon').on('click', function(e) {
         e.preventDefault();
         var mediaUploader;
 
@@ -34,7 +34,7 @@ jQuery(document).ready(function($) {
 
         mediaUploader.on('select', function() {
             var attachment = mediaUploader.state().get('selection').first().toJSON();
-            $('#shortcut-icon').val(attachment.filename);
+            $('#icon').val(attachment.filename);
         });
 
         mediaUploader.open();
@@ -47,16 +47,18 @@ jQuery(document).ready(function($) {
 
     function submitAddShortcutForm() {
         const shortcutData = {
-            name: $('#shortcut-name').val(),
-            description: $('#shortcut-description').val(),
-            headline: $('#shortcut-headline').val(),
-            input: $('#shortcut-input').val(),
-            result: $('#shortcut-result').val(),
-            color: $('#shortcut-color').val(),
-            icon: $('#shortcut-icon').val(),
-            actions: $('#shortcut-actions').val(),
-            sb_id: $('#sb-id').val(),
-            state: $('#shortcut-status').val()
+            name: $('#name').val(),
+            description: $('#description').val(),
+            headline: $('#headline').val(),
+            input: $('#input').val(),
+            result: $('#result').val(),
+            color: $('#color').val(),
+            icon: $('#icon').val(),
+            actions: $('#actions').val(),
+            sb_id: $('#sb_id').val(),
+            post_id: $('#post_id').val(),
+            state: $('#state').val(),
+            website: $('#website').val()
         };
 
         $.ajax({

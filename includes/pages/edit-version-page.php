@@ -15,7 +15,7 @@ function shortcuts_hub_render_edit_version_page() {
     <div class="wrap">
         <h1>Edit Version</h1>
         <form id="edit-version-form">
-            <input type="hidden" id="shortcut-id" name="shortcut_id" value="<?php echo esc_attr($id); ?>">
+            <input type="hidden" id="id" name="id" value="<?php echo esc_attr($id); ?>">
             <input type="hidden" id="version-id" name="version_id" value="<?php echo esc_attr($version_id); ?>">
             <div class="form-group">
                 <label for="version-notes">Notes</label>
@@ -36,8 +36,8 @@ function shortcuts_hub_render_edit_version_page() {
             <div class="form-group">
                 <label for="version-required">Required Update</label>
                 <select id="version-required" name="version_required">
-                    <option value="false">Not Required</option>
-                    <option value="true">Required</option>
+                    <option value="false">No</option>
+                    <option value="true">Yes</option>
                 </select>
             </div>
             <div class="button-container">
@@ -47,6 +47,7 @@ function shortcuts_hub_render_edit_version_page() {
         </form>
     </div>
     <script>
+        
         document.addEventListener('DOMContentLoaded', function() {
             const id = '<?php echo esc_js($id); ?>';
             const versionId = '<?php echo esc_js($version_id); ?>';

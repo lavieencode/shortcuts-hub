@@ -134,30 +134,22 @@ class Shortcuts_Download_Button extends \Elementor\Widget_Base {
 
     protected function render() {
         $settings = $this->get_settings_for_display();
-
         $post_id = get_the_ID();
-        $shortcut_id = get_post_meta($post_id, 'sb_id', true);
+        $id = get_post_meta($post_id, 'id', true);
 
         if (is_user_logged_in()) {
             $download_url = '';
 
-            if (!empty($shortcut_id)) {
-                $response = sb_api_call("shortcuts/{$shortcut_id}/version/latest", 'GET');
-
-                // Log the API response for debugging
-                error_log('API Response: ' . print_r($response, true));
-
-                if (!is_wp_error($response) && isset($response['version']['url'])) {
-                    $download_url = esc_url($response['version']['url']);
-                } else {
-                    error_log('Error fetching latest version URL or URL not set.');
+            if (!empty($id)) {
+                $latest_version_data = get_transient("latest_version_{$id}");
+                if ($latest_version_data) {
+                    $download_url = esc_url($latest_version_data['version']['url']);
+                    log_shortcut_download($latest_version_data['shortcut']['name'], $latest_version_data['version']['version'], $download_url);
                 }
-            } else {
-                error_log('Shortcut ID is empty.');
             }
 
             if (!empty($download_url)) {
-                echo '<a href="' . $download_url . '" download class="elementor-button elementor-size-md">';
+                echo '<a href="' . $download_url . '" class="elementor-button elementor-size-md">';
                 echo esc_html($settings['button_text']);
                 echo '</a>';
             } else {
@@ -165,8 +157,8 @@ class Shortcuts_Download_Button extends \Elementor\Widget_Base {
             }
         } else {
             $login_url = add_query_arg(array(
-                'sb_id' => $shortcut_id,
-                'id' => get_the_ID()
+                'id' => $id,
+                'post_id' => get_the_ID()
             ), 'https://debotchery.ai/shortcuts-gallery/login');
 
             echo '<a href="' . esc_url($login_url) . '" class="elementor-button elementor-size-md">';

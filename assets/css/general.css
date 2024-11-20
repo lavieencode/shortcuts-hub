@@ -10,9 +10,18 @@ body {
 }
 
 /* Headers */
+
 h1 {
     font-size: 34px;
-    color: #909CFE !important;
+    color: #909CFE;
+    margin-bottom: 10px;
+}
+
+h2#shortcut-name-display {
+    color: #CACACA !important;
+    font-size: 24px;
+    font-weight: 300 !important;
+    margin-top: 0 !important;
     margin-bottom: 30px !important;
 }
 
@@ -76,49 +85,52 @@ button {
 .delete-button {
     background-color: #ff4d4d !important;
     color: #252525;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
-    transition-duration: 0.4s;
 }
 
 .restore-button {
     background-color: #909CFE;
     color: #252525;
-    border: none;
 }
 
 .revert-button {
     border: 2px solid #909CFE;
     background-color: transparent;
     color: #909CFE;
-    display: inline-block;
-    font-size: 16px;
-    transition-duration: 0.4s;
+}
+
+.save-draft {
+    border: 2px solid #909CFE;
+    background-color: transparent;
+    color: #909CFE;
 }
 
 .publish-button {
     background-color: #909CFE;
     color: #252525;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    transition-duration: 0.4s;
 }
 
 .cancel-button {
-    background-color: #b1b1b1;
+    background-color: #909cfe;
     color: #252525;
-    border: none;
 }
 
 .button-container {
     display: flex;
     gap: 10px;
     align-items: center;
+    margin-top: 30px !important;
+}
+
+/* Badges */
+.badge {
+    position: relative;
+    margin-left: 5px;
+    background-color: #9e9e9e;
+    color: #252525;
+    font-weight: 800;
+    padding: 5px 10px;
+    border-radius: 0px;
+    font-size: 13px;
 }
 
 /* Link Styles */
@@ -126,10 +138,4 @@ a {
     font-weight: 600;
     color: #909CFE;
     text-decoration: none;
-}
-
-.shortcuts-page-title {
-    font-size: 34px;
-    color: #909CFE;
-    margin-bottom: 30px;
 }

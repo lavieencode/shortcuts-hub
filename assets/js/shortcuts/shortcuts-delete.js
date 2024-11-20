@@ -1,22 +1,20 @@
-function toggleDelete(shortcutId, isRestore, buttonElement) {
+function toggleDelete(id, isRestore, buttonElement) {
     const loadingText = isRestore ? 'Restoring...' : 'Deleting...';
     jQuery(buttonElement).text(loadingText).prop('disabled', true);
 
-    // Toggle the delete state
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
         data: {
             action: 'toggle_delete',
             security: shortcutsHubData.security,
-            shortcut_id: shortcutId
+            id: id
         },
         success: function(response) {
             if (response.success) {
-                // Fetch the sb_id from the shortcut's metadata
-                const sbId = response.data.sb_id; // Assuming the sb_id is returned in the response
+                const id = response.data.id;
 
-                if (sbId) {
+                if (id) {
                     const deletedStatus = !isRestore; // Set to true if deleting, false if restoring
 
                     // Update the Switchblade server
@@ -24,9 +22,9 @@ function toggleDelete(shortcutId, isRestore, buttonElement) {
                         url: shortcutsHubData.ajax_url,
                         method: 'POST',
                         data: {
-                            action: 'toggle_delete', // Reuse the existing action
+                            action: 'toggle_delete',
                             security: shortcutsHubData.security,
-                            shortcut_id: sbId,
+                            id: id,
                             deleted: deletedStatus // Send the deleted status
                         },
                         success: function(sbResponse) {

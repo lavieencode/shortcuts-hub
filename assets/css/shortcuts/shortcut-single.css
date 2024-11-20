@@ -37,16 +37,6 @@
     align-items: center;
 }
 
-.badge {
-    background-color: #909090;
-    color: #252525;
-    font-size: 12px;
-    font-weight: bold;
-    padding: 5px 10px;
-    margin-right: 5px;
-    border-radius: 0 !important;
-}
-
 .badge.draft {
     background-color: #787878;
     color: #252525;

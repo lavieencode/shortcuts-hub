@@ -1,18 +1,17 @@
 jQuery(document).ready(function($) {
     const urlParams = new URLSearchParams(window.location.search);
     const view = urlParams.get('view');
-    const shortcutId = urlParams.get('id');
+    const sb_id = urlParams.get('id');
 
-    if (view === 'versions' && shortcutId) {
-        fetchVersions(shortcutId);
+    if (view === 'versions' && sb_id) {
+        console.log('Fetching versions for shortcut ID on page load:', sb_id);
+        fetchVersions(sb_id);
     }
 
-    if (shortcutsHubData.shortcut_id) {
-        fetchVersion(shortcutsHubData.shortcut_id, true);
-    }
 });
 
-function fetchVersions(shortcutId, retries = 3) {
+function fetchVersions(sb_id, retries = 3) {   
+    console.log('Fetching versions for shortcut ID:', sb_id);
     jQuery('#versions-container').hide();
     jQuery('#shortcut-name-display').hide();
 
@@ -22,41 +21,59 @@ function fetchVersions(shortcutId, retries = 3) {
     const searchTerm = jQuery('#search-versions-input').val();
 
     const data = {
-        action: 'fetch_versions',
+        action: 'fetch_versions',  
         security: shortcutsHubData.security,
-        shortcut_id: shortcutId,
+        id: sb_id,  
         search_term: searchTerm,
-        status: filterStatus,
-        deleted: filterDeleted === 'true',
-        required_update: filterRequiredUpdate === 'true'
+        status: filterStatus
     };
+
+    if (filterDeleted === 'true') {
+        data.deleted = true;
+    } else if (filterDeleted === 'false') {
+        data.deleted = false;
+    }
+
+    if (filterRequiredUpdate !== '') {
+        data.required_update = filterRequiredUpdate === 'true';
+    }
 
     jQuery.post(shortcutsHubData.ajax_url, data, function(response) {
         if (response.success) {
-            renderVersions(response.data, shortcutId);
-            jQuery('#shortcut-name-display').text(response.data.shortcut.name).show();
-            jQuery('#versions-container').show();
+            const shortcutData = response.data.shortcut || {};
+            const shortcutName = shortcutData.name || '';
+            jQuery('#shortcut-name-display').text(shortcutName).show();
+            sessionStorage.setItem('shortcutName', shortcutName);
+            const sb_id = shortcutData.id || sb_id;  
+            if (response.data && response.data.length > 0) {
+                renderVersions(response.data, sb_id);
+                jQuery('#versions-container').show();
+            } else {
+                jQuery('#versions-container').html('<p>No versions to list.</p>').show();
+            }
         } else {
             jQuery('#versions-container').html('<p>Error loading versions. Please try again later.</p>').show();
         }
     }).fail(function(xhr, status, error) {
+        console.error('AJAX error fetching versions:', status, error);
+        console.error('Response Text:', xhr.responseText);
         if (retries > 0) {
-            fetchVersions(shortcutId, retries - 1);
+            fetchVersions(sb_id, retries - 1);
         } else {
             jQuery('#versions-container').html('<p>Error loading versions. Please try again later.</p>').show();
         }
     });
 }
 
-function fetchVersion(shortcutId, versionId, latest = false) {
+function fetchVersion(sb_id, version_id, latest = false) {
     const data = {
         action: 'fetch_version',
         security: shortcutsHubData.security,
-        shortcut_id: shortcutId
+        id: sb_id
     };
 
-    if (versionId) {
-        data.version_id = versionId;
+    if (version_id) {
+        data.version_id = version_id;
     }
 
     if (latest) {
@@ -68,8 +85,9 @@ function fetchVersion(shortcutId, versionId, latest = false) {
         method: 'POST',
         data: data,
         success: function(response) {
+            console.log('Response from server:', response);
             if (response.success && response.data) {
-                populateEditVersionForm(response.data);
+                populateVersionEditModal(response.data);
             } else {
                 console.error('Error fetching version:', response.data ? response.data.message : 'Unknown error');
             }

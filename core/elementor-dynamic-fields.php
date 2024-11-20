@@ -19,7 +19,7 @@ class Name_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
 
     public function get_content(array $options = []) {
         $post_id = get_the_ID();
-        $name = get_post_meta($post_id, 'shortcut_name', true);
+        $name = get_post_meta($post_id, 'name', true);
 
         return !empty($name) ? esc_html($name) : '';
     }
@@ -222,10 +222,10 @@ class Latest_Version_URL_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
 
     public function get_content(array $options = []) {
         $post_id = get_the_ID();
-        $shortcut_id = get_post_meta($post_id, 'sb_id', true);
+        $id = get_post_meta($post_id, 'id', true);
 
-        if (!empty($shortcut_id)) {
-            $response = sb_api_call("shortcuts/{$shortcut_id}/version/latest", 'GET');
+        if (!empty($id)) {
+            $response = sb_api_call("shortcuts/{$id}/version/latest", 'GET');
             return (!is_wp_error($response) && isset($response['url'])) ? esc_url($response['url']) : '';
         }
 

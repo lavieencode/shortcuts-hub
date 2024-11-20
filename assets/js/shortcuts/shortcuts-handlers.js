@@ -1,4 +1,5 @@
 jQuery(document).ready(function() {
+
     initializeShortcutButtons();
     fetchShortcuts();
     checkUrlParameters();
@@ -6,32 +7,36 @@ jQuery(document).ready(function() {
 
 function initializeShortcutButtons() {
     jQuery('.version-button').on('click', function() {
-        const sbId = jQuery(this).data('sb-id');
+        const id = jQuery(this).data('id');
         const urlParams = new URLSearchParams(window.location.search);
         urlParams.set('view', 'versions');
-        urlParams.set('id', sbId);
+        urlParams.set('id', id);
         window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
         
         toggleVersionsView(true);
-        fetchVersions(sbId);
+        fetchVersions(id);
     });
 
-    jQuery('.edit-button').on('click', function() {
-        const shortcutId = jQuery(this).data('id');
-        const editUrl = `admin.php?page=edit-shortcut&id=${shortcutId}`;
-        window.location.href = editUrl;
+    jQuery(document).on('click', '.edit-button', function() {
+        const post_id = jQuery(this).data('post_id');
+        if (post_id) {
+            const editUrl = `admin.php?page=edit-shortcut&id=${post_id}`;
+            window.location.href = editUrl;
+        } else {
+            console.error('Post ID is undefined');
+        }
     });
 
     jQuery(document).on('click', '.delete-button', function() {
-        const shortcutId = jQuery(this).data('id');
+        const post_id = jQuery(this).data('post_id');
         const isRestore = false;
     
-        toggleDelete(shortcutId, isRestore, this);
+        toggleDelete(post_id, isRestore, this);
     });
 
     jQuery('.synced-text').on('click', function() {
-        const sbId = jQuery(this).data('sb-id');
-        openEditModal(sbId);
+        const id = jQuery(this).data('id');
+        openEditModal(id);
     });
 }
 

@@ -1,5 +1,5 @@
 h1 {
-    margin-bottom: 5px !important;
+    margin-bottom: 10px !important;
 }
 
 select {
@@ -16,10 +16,4 @@ select {
     font-size: 15px;
     border-radius: 0;
     display: block;
-}
-
-#shortcut-name-display {
-    color: #CACACA !important;
-    font-weight: 300 !important;
-    margin: 5px 0 !important;
 }

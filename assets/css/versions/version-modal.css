@@ -1,5 +1,5 @@
-/* Modal for Editing Version */
-#edit-version-modal {
+/* Modal for Editing or Adding Version */
+#edit-version-modal, #add-version-modal {
     filter: none;
     z-index: 1000;
     pointer-events: auto;
@@ -9,32 +9,32 @@
     width: 403px;
     height: 100%;
     padding: 20px;
+    padding-top: 60px !important;
     background-color: #373737;
     color: #CACACA;
     transform: translateX(100%);
     transition: transform 0.3s ease-in-out;
 }
 
-#version-display {
-    color: #CACACA;
-    font-size: 22px;
-    margin-bottom: 20px;
-    margin-top: 0px;
-}
-
-#edit-version-modal.active {
+#edit-version-modal.active, #add-version-modal.active {
     transform: translateX(0);
 }
 
-#edit-version-modal h2 {
-    font-size: 26px;
+#edit-version-modal h1, #add-version-modal h1 {
+    font-size: 34px;
     text-transform: uppercase;
-    margin-bottom: 0px;
+    margin-bottom: 15px !important;
 }
 
-#edit-version-modal input, 
-#edit-version-modal textarea, 
-#edit-version-modal select {
+#edit-version-modal h2, #add-version-modal h2 {
+    font-size: 26px;
+    font-weight: 400;
+    margin-top: 10px;
+    margin-bottom: 40px;
+}
+
+#edit-version-modal input, #edit-version-modal textarea, #edit-version-modal select,
+#add-version-modal input, #add-version-modal textarea, #add-version-modal select {
     display: block;
     background-color: #252525;
     color: #CACACA;
@@ -46,27 +46,14 @@
     font-size: 15px;
 }
 
-#edit-version-modal button.shortcuts-button {
-    display: inline-block;
-    background-color: #909CFE;
-    color: #252525;
-    font-weight: 600;
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
-    margin-top: 15px;
-    margin-right: 5px;
-}
-
-#edit-version-modal .close-button {
+#edit-version-modal .close-button, #add-version-modal .close-button {
     display: inline-block;
     color: #252525;
     font-weight: 600;
     margin-left: 15px;
 }
 
-#edit-version-form label {
+#edit-version-form label, #add-version-form label {
     font-weight: 600;
     font-size: 13px;
     margin-bottom: 0px;
@@ -80,31 +67,35 @@
     padding-left: 10px;
 }
 
-.version-edit-error {
-    margin-top: 20px !important;
+#edit-version-modal .save-draft-button, #add-version-modal .save-draft-button {
+    background-color: transparent !important;
+    border: 2px solid #909CFE !important;
+    color: #909CFE !important;
 }
 
-#edit-version-modal .draft-button,
-#edit-version-modal .publish-button {
-    background-color: transparent;
-    color: #909CFE;
-    border: 2px solid #252525;
-    border-radius: 0;
-    padding: 10px;
-    margin-right: 5px;
-    cursor: pointer;
-    font-weight: 600;
-}
-
-#edit-version-modal .delete-button {
-    background-color: #FF6B6B !important;
+#edit-version-modal .update-button, #add-version-modal .update-button {
+    background-color: #909CFE !important;
     color: #252525 !important;
-    font-weight: 600;
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
-    margin-right: 5px;
+}
+
+#edit-version-modal .publish-button, #add-version-modal .publish-button {
+    background-color: #909CFE !important;
+    color: #252525 !important;
+}
+
+#edit-version-modal .delete-button, #add-version-modal .delete-button {
+    background-color: #e46e6e !important;
+    color: #252525 !important;
+}
+
+#edit-version-modal .switch-to-draft-button, #add-version-modal .switch-to-draft-button {
+    background-color: transparent !important;
+    border: 2px solid #909CFE !important;
+    color: #909CFE !important;
+}
+
+.version-edit-error, .version-add-error {
+    margin-top: 20px !important;
 }
 
 #version-feedback-message {
@@ -113,10 +104,4 @@
     font-size: 14px;
     margin-top: 10px;
     font-weight: bold;
-}
-
-#edit-version-modal .switch-to-draft-button {
-    background-color: transparent !important;
-    border: 2px solid #909CFE !important;
-    color: #909CFE !important;
 }

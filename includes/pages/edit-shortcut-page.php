@@ -5,7 +5,7 @@ if (!defined('ABSPATH')) {
 }
 
 function shortcuts_hub_render_edit_shortcut_page() {
-    $shortcut_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+    $post_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
     $name = '';
     $headline = '';
     $description = '';
@@ -14,10 +14,10 @@ function shortcuts_hub_render_edit_shortcut_page() {
     $icon = '';
     $input = '';
     $result = '';
-    $switchblade_id = '';
+    $id = '';
 
-    if ($shortcut_id) {
-        $shortcut = get_post($shortcut_id);
+    if ($post_id) {
+        $shortcut = get_post($post_id);
 
         if ($shortcut) {
             $name = get_the_title($shortcut);
@@ -28,7 +28,7 @@ function shortcuts_hub_render_edit_shortcut_page() {
             $icon = get_post_meta($shortcut->ID, 'icon', true);
             $input = get_post_meta($shortcut->ID, 'input', true);
             $result = get_post_meta($shortcut->ID, 'result', true);
-            $switchblade_id = get_post_meta($shortcut->ID, 'sb_id', true);
+            $id = get_post_meta($shortcut->ID, 'id', true);
         }
     }
     ?>
@@ -36,7 +36,7 @@ function shortcuts_hub_render_edit_shortcut_page() {
         <h1><?php esc_html_e('Edit Shortcut', 'shortcuts-hub'); ?></h1>
         <h2 id="shortcut-title"><?php echo esc_html($name); ?></h2>
         <form id="edit-shortcut-form" class="form-container">
-            <input type="hidden" id="shortcut-id" name="id" value="<?php echo esc_attr($shortcut_id); ?>">
+            <input type="hidden" id="shortcut-id" name="id" value="<?php echo esc_attr($id); ?>">
             <div class="form-columns">
                 <div class="form-column">
                     <div class="form-group">
@@ -78,8 +78,8 @@ function shortcuts_hub_render_edit_shortcut_page() {
                     </div>
                     
                     <div class="form-group">
-                        <label for="sb-id">Switchblade ID</label>
-                        <input type="text" id="sb-id" name="sb_id" value="<?php echo esc_attr($switchblade_id); ?>" readonly>
+                        <label for="id">SB ID</label>
+                        <input type="text" id="id" name="id" value="<?php echo esc_attr($id); ?>" readonly>
                     </div>
                 </div>
             </div>
