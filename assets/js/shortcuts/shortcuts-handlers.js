@@ -7,14 +7,14 @@ jQuery(document).ready(function() {
 
 function initializeShortcutButtons() {
     jQuery('.version-button').on('click', function() {
-        const id = jQuery(this).data('id');
+        const sb_id = jQuery(this).data('id');
         const urlParams = new URLSearchParams(window.location.search);
         urlParams.set('view', 'versions');
-        urlParams.set('id', id);
+        urlParams.set('id', sb_id);
         window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
         
         toggleVersionsView(true);
-        fetchVersions(id);
+        fetchVersions(sb_id);
     });
 
     jQuery(document).on('click', '.edit-button', function() {

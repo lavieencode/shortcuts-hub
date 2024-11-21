@@ -8,7 +8,10 @@ function checkUrlParameters() {
     const view = urlParams.get('view');
     const shortcutId = urlParams.get('id');
 
+    console.log('Checking URL parameters in versions-handlers.js with view:', view, 'and shortcutId:', shortcutId);
+
     if (view === 'versions' && shortcutId) {
+        console.log('Calling fetchVersions from checkUrlParameters in versions-handlers.js with shortcutId:', shortcutId);
         toggleVersionsView(true);
         fetchVersions(shortcutId);
     } else {
@@ -25,10 +28,17 @@ function attachVersionHandlers() {
         caret.html(versionBody.is(':visible') ? '&#9660;' : '&#9654;');
     });
 
-    jQuery(document).on('click', '.edit-version', function() {
-        const shortcutId = jQuery(this).data('id');
-        const versionId = jQuery(this).data('version-id');
-        handleVersionEditModal(shortcutId, versionId);
+    jQuery(document).on('click', '.edit-version', function(event) {
+        const button = jQuery(event.target);
+        const versionData = button.data('version');
+
+        if (versionData) {
+            populateVersionEditModal({ version: versionData });
+            jQuery('body').addClass('modal-open');
+            jQuery('#edit-version-modal').addClass('active').show();
+        } else {
+            console.error('Version data not found on button');
+        }
     });
 
     jQuery('#edit-version-modal .save-button').on('click', function(event) {
@@ -71,8 +81,15 @@ function attachVersionHandlers() {
         updateVersion('save');
     });
 
-    function handleVersionEditModal(shortcutId, versionId) {
-        jQuery('#edit-version-modal').addClass('active').show();
-        // rest of the function remains the same
+    function handleVersionEditModal(event) {
+        const button = jQuery(event.currentTarget);
+        const versionData = button.data('version');
+
+        if (versionData) {
+            populateVersionEditModal({ version: versionData });
+            jQuery('#edit-version-modal').addClass('active').show();
+        } else {
+            console.error('Version data not found on button');
+        }
     }
 }

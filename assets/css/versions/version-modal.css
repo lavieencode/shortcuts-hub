@@ -4,7 +4,7 @@
     z-index: 1000;
     pointer-events: auto;
     position: fixed;
-    right: 0;
+    right: -100%;
     top: 0;
     width: 403px;
     height: 100%;
@@ -12,12 +12,11 @@
     padding-top: 60px !important;
     background-color: #373737;
     color: #CACACA;
-    transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    transition: right 0.3s ease-in-out;
 }
 
 #edit-version-modal.active, #add-version-modal.active {
-    transform: translateX(0);
+    right: 0;
 }
 
 #edit-version-modal h1, #add-version-modal h1 {
@@ -104,4 +103,8 @@
     font-size: 14px;
     margin-top: 10px;
     font-weight: bold;
+}
+
+#version-display {
+    color: #CACACA;
 }

@@ -1,7 +1,5 @@
-#download-button {
+#download-button a {
     height: 60px;
-    max-width: 300px;
-    width: 100%;
     background-color: #909CFE;
     color: #252525;
     border: none;
@@ -9,5 +7,7 @@
     text-align: center;
     line-height: 60px;
     text-decoration: none;
-    display: inline-block;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
 }

@@ -28,7 +28,7 @@ function shortcuts_hub_render_edit_shortcut_page() {
             $icon = get_post_meta($shortcut->ID, 'icon', true);
             $input = get_post_meta($shortcut->ID, 'input', true);
             $result = get_post_meta($shortcut->ID, 'result', true);
-            $id = get_post_meta($shortcut->ID, 'id', true);
+            $id = get_post_meta($shortcut->ID, 'sb_id', true);
         }
     }
     ?>

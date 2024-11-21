@@ -1,17 +1,7 @@
 jQuery(document).ready(function($) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const view = urlParams.get('view');
-    const sb_id = urlParams.get('id');
-
-    if (view === 'versions' && sb_id) {
-        console.log('Fetching versions for shortcut ID on page load:', sb_id);
-        fetchVersions(sb_id);
-    }
-
 });
 
 function fetchVersions(sb_id, retries = 3) {   
-    console.log('Fetching versions for shortcut ID:', sb_id);
     jQuery('#versions-container').hide();
     jQuery('#shortcut-name-display').hide();
 
@@ -25,18 +15,10 @@ function fetchVersions(sb_id, retries = 3) {
         security: shortcutsHubData.security,
         id: sb_id,  
         search_term: searchTerm,
-        status: filterStatus
+        status: filterStatus,
+        deleted: filterDeleted === 'any' ? '' : filterDeleted,
+        required_update: filterRequiredUpdate === 'any' ? '' : filterRequiredUpdate
     };
-
-    if (filterDeleted === 'true') {
-        data.deleted = true;
-    } else if (filterDeleted === 'false') {
-        data.deleted = false;
-    }
-
-    if (filterRequiredUpdate !== '') {
-        data.required_update = filterRequiredUpdate === 'true';
-    }
 
     jQuery.post(shortcutsHubData.ajax_url, data, function(response) {
         if (response.success) {
@@ -44,24 +26,29 @@ function fetchVersions(sb_id, retries = 3) {
             const shortcutName = shortcutData.name || '';
             jQuery('#shortcut-name-display').text(shortcutName).show();
             sessionStorage.setItem('shortcutName', shortcutName);
-            const sb_id = shortcutData.id || sb_id;  
+            const sb_id = data.id;  
             if (response.data && response.data.versions && response.data.versions.length > 0) {
                 jQuery('#versions-container').empty();
                 renderVersions(response.data.versions, sb_id);
                 jQuery('#versions-container').show();
+                jQuery('.versions-page-title').show();
             } else {
                 jQuery('#versions-container').html('<p>No versions to list.</p>').show();
+                jQuery('.versions-page-title').show();
             }
         } else {
             jQuery('#versions-container').html('<p>Error loading versions. Please try again later.</p>').show();
+            jQuery('.versions-page-title').show();
         }
     }).fail(function(xhr, status, error) {
         console.error('AJAX error fetching versions:', status, error);
         console.error('Response Text:', xhr.responseText);
         if (retries > 0) {
-            fetchVersions(sb_id, retries - 1);
+            console.log('Retrying fetchVersions, attempts remaining:', retries - 1);
+            fetchVersions(data.id, retries - 1);
         } else {
             jQuery('#versions-container').html('<p>Error loading versions. Please try again later.</p>').show();
+            jQuery('.versions-page-title').show();
         }
     });
 }

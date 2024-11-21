@@ -2,7 +2,13 @@ jQuery(document).ready(function() {
 });
 
 function updateVersion(action) {
-    const shortcutId = jQuery('#edit-version-form #shortcut-id').val();
+    const urlParams = new URLSearchParams(window.location.search);
+    const shortcutId = urlParams.get('id');
+    if (!shortcutId) {
+        console.error('Shortcut ID is missing from the URL.');
+        return;
+    }
+
     const versionId = jQuery('#edit-version-form #version-id').val();
     const stateValue = jQuery('#version_state').val();
 
@@ -17,7 +23,7 @@ function updateVersion(action) {
             method: 'POST',
             data: {
                 action: 'version_toggle_draft',
-                id: id,
+                id: shortcutId,
                 version_id: versionId,
                 state: { value: newState },
                 security: shortcutsHubData.security
@@ -60,7 +66,7 @@ function updateVersion(action) {
             method: 'POST',
             data: {
                 action: 'update_version',
-                id: id,
+                id: shortcutId,
                 version_id: versionId,
                 version_data: versionData,
                 security: shortcutsHubData.security,

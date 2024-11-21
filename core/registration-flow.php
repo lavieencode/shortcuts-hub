@@ -12,44 +12,85 @@ add_action('elementor_pro/forms/process', function($record, $ajax_handler) {
     }
 
     $fields = $record->get('fields');
-    $username = sanitize_user($fields['username']['value']);
-    $email = sanitize_email($fields['email']['value']);
-    $password = $fields['password']['value'];
-    $password_confirm = $fields['password_confirm']['value'];
-    $id = sanitize_text_field($fields['id']['value'] ?? '');
-    $post_id = intval($fields['post_id']['value'] ?? 0);
+    
+    // Debug raw form data
+    error_log('Raw Form Data:');
+    error_log(print_r($record->get_form_settings('form'), true));
+    error_log('Raw Fields:');
+    error_log(print_r($fields, true));
+    
+    // Get form fields directly from the fields array
+    $username = !empty($fields['username']['value']) ? sanitize_user($fields['username']['value']) : '';
+    $password = !empty($fields['password']['value']) ? $fields['password']['value'] : '';
+    $password_confirm = !empty($fields['password_confirm']['value']) ? $fields['password_confirm']['value'] : '';
+    $email = !empty($fields['email']['value']) ? sanitize_email($fields['email']['value']) : '';
 
-    // Custom validation
+    // Debug extracted values
+    error_log('Extracted values:');
+    error_log('Username: ' . $username);
+    error_log('Email: ' . $email);
+    error_log('Password set: ' . (!empty($password) ? 'yes' : 'no'));
+    error_log('Password confirm set: ' . (!empty($password_confirm) ? 'yes' : 'no'));
+
+    // Validate username
     if (empty($username)) {
-        $ajax_handler->add_error_message('Username is required.');
+        error_log('Username is empty');
+        $ajax_handler->add_error_message('Please enter a username.');
         return;
     }
-
-    if (empty($email) || !is_email($email)) {
-        $ajax_handler->add_error_message('A valid email is required.');
+    if (strlen($username) < 4) {
+        error_log('Username too short: ' . strlen($username) . ' characters');
+        $ajax_handler->add_error_message('Username must be at least 4 characters long.');
         return;
     }
-
-    if (empty($password)) {
-        $ajax_handler->add_error_message('Password is required.');
-        return;
-    }
-
-    if ($password !== $password_confirm) {
-        $ajax_handler->add_error_message('Passwords do not match.');
-        return;
-    }
-
     if (username_exists($username)) {
-        $ajax_handler->add_error_message('Username already exists.');
+        error_log('Username already exists: ' . $username);
+        $ajax_handler->add_error_message('This username is already taken. Please choose a different username.');
         return;
     }
 
+    // Validate email
+    if (empty($email)) {
+        error_log('Email is empty');
+        $ajax_handler->add_error_message('Please enter your email address.');
+        return;
+    }
+    if (!is_email($email)) {
+        error_log('Invalid email format: ' . $email);
+        $ajax_handler->add_error_message('Please enter a valid email address.');
+        return;
+    }
     if (email_exists($email)) {
-        $ajax_handler->add_error_message('Email already exists.');
+        error_log('Email already exists: ' . $email);
+        $ajax_handler->add_error_message('This email address is already registered. Please use a different email or login to your existing account.');
         return;
     }
 
+    // Validate password
+    if (empty($password)) {
+        error_log('Password is empty');
+        $ajax_handler->add_error_message('Please enter a password.');
+        return;
+    }
+    if (strlen($password) < 8) {
+        error_log('Password too short: ' . strlen($password) . ' characters');
+        $ajax_handler->add_error_message('Password must be at least 8 characters long.');
+        return;
+    }
+
+    // Validate password confirmation
+    if (empty($password_confirm)) {
+        error_log('Password confirmation is empty');
+        $ajax_handler->add_error_message('Please confirm your password.');
+        return;
+    }
+    if ($password !== $password_confirm) {
+        error_log('Passwords do not match');
+        $ajax_handler->add_error_message('The passwords you entered do not match. Please try again.');
+        return;
+    }
+
+    error_log('Creating user with username: ' . $username . ' and email: ' . $email);
     $user_id = wp_create_user($username, $password, $email);
     if (is_wp_error($user_id)) {
         $ajax_handler->add_error_message('Error creating user: ' . $user_id->get_error_message());
@@ -60,56 +101,37 @@ add_action('elementor_pro/forms/process', function($record, $ajax_handler) {
     $user->set_role('shortcuts_user');
 
     // Log in the user
-    $creds = [
-        'user_login'    => $username,
-        'user_password' => $password,
-        'remember'      => true
-    ];
+    wp_set_current_user($user_id);
+    wp_set_auth_cookie($user_id, false);
 
-    $signon = wp_signon($creds, false);
-    if (is_wp_error($signon)) {
-        $ajax_handler->add_error_message('Error logging in: ' . $signon->get_error_message());
-        return;
-    }
+    // Send success message
+    $ajax_handler->add_success_message('Registration successful!');
 
-    // Determine the redirect URL
-    $redirect_url = home_url('/my-account'); // Default redirect to My Account page
+    // Get the shortcut ID and post ID if they exist
+    $post_id = !empty($fields['post_id']['value']) ? intval($fields['post_id']['value']) : 0;
+    $shortcut_id = !empty($fields['id']['value']) ? $fields['id']['value'] : '';
 
-    if (!empty($id)) {
+    if ($shortcut_id) {
+        // Fetch the latest version URL using the shortcut ID
         $fetch_response = wp_remote_post(admin_url('admin-ajax.php'), [
             'body' => [
                 'action' => 'fetch_latest_version',
                 'security' => wp_create_nonce('shortcuts_hub_nonce'),
-                'id' => $id
+                'id' => $shortcut_id
             ]
         ]);
 
         if (!is_wp_error($fetch_response)) {
-            $response_body = wp_remote_retrieve_body($fetch_response);
-            $response_data = json_decode($response_body, true);
+            $response_data = json_decode(wp_remote_retrieve_body($fetch_response), true);
+            
+            if (!empty($response_data['data']['download_url'])) {
+                $download_url = $response_data['data']['download_url'];
+                $shortcut_post_url = get_permalink($post_id);
 
-            if (is_array($response_data) && isset($response_data['version']['url'])) {
-                $redirect_url = $response_data['version']['url'];
-                $shortcut_name = $response_data['shortcut']['name'];
-                $version = $response_data['version']['number'];
-
-                // Log the download
-                log_shortcut_download($shortcut_name, $version, $redirect_url);
-
-                // Redirect to the iCloud link
-                wp_redirect($redirect_url);
-                exit;
-            } else {
-                $ajax_handler->add_error_message('Failed to retrieve the latest version URL.');
-                return;
+                // Add response data for redirection
+                $ajax_handler->add_response_data('download_url', $download_url);
+                $ajax_handler->add_response_data('redirect_url', $shortcut_post_url);
             }
-        } else {
-            $ajax_handler->add_error_message('Failed to fetch the latest version URL: ' . $fetch_response->get_error_message());
-            return;
         }
     }
-
-    // Send success message with redirect URL
-    $ajax_handler->add_success_message('User registered and logged in successfully.');
-    $ajax_handler->add_response_data('redirect_url', $redirect_url);
 }, 10, 2);

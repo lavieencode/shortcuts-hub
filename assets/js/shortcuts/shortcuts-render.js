@@ -16,8 +16,8 @@ function renderShortcuts(shortcuts) {
         const shortcut = shortcuts[i];
         const post_id = shortcut.post_id;
 
-        const syncedText = shortcut.id && shortcut.id !== '' ? 
-            `<span class="synced-text" style="color: #8a8a8a; font-size: 12px;">Switchblade ID: ${shortcut.id}</span>` : 
+        const syncedText = shortcut.sb_id && shortcut.sb_id !== '' ? 
+            `<span class="synced-text" style="color: #8a8a8a; font-size: 12px;">Switchblade ID: ${shortcut.sb_id}</span>` : 
             '<span class="synced-text" style="color: #8a8a8a; font-size: 12px;">No matching Switchblade shortcut</span>';
 
         const displayName = shortcut.name || 'Unnamed Shortcut';
@@ -35,8 +35,8 @@ function renderShortcuts(shortcuts) {
                 </div>
                 <div class="button-container">
                     <button class="edit-button" data-post_id="${post_id}">Edit</button>
-                    <button class="version-button" data-id="${shortcut.id}">Versions</button>
-                    <button class="delete-button" data-id="${shortcut.id}">Delete</button>
+                    <button class="version-button" data-id="${shortcut.sb_id}">Versions</button>
+                    <button class="delete-button" data-id="${shortcut.sb_id}">Delete</button>
                 </div>
             </div>
         `);

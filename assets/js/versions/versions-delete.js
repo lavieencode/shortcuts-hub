@@ -7,6 +7,11 @@ jQuery(document).on('click', '.delete-version, .restore-version', function() {
 });
 
 function toggleVersionDelete(id, versionId, isRestore) {
+    if (!id || !versionId) {
+        console.error('Shortcut ID or version ID is missing');
+        return;
+    }
+
     const action = 'version_toggle_delete';
     const requestData = {
         action: action,

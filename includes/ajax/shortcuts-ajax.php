@@ -25,7 +25,7 @@ function fetch_shortcuts() {
 
         foreach ($shortcuts as $shortcut) {
             $data[] = array(
-                'id' => $shortcut->ID,
+                'post_id' => $shortcut->ID, // Renamed from 'id' to 'post_id' for clarity
                 'name' => $shortcut->post_title,
                 'headline' => get_post_meta($shortcut->ID, 'headline', true),
                 'description' => get_post_meta($shortcut->ID, 'description', true),
@@ -33,7 +33,7 @@ function fetch_shortcuts() {
                 'icon' => get_post_meta($shortcut->ID, 'icon', true),
                 'input' => get_post_meta($shortcut->ID, 'input', true),
                 'result' => get_post_meta($shortcut->ID, 'result', true),
-                'id' => get_post_meta($shortcut->ID, 'id', true),
+                'sb_id' => get_post_meta($shortcut->ID, 'sb_id', true), // Changed to 'sb_id' for consistency
                 'post_date' => $shortcut->post_date,
                 'deleted' => get_post_meta($shortcut->ID, 'deleted', true),
                 'draft' => get_post_meta($shortcut->ID, 'draft', true),
@@ -66,7 +66,7 @@ function fetch_shortcut() {
             $response = array(
                 'success' => true,
                 'data' => array(
-                    'post_id' => $shortcut->id,
+                    'post_id' => $shortcut->ID,
                     'name' => $shortcut->post_title,
                     'headline' => get_post_meta($post_id, 'headline', true),
                     'description' => get_post_meta($post_id, 'description', true),
@@ -74,7 +74,7 @@ function fetch_shortcut() {
                     'icon' => get_post_meta($post_id, 'icon', true),
                     'input' => get_post_meta($post_id, 'input', true),
                     'result' => get_post_meta($post_id, 'result', true),
-                    'id' => get_post_meta($post_id, 'id', true),
+                    'sb_id' => get_post_meta($post_id, 'sb_id', true),
                     'post_date' => $shortcut->post_date,
                     'deleted' => get_post_meta($post_id, 'deleted', true),
                     'draft' => get_post_meta($post_id, 'draft', true),
@@ -149,14 +149,14 @@ function create_shortcut() {
         update_post_meta($post_id, 'icon', isset($shortcut_data['icon']) ? sanitize_text_field($shortcut_data['icon']) : '');
         update_post_meta($post_id, 'input', isset($shortcut_data['input']) ? sanitize_text_field($shortcut_data['input']) : '');
         update_post_meta($post_id, 'result', isset($shortcut_data['result']) ? sanitize_text_field($shortcut_data['result']) : '');
-        update_post_meta($post_id, 'id', sanitize_text_field($id));
+        update_post_meta($post_id, 'sb_id', sanitize_text_field($id));
         update_post_meta($post_id, 'name', sanitize_text_field($shortcut_data['name']));
         
         if (isset($shortcut_data['actions']) && is_array($shortcut_data['actions'])) {
             update_post_meta($post_id, 'actions', $shortcut_data['actions']);
         }
 
-        wp_send_json_success(array('message' => 'Shortcut created successfully.', 'post_id' => $post_id, 'id' => $id));
+        wp_send_json_success(array('message' => 'Shortcut created successfully.', 'post_id' => $post_id, 'sb_id' => $id));
     } else {
         wp_send_json_error(array('message' => 'Failed to create shortcut in WordPress.'));
     }
@@ -166,7 +166,7 @@ function update_shortcut() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
 
     $shortcut_data = $_POST['shortcut_data'];
-    $post_id = intval($shortcut_data['id']);
+    $post_id = intval($shortcut_data['post_id']);
 
     if (!isset($shortcut_data['state'])) {
         wp_send_json_error(array('message' => 'State is required.'));
@@ -191,7 +191,7 @@ function update_shortcut() {
         update_post_meta($updated_post_id, 'icon', sanitize_text_field($shortcut_data['icon']));
         update_post_meta($updated_post_id, 'input', sanitize_text_field($shortcut_data['input']));
         update_post_meta($updated_post_id, 'result', sanitize_text_field($shortcut_data['result']));
-        update_post_meta($updated_post_id, 'id', sanitize_text_field($shortcut_data['id']));
+        update_post_meta($updated_post_id, 'sb_id', sanitize_text_field($shortcut_data['sb_id']));
         update_post_meta($updated_post_id, 'name', sanitize_text_field($shortcut_data['name']));
 
         wp_send_json_success(array('message' => 'Shortcut updated successfully.'));
@@ -219,7 +219,7 @@ function toggle_draft() {
         return;
     }
 
-    $id = get_post_meta($post_id, 'id', true);
+    $id = get_post_meta($post_id, 'sb_id', true);
     $sb_response = sb_api_call('/shortcuts/' . $id , 'PATCH', [], array(
         'state' => $new_status
     ));
@@ -240,8 +240,8 @@ function toggle_delete() {
     if ($post_id > 0) {
         $deleted = wp_trash_post($post_id);
 
-        $id = get_post_meta($id, 'id', true);
-        wp_send_json_success(array('message' => 'Shortcut deleted successfully.', 'id' => $id));
+        $id = get_post_meta($post_id, 'sb_id', true);
+        wp_send_json_success(array('message' => 'Shortcut deleted successfully.', 'sb_id' => $id));
     } else {
         wp_send_json_error(array('message' => 'Invalid shortcut ID.'));
     }

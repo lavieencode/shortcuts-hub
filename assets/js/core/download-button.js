@@ -40,9 +40,14 @@ function fetchVersion(id, latest = false) {
         method: 'POST',
         data: data,
         success: function(response) {
-            if (response.success && response.data) {
-                console.log('Latest version fetched:', response.data);
-                error_log('Latest version fetched: ' + JSON.stringify(response.data));
+            if (response.success && response.data && response.data.version) {
+                const versionData = response.data.version;
+                if (versionData.url) {
+                    console.log('Latest version URL:', versionData.url);
+                    $('.download-button').attr('href', versionData.url);
+                } else {
+                    console.warn('URL is not available in the version data.');
+                }
             } else {
                 console.error('Error fetching version:', response.data ? response.data.message : 'Unknown error');
             }

@@ -18,12 +18,17 @@ function shortcuts_hub_include_files() {
         require_once $registration_flow_path;
     }
 
+    // Include the login flow file
+    $login_flow_path = SHORTCUTS_HUB_PATH . 'core/login-flow.php';
+    if (file_exists($login_flow_path)) {
+        require_once $login_flow_path;
+    }
+
     // Include other necessary components
     require_once SHORTCUTS_HUB_PATH . 'core/download-button.php';
     require_once SHORTCUTS_HUB_PATH . 'core/elementor-dynamic-fields.php';
     require_once SHORTCUTS_HUB_PATH . 'core/user-role.php';
-    require_once SHORTCUTS_HUB_PATH . 'core/downloads-db.php';
-    require_once SHORTCUTS_HUB_PATH . 'core/log-downloads.php';
+    // Database functionality is now loaded in the main plugin file
 }
 
 add_action('init', 'shortcuts_hub_include_files');
@@ -39,6 +44,12 @@ function shortcuts_hub_enqueue_scripts() {
 
         wp_enqueue_script('login-register-script', plugins_url('../assets/js/core/login-register-page.js', __FILE__), array('jquery'), null, true);
         wp_localize_script('login-register-script', 'shortcutsHubData', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'security' => wp_create_nonce('shortcuts_hub_nonce')
+        ));
+
+        wp_enqueue_script('login-redirect-script', plugins_url('../assets/js/core/login-redirect.js', __FILE__), array('jquery'), null, true);
+        wp_localize_script('login-redirect-script', 'shortcutsHubData', array(
             'ajax_url' => admin_url('admin-ajax.php'),
             'security' => wp_create_nonce('shortcuts_hub_nonce')
         ));

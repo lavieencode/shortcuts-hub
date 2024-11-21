@@ -97,7 +97,8 @@ function shortcuts_hub_render_shortcuts_list_page() {
             </div>
             <div class="button-container">
                 <button type="button" class="update-button">Save</button>
-                <button type="button" class="state-button">State</button>
+                <button type="button" class="publish-button" style="display: none;">Publish</button>
+                <button type="button" class="revert-button" style="display: none;">Revert to Draft</button>
                 <button type="button" class="cancel-button">Cancel</button>
             </div>
         </form>

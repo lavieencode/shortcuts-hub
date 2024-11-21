@@ -10,8 +10,6 @@ function checkUrlParameters() {
     if (view !== 'versions' || !id) {
         return;
     }
-
-    fetchVersions(id);
 }
 
 function renderVersions(data, id) {
@@ -42,8 +40,9 @@ function renderVersions(data, id) {
                     ${version.state && version.state.label ? `<p><strong>Status:</strong> ${version.state.label}</p>` : ''}
                     <p><strong>Required:</strong> ${version.required ? 'Yes' : 'No'}</p>
                     <div class="button-container">
-                        <button class="download-button" onclick="window.open('${version.url}', '_blank')">Download</button>
-                        <button class="edit-version" data-id="${id}" data-version-id="${version.version}">Edit</button>
+                        ${!version.url ? console.warn(`Version ${version.version} does not have a URL.`) : ''}
+                        <button class="download-button" onclick="window.open('${version.url || '#'}', '_blank')">Download</button>
+                        <button class="edit-version" data-id="${id}" data-version-id="${version.version}" data-version='${JSON.stringify(version)}'>Edit</button>
                         <button type="button" class="delete-button delete-version" data-shortcut-id="${id}" data-version-id="${version.version}">Delete</button>
                     </div>
                 </div>

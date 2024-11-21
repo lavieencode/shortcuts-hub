@@ -11,12 +11,11 @@ jQuery(document).ready(function() {
         console.error('Shortcut ID is not defined or invalid.');
         return;
     }
-
     initializeVersionsFilters(shortcutId);
 });
 
 function initializeVersionsFilters(shortcutId) {
-    jQuery('#versions-filters').on('change', 'select, input', function() {
+    jQuery('#versions-filters').on('change', 'select, input', function() {  
         fetchVersions(shortcutId);
     });
 
@@ -25,7 +24,7 @@ function initializeVersionsFilters(shortcutId) {
     });
 
     jQuery('#reset-version-filters').on('click', function() {
-        jQuery('#filter-version-status').val('');
+        jQuery('#filter-version-status').val('any');
         jQuery('#filter-version-deleted').val('any');
         jQuery('#filter-required-update').val('any');
         jQuery('#search-versions-input').val('');

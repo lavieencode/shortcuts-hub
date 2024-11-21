@@ -22,7 +22,7 @@ jQuery(document).ready(function() {
 
 function handleVersionEditModal(id, versionId, latest = false) {
     jQuery.ajax({
-        url: shortcutsHubData.ajax_url,
+        url: shortcutsHubData.ajax_url + '/shortcuts/' + id + '/version/' + versionId,
         method: 'POST',
         data: {
             action: 'fetch_version',
@@ -32,6 +32,7 @@ function handleVersionEditModal(id, versionId, latest = false) {
             latest: latest
         },
         success: function(response) {
+            console.log('Version data fetched:', response.data);
             if (response.success && response.data) {
                 populateVersionEditModal(response.data).then(() => {
                     const version = response.data.version;
@@ -40,18 +41,31 @@ function handleVersionEditModal(id, versionId, latest = false) {
                     jQuery('#version_state').val(version.state.value);
                     jQuery('#version_deleted').val(version.deleted ? 'true' : 'false');
 
-                    // Reset button states
+                    // Ensure the state button text is set correctly based on the version state
+                    const publishButton = jQuery('#edit-version-modal .publish-button');
+                    const revertButton = jQuery('#edit-version-modal .revert-button');
+                    const stateButton = jQuery('#edit-version-modal .state-button');
                     const updateButton = jQuery('.update-button');
-                    const stateButton = jQuery('.state-button');
 
-                    if (version.state.value === 1) { // Draft
-                        updateButton.text('Save Draft').addClass('save-draft-button').removeClass('publish-button switch-to-draft-button');
-                        stateButton.text('Publish').addClass('publish-button').removeClass('switch-to-draft-button save-draft-button');
-                    } else if (version.state.value === 0) { // Published
+                    if (version.state && version.state.value === 0) { // Published
+                        publishButton.hide();
+                        revertButton.show();
+                        stateButton.text('Revert to Draft').show();
                         updateButton.text('Update').removeClass('save-draft-button publish-button switch-to-draft-button');
-                        stateButton.text('Switch to Draft').addClass('switch-to-draft-button').removeClass('publish-button save-draft-button');
+                    } else if (version.state && version.state.value === 1) { // Draft
+                        publishButton.show();
+                        revertButton.hide();
+                        stateButton.text('Publish').show();
+                        updateButton.text('Save Draft').addClass('save-draft-button').removeClass('publish-button switch-to-draft-button');
+                    } else {
+                        stateButton.text('Unknown State').show();
+                        console.error('Unexpected version state:', version.state);
                     }
 
+                    // Log the version object for debugging
+                    console.log('Version object:', version);
+
+                    // Show the modal after setting the state button text
                     jQuery('#edit-version-modal').addClass('active').show();
                     jQuery('body').addClass('modal-open');
                 });

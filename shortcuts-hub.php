@@ -15,6 +15,7 @@ define('SHORTCUTS_HUB_PATH', plugin_dir_path(__FILE__));
 
 // Include separate modular PHP files
 require_once SHORTCUTS_HUB_PATH . 'includes/security.php'; // Security & nonce
+require_once SHORTCUTS_HUB_PATH . 'core/database.php'; // Database functionality - must be loaded before activation hook
 require_once SHORTCUTS_HUB_PATH . 'core/enqueue-core.php'; // Enqueue core functionalities
 require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php'; // Enqueue scripts/styles
 require_once SHORTCUTS_HUB_PATH . 'includes/ajax/shortcuts-ajax.php'; // Shortcuts-related AJAX handlers
@@ -27,6 +28,11 @@ require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-shortcut-page.php'; // Ed
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-version-page.php'; // Add version page logic
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-version-page.php'; // Edit version page logic
 require_once SHORTCUTS_HUB_PATH . 'includes/pages/settings.php'; // Settings page logic
+
+// Include Elementor integration
+if (did_action('elementor/loaded')) {
+    require_once SHORTCUTS_HUB_PATH . 'core/elementor-init.php';
+}
 
 function register_shortcuts_post_type() {
     $labels = array(
@@ -43,50 +49,30 @@ function register_shortcuts_post_type() {
         'parent_item_colon'     => 'Parent Shortcut:',
         'search_items'          => 'Search Shortcuts',
         'not_found'             => 'No Shortcuts found',
-        'not_found_in_trash'    => 'No Shortcuts found in Trash',
-        'archives'              => 'Shortcut archives',
-        'attributes'            => 'Shortcuts attributes',
-        'featured_image'        => 'Featured image for this Shortcut',
-        'set_featured_image'    => 'Set featured image for this Shortcut',
-        'remove_featured_image' => 'Remove featured image for this Shortcut',
-        'use_featured_image'    => 'Use as featured image for this Shortcut',
-        'insert_into_item'      => 'Insert into Shortcut',
-        'uploaded_to_this_item' => 'Uploaded to this Shortcut',
-        'filter_items_list'     => 'Filter Shortcut list',
-        'filter_by_date'        => 'Filter shortcuts by date',
-        'items_list_navigation' => 'Shortcuts list navigation',
-        'items_list'            => 'Shortcuts list',
-        'item_published'        => 'Shortcut published',
-        'item_published_privately' => 'Shortcut published privately',
-        'item_reverted_to_draft' => 'Shortcut reverted to draft',
-        'item_scheduled'        => 'Shortcut scheduled',
-        'item_updated'          => 'Shortcut updated',
+        'not_found_in_trash'    => 'No Shortcuts found in Trash'
     );
 
     $args = array(
-        'labels'                => $labels,
-        'public'                => true,
-        'hierarchical'          => false,
-        'exclude_from_search'   => false,
-        'publicly_queryable'    => true,
-        'show_ui'               => true,
-        'show_in_menu'          => true,
-        'show_in_admin_bar'     => true,
-        'show_in_nav_menus'     => true,
-        'show_in_rest'          => true,
-        'rest_base'             => 'shortcut',
-        'menu_icon'             => 'dashicons-admin-post',
-        'supports'              => array('title', 'editor', 'thumbnail', 'custom-fields'),
-        'taxonomies'            => array('shortcut-category'),
-        'has_archive'           => true,
-        'rewrite'               => array('with_front' => false),
-        'can_export'            => true,
-        'delete_with_user'      => false,
+        'labels'             => $labels,
+        'public'             => true,
+        'publicly_queryable' => true,
+        'show_ui'            => true,
+        'show_in_menu'       => true,
+        'query_var'          => true,
+        'rewrite'            => array(
+            'slug' => 'shortcut',
+            'with_front' => false
+        ),
+        'capability_type'    => 'post',
+        'has_archive'        => true,
+        'hierarchical'       => false,
+        'menu_position'      => null,
+        'supports'           => array('title', 'editor', 'thumbnail', 'custom-fields')
     );
 
     register_post_type('shortcut', $args);
 }
-add_action('init', 'register_shortcuts_post_type');
+add_action('init', 'register_shortcuts_post_type', 0);
 
 function register_shortcuts_menu() {
     remove_menu_page('shortcuts-hub');
@@ -176,3 +162,75 @@ function shortcuts_hub_admin_body_class($classes) {
 }
 add_filter('admin_body_class', 'shortcuts_hub_admin_body_class');
 
+// Register activation hook
+register_activation_hook(__FILE__, 'shortcuts_hub_activate');
+
+function shortcuts_hub_activate() {
+    flush_rewrite_rules();
+}
+
+// Plugin deactivation hook
+register_deactivation_hook(__FILE__, 'shortcuts_hub_deactivate');
+
+function shortcuts_hub_deactivate() {
+    flush_rewrite_rules();
+}
+
+// Add AJAX handlers
+add_action('wp_ajax_log_shortcut_download', 'sh_log_shortcut_download');
+
+function sh_log_shortcut_download() {
+    if (!check_ajax_referer('shortcut_download', 'nonce', false)) {
+        wp_send_json_error('Invalid nonce');
+        return;
+    }
+
+    $shortcut_id = isset($_POST['shortcut_id']) ? sanitize_text_field($_POST['shortcut_id']) : '';
+    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+    $shortcut_name = isset($_POST['shortcut_name']) ? sanitize_text_field($_POST['shortcut_name']) : '';
+    $version = isset($_POST['version']) ? sanitize_text_field($_POST['version']) : '';
+
+    if (empty($shortcut_id) || empty($post_id)) {
+        wp_send_json_error('Missing required fields');
+        return;
+    }
+
+    $user_id = get_current_user_id();
+    $logged = log_shortcut_download_to_db($shortcut_id, $post_id, $user_id, $shortcut_name, $version);
+
+    if ($logged) {
+        wp_send_json_success('Download logged successfully');
+    } else {
+        wp_send_json_error('Failed to log download');
+    }
+}
+
+function log_shortcut_download_to_db($shortcut_id, $post_id, $user_id, $shortcut_name, $version) {
+    global $wpdb;
+    
+    $table_name = $wpdb->prefix . 'shortcut_downloads';
+    
+    $result = $wpdb->insert(
+        $table_name,
+        array(
+            'shortcut_id' => $shortcut_id,
+            'post_id' => $post_id,
+            'user_id' => $user_id,
+            'shortcut_name' => $shortcut_name,
+            'version' => $version,
+            'download_date' => current_time('mysql'),
+            'ip_address' => $_SERVER['REMOTE_ADDR']
+        ),
+        array(
+            '%s',
+            '%d',
+            '%d',
+            '%s',
+            '%s',
+            '%s',
+            '%s'
+        )
+    );
+    
+    return $result !== false;
+}
