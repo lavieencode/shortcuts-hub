@@ -6,132 +6,237 @@ if (!defined('ABSPATH')) {
     exit; 
 }
 
-// Custom login validation for Elementor Pro Forms
-add_action('elementor_pro/forms/process', function($record, $handler) {
-    // Ensure this is the login form
+// Handle login form validation
+function shortcuts_hub_validate_login($record, $ajax_handler) {
     $form_name = $record->get_form_settings('form_name');
     if ('Shortcuts Gallery Login' !== $form_name) {
         return;
     }
 
-    // Get form fields
-    $fields = $record->get('fields');
-    $username_email = sanitize_user($fields['username_email']['value']);
-    $password = $fields['password']['value'];
-
-    // Validate username/email field
-    if (empty($username_email)) {
-        $handler->add_error_message('Username or email is required.');
-        return;
-    }
-
-    // Validate password field
-    if (empty($password)) {
-        $handler->add_error_message('Password is required.');
-        return;
-    }
-
-    // Attempt to authenticate the user
-    $user = wp_authenticate($username_email, $password);
-    if (is_wp_error($user)) {
-        $handler->add_error_message('Invalid login credentials.');
-        return;
-    }
-
-    // Set current user and authentication cookie
-    wp_set_current_user($user->ID);
-    wp_set_auth_cookie($user->ID, false);
-
-    // Retrieve the download URL from transients
-    $user_id = get_current_user_id();
-    $download_url = get_transient('download_url_' . $user_id);
-    if (!$download_url) {
-        $handler->add_error_message('Download URL is missing.');
-        return;
-    }
-
-    // Retrieve the shortcut post URL from transients
-    $post_id = get_transient('download_post_id_' . $user_id);
-    if (!$post_id) {
-        $handler->add_error_message('Shortcut post URL is missing.');
-        return;
-    }
-    $shortcut_post_url = get_permalink($post_id);
-
-    // Get the referrer URL (where user clicked the download button)
-    $referrer = wp_get_referer();
+    error_log('Validating login form submission');
     
-    // Prepare the response data
-    $response_data = [
-        'login_status' => 'success',
-        'redirect_url' => $referrer ?: home_url(),
-        'download_url' => $download_url,
-        'open_in_new_tab' => true
-    ];
+    $fields = $record->get_formatted_data();
+    
+    // Get login fields
+    $username_email = isset($fields['username_email']) ? sanitize_text_field($fields['username_email']) : '';
+    $password = isset($fields['password']) ? $fields['password'] : '';
 
-    // Add JavaScript to handle redirection and new tab
-    add_action('wp_footer', function() use ($response_data) {
-        ?>
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Open download URL in new tab
-            window.open('<?php echo esc_js($response_data['download_url']); ?>', '_blank');
-            
-            // Redirect current page back to referrer
-            window.location.href = '<?php echo esc_js($response_data['redirect_url']); ?>';
-        });
-        </script>
-        <?php
-    });
-
-    // Send JSON response
-    wp_send_json_success(['message' => 'Login successful! Redirecting...', 'data' => $response_data]);
-
-}, 10, 2);
-
-
-function handle_ajax_login() {
-    // Ensure this is a POST request
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        wp_send_json_error(['message' => 'Invalid request method.']);
+    // Validate required fields
+    if (empty($username_email) || empty($password)) {
+        $ajax_handler->add_error_message('Please enter both username/email and password.');
+        error_log('Login validation failed: Empty fields');
         return;
     }
 
-    // Check for required fields
-    if (empty($_POST['username_email']) || empty($_POST['password'])) {
-        wp_send_json_error(['message' => 'Username/email and password are required.']);
+    // Check if input is email
+    if (is_email($username_email)) {
+        $user = get_user_by('email', $username_email);
+    } else {
+        $user = get_user_by('login', $username_email);
+    }
+
+    if (!$user) {
+        $ajax_handler->add_error_message('Invalid username or email.');
+        error_log('Login validation failed: Invalid user');
         return;
     }
 
-    $username_email = sanitize_user($_POST['username_email']);
-    $password = $_POST['password'];
-
-    // Check if 'remember me' is selected
-    $remember = isset($_POST['remember_me']) ? true : false;
-
-    // Attempt to authenticate the user
-    $user = wp_authenticate($username_email, $password);
-    if (is_wp_error($user)) {
-        wp_send_json_error(['message' => 'Invalid login credentials.']);
+    // Verify password
+    if (!wp_check_password($password, $user->user_pass, $user->ID)) {
+        $ajax_handler->add_error_message('Invalid password.');
+        error_log('Login validation failed: Invalid password');
         return;
     }
 
-    // Set current user and authentication cookie
-    wp_set_current_user($user->ID);
-    wp_set_auth_cookie($user->ID, $remember);
-
-    // Retrieve the download URL from transients
-    $user_id = get_current_user_id();
-    $download_url = get_transient('download_url_' . $user_id);
-    if (!$download_url) {
-        wp_send_json_error(['message' => 'Download URL is missing.']);
-        return;
-    }
-
-    // Send success response
-    wp_send_json_success(['download_url' => $download_url, 'post_url' => home_url()]);
+    // Store validated user data for processing
+    $record->set_form_settings('validated_user', $user);
 }
 
-// Handle AJAX login request
-add_action('wp_ajax_nopriv_elementor_pro_forms_ajax_handler', 'handle_ajax_login');
-add_action('wp_ajax_elementor_pro_forms_ajax_handler', 'handle_ajax_login');
+// Handle login form processing
+function shortcuts_hub_process_login($record, $ajax_handler) {
+    $form_name = $record->get_form_settings('form_name');
+    if ('Shortcuts Gallery Login' !== $form_name) {
+        return;
+    }
+
+    error_log('Processing login form submission');
+    
+    // Get the validated user
+    $user = $record->get_form_settings('validated_user');
+    if (!$user) {
+        error_log('Login processing failed: No validated user found');
+        return;
+    }
+
+    $fields = $record->get_formatted_data();
+    $remember = isset($fields['remember_me']) && $fields['remember_me'] === 'yes';
+
+    // Log the user in
+    $creds = array(
+        'user_login'    => $user->user_login,
+        'user_password' => $fields['password'],
+        'remember'      => $remember
+    );
+
+    $login = wp_signon($creds, false);
+
+    if (is_wp_error($login)) {
+        $ajax_handler->add_error_message('Login failed. Please try again.');
+        error_log('Login processing failed: ' . $login->get_error_message());
+        return;
+    }
+
+    // Set the user's auth cookie
+    wp_set_auth_cookie($user->ID, $remember);
+
+    // Get button data from cookie
+    $button_data = isset($_COOKIE['shortcuts_hub_button_data']) ? stripslashes($_COOKIE['shortcuts_hub_button_data']) : '';
+    $button_data = json_decode($button_data, true);
+
+    // Prepare response data
+    $response_data = [
+        'success' => true,
+        'login_success' => true,
+        'redirect_url' => !empty($button_data['redirect_url']) ? $button_data['redirect_url'] : home_url()
+    ];
+
+    if (!empty($button_data['shortcut_id'])) {
+        $response_data['shortcut_id'] = $button_data['shortcut_id'];
+        error_log('Login: Setting shortcut_id for download: ' . $button_data['shortcut_id']);
+    }
+
+    // Set the response data
+    foreach ($response_data as $key => $value) {
+        $ajax_handler->add_response_data($key, $value);
+    }
+
+    error_log('Login successful: Setting response data');
+}
+
+// Add hooks
+add_action('elementor_pro/forms/validation', 'shortcuts_hub_validate_login', 10, 2);
+add_action('elementor_pro/forms/new_record', 'shortcuts_hub_process_login', 10, 2);
+
+function shortcuts_hub_handle_login() {
+    check_ajax_referer('shortcuts_hub_nonce', 'security');
+
+    $username_email = isset($_POST['username_email']) ? sanitize_text_field($_POST['username_email']) : '';
+    $password = isset($_POST['password']) ? $_POST['password'] : '';
+    $remember_me = isset($_POST['remember_me']) && $_POST['remember_me'] === 'true';
+    $return_url = isset($_POST['return_url']) ? esc_url_raw($_POST['return_url']) : '';
+    $download_url = isset($_POST['download_url']) ? esc_url_raw($_POST['download_url']) : '';
+    
+    // Validate required fields
+    if (empty($username_email)) {
+        wp_send_json_error(array(
+            'message' => 'Please enter your email or username',
+            'error_type' => 'empty_username'
+        ));
+        return;
+    }
+    
+    if (empty($password)) {
+        wp_send_json_error(array(
+            'message' => 'Please enter your password',
+            'error_type' => 'empty_password'
+        ));
+        return;
+    }
+    
+    // Check if input is email and validate format
+    if (is_email($username_email)) {
+        if (!filter_var($username_email, FILTER_VALIDATE_EMAIL)) {
+            wp_send_json_error(array(
+                'message' => 'Invalid email format',
+                'error_type' => 'invalid_email'
+            ));
+            return;
+        }
+        $user = get_user_by('email', $username_email);
+    } else {
+        $user = get_user_by('login', $username_email);
+    }
+    
+    if (!$user) {
+        wp_send_json_error(array(
+            'message' => 'Invalid username or email address',
+            'error_type' => 'invalid_username'
+        ));
+        return;
+    }
+    
+    $credentials = array(
+        'user_login' => $user->user_login,
+        'user_password' => $password,
+        'remember' => $remember_me
+    );
+    
+    $user = wp_signon($credentials);
+    
+    if (is_wp_error($user)) {
+        $error_code = $user->get_error_code();
+        
+        switch ($error_code) {
+            case 'incorrect_password':
+                $error_message = 'The password you entered is incorrect';
+                $error_type = 'incorrect_password';
+                break;
+            case 'invalid_username':
+                $error_message = 'Invalid username or email address';
+                $error_type = 'invalid_username';
+                break;
+            case 'invalid_email':
+                $error_message = 'Invalid email format';
+                $error_type = 'invalid_email';
+                break;
+            default:
+                $error_message = $user->get_error_message();
+                $error_type = $error_code;
+        }
+        
+        wp_send_json_error(array(
+            'message' => $error_message,
+            'error_type' => $error_type
+        ));
+        return;
+    }
+    
+    // Store the URLs for this user
+    if (!empty($return_url)) {
+        update_user_meta($user->ID, 'shortcuts_hub_return_url', $return_url);
+    }
+    if (!empty($download_url)) {
+        update_user_meta($user->ID, 'shortcuts_hub_download_url', $download_url);
+    }
+    
+    // Use return URL if provided, otherwise fallback to admin URL
+    $redirect_url = !empty($return_url) ? $return_url : admin_url();
+    
+    wp_send_json_success(array(
+        'message' => 'Login successful',
+        'redirect_url' => $redirect_url,
+        'download_url' => $download_url
+    ));
+}
+
+add_action('wp_ajax_nopriv_shortcuts_hub_login', 'shortcuts_hub_handle_login');
+add_action('wp_ajax_shortcuts_hub_login', 'shortcuts_hub_handle_login');
+
+// Handle AJAX logout
+function shortcuts_hub_handle_ajax_logout() {
+    check_ajax_referer('shortcuts_hub_ajax_logout', 'security');
+    
+    // Get the redirect URL before logout
+    $redirect_url = isset($_POST['redirect_url']) ? esc_url_raw($_POST['redirect_url']) : '';
+    
+    error_log('Handling AJAX logout. Redirect URL: ' . $redirect_url);
+    
+    wp_logout();
+    
+    if (!empty($redirect_url)) {
+        wp_send_json_success(array('redirect_url' => $redirect_url));
+    } else {
+        wp_send_json_success();
+    }
+}
+add_action('wp_ajax_shortcuts_hub_ajax_logout', 'shortcuts_hub_handle_ajax_logout');
