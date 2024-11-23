@@ -45,17 +45,12 @@ class Name_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
 
     public function get_value(array $options = []) {
         $post_id = get_the_ID();
-        
-        if (!$post_id) {
-            return '';
-        }
-
         $name = get_post_meta($post_id, 'name', true);
         
         if (empty($name)) {
             $name = get_the_title($post_id);
         }
-
+        
         return !empty($name) ? esc_html($name) : '';
     }
 
@@ -259,18 +254,142 @@ class Icon_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
     }
 
     public function get_categories() {
-        return [\Elementor\Modules\DynamicTags\Module::IMAGE_CATEGORY];
+        return [\Elementor\Modules\DynamicTags\Module::TEXT_CATEGORY];
     }
 
     protected function register_controls() {
         $this->add_control(
-            'override_icon',
+            'before',
             [
-                'label' => esc_html__('Override Icon', 'shortcuts-hub'),
-                'type' => \Elementor\Controls_Manager::ICONS,
-                'default' => [
-                    'value' => '',
-                    'library' => 'fa-solid',
+                'label' => esc_html__('Before', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+            ]
+        );
+
+        $this->add_control(
+            'after',
+            [
+                'label' => esc_html__('After', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+            ]
+        );
+
+        $this->add_control(
+            'fallback',
+            [
+                'label' => esc_html__('Fallback', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+            ]
+        );
+    }
+
+    public function get_value(array $options = []) {
+        $post_id = get_the_ID();
+        
+        $icon_data = get_post_meta($post_id, 'icon', true);
+        
+        if (!empty($icon_data)) {
+            $decoded = json_decode($icon_data, true);
+            if ($decoded && isset($decoded['type'])) {
+                if ($decoded['type'] === 'fontawesome' && isset($decoded['name'])) {
+                    return [
+                        'value' => $decoded['name'],
+                        'library' => $decoded['library'] ?? 'fa-solid'
+                    ];
+                } elseif ($decoded['type'] === 'svg' && isset($decoded['url'])) {
+                    return [
+                        'value' => [
+                            'url' => $decoded['url'],
+                            'id' => $decoded['id'] ?? ''
+                        ],
+                        'library' => 'svg'
+                    ];
+                }
+            }
+            
+            // Legacy format handling
+            if (strpos($icon_data, 'fa-') !== false) {
+                $library = 'fa-solid';
+                if (strpos($icon_data, 'fab ') === 0) {
+                    $library = 'fa-brands';
+                } elseif (strpos($icon_data, 'far ') === 0) {
+                    $library = 'fa-regular';
+                }
+                return [
+                    'value' => $icon_data,
+                    'library' => $library
+                ];
+            }
+        }
+        
+        return [
+            'value' => 'fas fa-mobile-alt',
+            'library' => 'fa-solid'
+        ];
+    }
+
+    public function get_content(array $options = []) {
+        $settings = $this->get_settings();
+        $value = $this->get_value();
+
+        if (empty($value)) {
+            $value = $settings['fallback'];
+        }
+
+        if (empty($value)) {
+            return '';
+        }
+
+        return $settings['before'] . $value . $settings['after'];
+    }
+
+    public function render() {
+        echo $this->get_content();
+    }
+}
+
+class Shortcuts_Icon_Widget extends \Elementor\Widget_Base {
+    public function __construct($data = [], $args = null) {
+        parent::__construct($data, $args);
+    }
+
+    public function get_name() {
+        return 'shortcut_icon';
+    }
+
+    public function get_title() {
+        return esc_html__('Shortcut Icon', 'shortcuts-hub');
+    }
+
+    public function get_icon() {
+        return 'eicon-favorite';
+    }
+
+    public function get_categories() {
+        return ['shortcuts-hub'];
+    }
+
+    public function get_keywords() {
+        return ['shortcuts', 'icon', 'shortcut'];
+    }
+
+    protected function register_controls() {
+        $this->start_controls_section(
+            'section_icon',
+            [
+                'label' => esc_html__('Icon', 'shortcuts-hub'),
+            ]
+        );
+
+        $this->add_control(
+            'icon_source',
+            [
+                'label' => esc_html__('Icon Source', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'default' => 'shortcut',
+                'options' => [
+                    'shortcut' => esc_html__('Shortcut Icon', 'shortcuts-hub'),
+                    'custom' => esc_html__('Custom Icon', 'shortcuts-hub'),
                 ],
             ]
         );
@@ -291,29 +410,236 @@ class Icon_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
                     'unit' => 'px',
                     'size' => 50,
                 ],
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-icon img' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .elementor-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+                ],
             ]
         );
+
+        $this->add_control(
+            'selected_icon',
+            [
+                'label' => esc_html__('Custom Icon', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::ICONS,
+                'default' => [
+                    'value' => 'fas fa-mobile-alt',
+                    'library' => 'fa-solid',
+                ],
+                'recommended' => [
+                    'fa-solid' => [
+                        'mobile-alt',
+                        'tablet-alt',
+                        'laptop',
+                        'desktop',
+                        'cog',
+                        'tools',
+                    ],
+                ],
+                'condition' => [
+                    'icon_source' => 'custom',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'view',
+            [
+                'label' => esc_html__('View', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    'default' => esc_html__('Default', 'shortcuts-hub'),
+                    'stacked' => esc_html__('Stacked', 'shortcuts-hub'),
+                    'framed' => esc_html__('Framed', 'shortcuts-hub'),
+                ],
+                'default' => 'default',
+                'prefix_class' => 'elementor-view-',
+            ]
+        );
+
+        $this->add_control(
+            'shape',
+            [
+                'label' => esc_html__('Shape', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::SELECT,
+                'options' => [
+                    'circle' => esc_html__('Circle', 'shortcuts-hub'),
+                    'square' => esc_html__('Square', 'shortcuts-hub'),
+                ],
+                'default' => 'circle',
+                'condition' => [
+                    'view!' => 'default',
+                ],
+                'prefix_class' => 'elementor-shape-',
+            ]
+        );
+
+        $this->end_controls_section();
+
+        $this->start_controls_section(
+            'section_style_icon',
+            [
+                'label' => esc_html__('Icon', 'shortcuts-hub'),
+                'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'primary_color',
+            [
+                'label' => esc_html__('Primary Color', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '',
+                'selectors' => [
+                    '{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'background-color: {{VALUE}};',
+                    '{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon' => 'color: {{VALUE}}; border-color: {{VALUE}};',
+                    '{{WRAPPER}}.elementor-view-framed .elementor-icon, {{WRAPPER}}.elementor-view-default .elementor-icon svg' => 'fill: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'secondary_color',
+            [
+                'label' => esc_html__('Secondary Color', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '',
+                'condition' => [
+                    'view!' => 'default',
+                ],
+                'selectors' => [
+                    '{{WRAPPER}}.elementor-view-framed .elementor-icon' => 'background-color: {{VALUE}};',
+                    '{{WRAPPER}}.elementor-view-stacked .elementor-icon' => 'color: {{VALUE}};',
+                    '{{WRAPPER}}.elementor-view-stacked .elementor-icon svg' => 'fill: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_responsive_control(
+            'size',
+            [
+                'label' => esc_html__('Size', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'range' => [
+                    'px' => [
+                        'min' => 6,
+                        'max' => 300,
+                    ],
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'hover_animation',
+            [
+                'label' => esc_html__('Hover Animation', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::HOVER_ANIMATION,
+            ]
+        );
+
+        $this->end_controls_section();
     }
 
-    public function get_value(array $options = []) {
-        $settings = $this->get_settings();
+    protected function render() {
+        $settings = $this->get_settings_for_display();
+
+        $this->add_render_attribute('wrapper', [
+            'class' => 'elementor-icon-wrapper',
+            'style' => 'display: inline-block; line-height: 0;'
+        ]);
         
-        if (!empty($settings['override_icon']['value'])) {
-            $size = !empty($settings['icon_size']['size']) ? $settings['icon_size']['size'] : 50;
-            \Elementor\Icons_Manager::render_icon($settings['override_icon'], [
-                'aria-hidden' => 'true',
-                'style' => 'font-size: ' . $size . 'px;'
-            ]);
-            return '';
+        $this->add_render_attribute('icon-wrapper', [
+            'class' => 'elementor-icon',
+            'style' => 'display: inline-block;'
+        ]);
+
+        if (!empty($settings['hover_animation'])) {
+            $this->add_render_attribute('icon-wrapper', 'class', 'elementor-animation-' . $settings['hover_animation']);
         }
 
-        $post_id = get_the_ID();
-        $icon_url = get_post_meta($post_id, 'icon', true);
-        return !empty($icon_url) ? '<img src="' . esc_url($icon_url) . '" alt="' . esc_attr__('Icon', 'shortcuts-hub') . '">' : '';
-    }
+        $icon_html = '';
+        if ($settings['icon_source'] === 'shortcut') {
+            $post_id = get_the_ID();
+            $icon_data = get_post_meta($post_id, 'icon', true);
+            
+            if (!empty($icon_data)) {
+                $decoded = json_decode($icon_data, true);
+                if ($decoded && isset($decoded['type'])) {
+                    if ($decoded['type'] === 'fontawesome' && isset($decoded['name'])) {
+                        ob_start();
+                        \Elementor\Icons_Manager::render_icon(
+                            [
+                                'value' => $decoded['name'],
+                                'library' => $decoded['library'] ?? 'fa-solid'
+                            ],
+                            ['aria-hidden' => 'true']
+                        );
+                        $icon_html = ob_get_clean();
+                    } elseif ($decoded['type'] === 'svg' && isset($decoded['url'])) {
+                        ob_start();
+                        \Elementor\Icons_Manager::render_icon(
+                            [
+                                'value' => [
+                                    'url' => $decoded['url'],
+                                    'id' => $decoded['id'] ?? ''
+                                ],
+                                'library' => 'svg'
+                            ],
+                            ['aria-hidden' => 'true']
+                        );
+                        $icon_html = ob_get_clean();
+                    }
+                } else {
+                    // Legacy format handling
+                    if (strpos($icon_data, 'fa-') !== false) {
+                        $library = 'fa-solid';
+                        if (strpos($icon_data, 'fab ') === 0) {
+                            $library = 'fa-brands';
+                        } elseif (strpos($icon_data, 'far ') === 0) {
+                            $library = 'fa-regular';
+                        }
+                        ob_start();
+                        \Elementor\Icons_Manager::render_icon(
+                            [
+                                'value' => $icon_data,
+                                'library' => $library
+                            ],
+                            ['aria-hidden' => 'true']
+                        );
+                        $icon_html = ob_get_clean();
+                    }
+                }
+            }
+        } else if (!empty($settings['selected_icon']['value'])) {
+            // Custom icon selected in widget settings
+            ob_start();
+            \Elementor\Icons_Manager::render_icon($settings['selected_icon'], ['aria-hidden' => 'true']);
+            $icon_html = ob_get_clean();
+        }
 
-    public function render() {
-        echo $this->get_value();
+        // Fallback to default icon if nothing else worked
+        if (empty($icon_html)) {
+            ob_start();
+            \Elementor\Icons_Manager::render_icon(
+                [
+                    'value' => 'fas fa-mobile-alt',
+                    'library' => 'fa-solid'
+                ],
+                ['aria-hidden' => 'true']
+            );
+            $icon_html = ob_get_clean();
+        }
+
+        ?>
+        <div <?php echo $this->get_render_attribute_string('wrapper'); ?>>
+            <div <?php echo $this->get_render_attribute_string('icon-wrapper'); ?>>
+                <?php echo $icon_html; ?>
+            </div>
+        </div>
+        <?php
     }
 }
 
@@ -480,7 +806,7 @@ class Latest_Version_URL_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
             $response = sb_api_call("shortcuts/{$id}/version/latest", 'GET');
             return !empty($response['download_url']) ? $response['download_url'] : '';
         }
-
+        
         return '';
     }
 
@@ -490,8 +816,6 @@ class Latest_Version_URL_Dynamic_Tag extends \Elementor\Core\DynamicTags\Tag {
 }
 
 function register_shortcut_widgets($widgets_manager) {
-    require_once(__DIR__ . '/download-button.php');
-    $widgets_manager->register(new \Shortcuts_Download_Button());
+    $widgets_manager->register(new \Shortcuts_Icon_Widget());
 }
-
 add_action('elementor/widgets/register', 'register_shortcut_widgets');

@@ -22,7 +22,7 @@ h1 {
 .form-columns {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
 }
 
 .form-column {
@@ -40,7 +40,7 @@ textarea,
 select {
     background-color: #252525;
     color: #CACACA;
-    border: 1px solid #909CFE;
+    border: none;
     padding: 10px;
     margin-top: 0;
     margin-bottom: 15px;
@@ -110,7 +110,7 @@ select {
 #shortcut-actions {
     background-color: #373737;
     color: #CACACA;
-    border: 1px solid #909CFE;
+    border: none;
     border-radius: 0;
     padding: 10px;
     width: 100%;

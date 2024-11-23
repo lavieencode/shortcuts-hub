@@ -1,0 +1,18 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Reset WordPress Plugin",
+            "type": "shell",
+            "command": "${workspaceFolder}/reset-plugin.sh",
+            "group": "none",
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            },
+            "runOptions": {
+                "runOn": "onSave"
+            }
+        }
+    ]
+}

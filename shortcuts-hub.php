@@ -13,11 +13,11 @@ if (!defined('ABSPATH')) {
 // Define the plugin path
 define('SHORTCUTS_HUB_PATH', plugin_dir_path(__FILE__));
 
-// Include separate modular PHP files
+// Include essential files
 require_once SHORTCUTS_HUB_PATH . 'includes/security.php'; // Security & nonce
-require_once SHORTCUTS_HUB_PATH . 'core/database.php'; // Database functionality - must be loaded before activation hook
-require_once SHORTCUTS_HUB_PATH . 'core/enqueue-core.php'; // Enqueue core functionalities
-require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php'; // Enqueue scripts/styles
+require_once SHORTCUTS_HUB_PATH . 'core/database.php'; // Database functions
+require_once SHORTCUTS_HUB_PATH . 'core/enqueue-core.php'; // Core functionality loader
+require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php'; // Asset loader
 require_once SHORTCUTS_HUB_PATH . 'includes/ajax/shortcuts-ajax.php'; // Shortcuts-related AJAX handlers
 require_once SHORTCUTS_HUB_PATH . 'includes/ajax/versions-ajax.php'; // Version-related AJAX handlers
 require_once SHORTCUTS_HUB_PATH . 'includes/sb-api.php'; // Switchblade integration and API calls
@@ -32,6 +32,28 @@ require_once SHORTCUTS_HUB_PATH . 'includes/pages/settings.php'; // Settings pag
 // Include Elementor integration
 if (did_action('elementor/loaded')) {
     require_once SHORTCUTS_HUB_PATH . 'core/elementor-init.php';
+}
+
+// Register activation hook
+register_activation_hook(__FILE__, 'shortcuts_hub_activate');
+
+function shortcuts_hub_activate() {
+    // Install/update database tables
+    shortcuts_hub_install_db();
+    
+    // Ensure the post type is registered before flushing
+    register_shortcuts_post_type();
+    
+    // Flush rewrite rules
+    flush_rewrite_rules();
+}
+
+// Plugin deactivation hook
+register_deactivation_hook(__FILE__, 'shortcuts_hub_deactivate');
+
+function shortcuts_hub_deactivate() {
+    // Flush rewrite rules on deactivation
+    flush_rewrite_rules();
 }
 
 function register_shortcuts_post_type() {
@@ -162,75 +184,4 @@ function shortcuts_hub_admin_body_class($classes) {
 }
 add_filter('admin_body_class', 'shortcuts_hub_admin_body_class');
 
-// Register activation hook
-register_activation_hook(__FILE__, 'shortcuts_hub_activate');
-
-function shortcuts_hub_activate() {
-    flush_rewrite_rules();
-}
-
-// Plugin deactivation hook
-register_deactivation_hook(__FILE__, 'shortcuts_hub_deactivate');
-
-function shortcuts_hub_deactivate() {
-    flush_rewrite_rules();
-}
-
-// Add AJAX handlers
-add_action('wp_ajax_log_shortcut_download', 'sh_log_shortcut_download');
-
-function sh_log_shortcut_download() {
-    if (!check_ajax_referer('shortcut_download', 'nonce', false)) {
-        wp_send_json_error('Invalid nonce');
-        return;
-    }
-
-    $shortcut_id = isset($_POST['shortcut_id']) ? sanitize_text_field($_POST['shortcut_id']) : '';
-    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
-    $shortcut_name = isset($_POST['shortcut_name']) ? sanitize_text_field($_POST['shortcut_name']) : '';
-    $version = isset($_POST['version']) ? sanitize_text_field($_POST['version']) : '';
-
-    if (empty($shortcut_id) || empty($post_id)) {
-        wp_send_json_error('Missing required fields');
-        return;
-    }
-
-    $user_id = get_current_user_id();
-    $logged = log_shortcut_download_to_db($shortcut_id, $post_id, $user_id, $shortcut_name, $version);
-
-    if ($logged) {
-        wp_send_json_success('Download logged successfully');
-    } else {
-        wp_send_json_error('Failed to log download');
-    }
-}
-
-function log_shortcut_download_to_db($shortcut_id, $post_id, $user_id, $shortcut_name, $version) {
-    global $wpdb;
-    
-    $table_name = $wpdb->prefix . 'shortcut_downloads';
-    
-    $result = $wpdb->insert(
-        $table_name,
-        array(
-            'shortcut_id' => $shortcut_id,
-            'post_id' => $post_id,
-            'user_id' => $user_id,
-            'shortcut_name' => $shortcut_name,
-            'version' => $version,
-            'download_date' => current_time('mysql'),
-            'ip_address' => $_SERVER['REMOTE_ADDR']
-        ),
-        array(
-            '%s',
-            '%d',
-            '%d',
-            '%s',
-            '%s',
-            '%s',
-            '%s'
-        )
-    );
-    
-    return $result !== false;
-}
+// Note: Download logging functionality moved to core/download-button.php for better modularity

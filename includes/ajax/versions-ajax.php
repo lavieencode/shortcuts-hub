@@ -51,17 +51,28 @@ function fetch_latest_version() {
         return;
     }
 
+    error_log('Fetching latest version for shortcut ID: ' . $id);
+    
     $endpoint = "shortcuts/{$id}/version/latest";
     $response = sb_api_call($endpoint, 'GET');
 
     if (is_wp_error($response)) {
+        error_log('Error fetching latest version: ' . $response->get_error_message());
         wp_send_json_error(['message' => 'Error fetching latest version: ' . $response->get_error_message()]);
+        return;
+    }
+
+    error_log('API Response: ' . print_r($response, true));
+
+    // Ensure we have a valid version object with a URL
+    if (!isset($response['version']) || !isset($response['version']['url'])) {
+        error_log('Invalid version response structure: ' . print_r($response, true));
+        wp_send_json_error(['message' => 'Invalid version response structure']);
         return;
     }
 
     wp_send_json_success($response);
 }
-
 
 // Fetch a specific version
 function fetch_version() {
@@ -198,6 +209,7 @@ function version_toggle_draft() {
 
 add_action('wp_ajax_fetch_versions', 'fetch_versions');
 add_action('wp_ajax_fetch_latest_version', 'fetch_latest_version');
+add_action('wp_ajax_nopriv_fetch_latest_version', 'fetch_latest_version');
 add_action('wp_ajax_fetch_version', 'fetch_version');
 add_action('wp_ajax_create_version', 'create_version');
 add_action('wp_ajax_update_version', 'update_version');

@@ -63,27 +63,48 @@ function shortcuts_hub_enqueue_assets($hook) {
             break;
 
         case 'shortcuts-hub_page_edit-shortcut':
+            wp_enqueue_media();
+            wp_enqueue_style('wp-color-picker');
+            wp_enqueue_script('wp-color-picker');
+            wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+            
             wp_enqueue_style('edit-shortcut-style', plugins_url('../assets/css/pages/edit-shortcut.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/pages/edit-shortcut.css'));
-            wp_enqueue_script('edit-shortcut-script', plugins_url('../assets/js/pages/edit-shortcut.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/pages/edit-shortcut.js'), true);
-
-            wp_localize_script('edit-shortcut-script', 'shortcutsHubData', array(
+            wp_enqueue_style('icon-selector-style', plugins_url('../assets/css/core/icon-selector.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/core/icon-selector.css'));
+            
+            wp_enqueue_script('icon-selector', plugins_url('../assets/js/core/icon-selector.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/core/icon-selector.js'));
+            wp_enqueue_script('edit-shortcut', plugins_url('../assets/js/pages/edit-shortcut.js', __FILE__), array('jquery', 'wp-color-picker', 'icon-selector'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/pages/edit-shortcut.js'));
+            
+            // Get WordPress uploads directory info
+            $upload_dir = wp_upload_dir();
+            
+            wp_localize_script('edit-shortcut', 'shortcutsHubData', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'security' => wp_create_nonce('shortcuts_hub_nonce'),
-                'sb_url' => SB_URL,
-                'token' => get_refresh_sb_token(),
-                'post_id' => get_the_ID(),
-                'id' => get_post_meta(get_the_ID(), 'id', true),
-                'site_url' => get_site_url()
+                'uploads_url' => $upload_dir['baseurl'],
+                'uploads_dir' => $upload_dir['basedir']
             ));
             break;
 
         case 'shortcuts-hub_page_add-shortcut':
+            wp_enqueue_media();
+            wp_enqueue_style('wp-color-picker');
+            wp_enqueue_script('wp-color-picker');
+            wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+            
             wp_enqueue_style('add-shortcut-style', plugins_url('../assets/css/pages/add-shortcut.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/pages/add-shortcut.css'));
-            wp_enqueue_script('add-shortcut-script', plugins_url('../assets/js/pages/add-shortcut.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/pages/add-shortcut.js'), true);
-
-            wp_localize_script('add-shortcut-script', 'shortcutsHubData', array(
+            wp_enqueue_style('icon-selector-style', plugins_url('../assets/css/core/icon-selector.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/core/icon-selector.css'));
+            
+            wp_enqueue_script('icon-selector', plugins_url('../assets/js/core/icon-selector.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/core/icon-selector.js'));
+            wp_enqueue_script('add-shortcut', plugins_url('../assets/js/pages/add-shortcut.js', __FILE__), array('jquery', 'wp-color-picker', 'icon-selector'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/pages/add-shortcut.js'));
+            
+            // Get WordPress uploads directory info
+            $upload_dir = wp_upload_dir();
+            
+            wp_localize_script('add-shortcut', 'shortcutsHubData', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'security' => wp_create_nonce('shortcuts_hub_nonce'),
+                'uploads_url' => $upload_dir['baseurl'],
+                'uploads_dir' => $upload_dir['basedir'],
                 'site_url' => get_site_url()
             ));
             break;

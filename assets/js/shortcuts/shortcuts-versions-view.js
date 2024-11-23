@@ -4,33 +4,21 @@ jQuery(document).ready(function() {
     const shortcutId = urlParams.get('id');
 
     if (view === 'versions' && shortcutId) {
-        toggleVersionsView(true);
+        jQuery('#versions-header-bar').show();
+        jQuery('#back-to-shortcuts').show();
+        jQuery('#shortcut-name-display').show();
         fetchVersions(shortcutId);
-    } else {
-        toggleVersionsView(false);
     }
 });
 
 function toggleVersionsView(show) {
+    const urlParams = new URLSearchParams(window.location.search);
     if (show) {
-        jQuery('#versions-container').show();
-        jQuery('#versions-header-bar').show();
-        jQuery('#back-to-shortcuts').show();
-        
-        jQuery('.shortcuts-page-title').hide();
-        jQuery('#shortcuts-header-bar').hide();
-        jQuery('#shortcuts-container').hide();
-        jQuery('.versions-page-title').show();
-        jQuery('#shortcut-name-display').show();
+        urlParams.set('view', 'versions');
     } else {
-        jQuery('#versions-container').hide();
-        jQuery('#versions-header-bar').hide();
-        jQuery('#back-to-shortcuts').hide();
-        
-        jQuery('.shortcuts-page-title').show();
-        jQuery('#shortcuts-header-bar').show();
-        jQuery('#shortcuts-container').show();
-        jQuery('.versions-page-title').hide();
-        jQuery('#shortcut-name-display').hide();
+        urlParams.delete('view');
+        urlParams.delete('id');
     }
+    window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
+    window.location.reload();
 }

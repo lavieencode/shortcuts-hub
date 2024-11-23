@@ -35,20 +35,20 @@ label {
     padding: 5px 20px;
     width: auto;
     border: none;
+    margin-bottom: 10px;
 }
 
 /* Form Elements */
-input[type="text"],
-input[type="color"],
-textarea,
-select {
-    background-color: #252525 !important;
+#wpbody input[type="text"],
+#wpbody input[type="color"],
+#wpbody textarea,
+#wpbody select {
+    background-color: #373737 !important;
     color: #CACACA !important;
-    border: 1px solid #909CFE !important;
     padding: 10px !important;
     margin-top: 0 !important;
     margin-left: 0 !important;
-    margin-bottom: 15px !important;
+    margin-bottom: 30px;
     width: 100%;
     max-width: 500px;
     box-sizing: border-box;
@@ -59,6 +59,38 @@ select {
 
 input[type="checkbox"] {
     margin-right: 10px;
+}
+
+/* Form Row Spacing */
+.form-row {
+    margin-bottom: 30px;
+}
+
+/* Icon Selector Spacing */
+#icon-selector-container {
+    margin-bottom: 30px;
+}
+
+.icon-preview {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* Color Picker Spacing */
+#color-picker-container {
+    margin-bottom: 30px;
+}
+
+/* Textarea Specific Spacing */
+textarea {
+    margin-bottom: 35px !important;
+    min-height: 120px;
+}
+
+/* Button Groups Spacing */
+.button-group {
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
 
 /* Button Styles */

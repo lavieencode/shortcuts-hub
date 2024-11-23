@@ -33,15 +33,16 @@
 }
 
 #edit-version-modal input, #edit-version-modal textarea, #edit-version-modal select,
-#add-version-modal input, #add-version-modal textarea, #add-version-modal select {
+#add-version-modal input, #add-version-modal textarea, #add-version-modal select,
+#edit-version-modal input[type="text"], #add-version-modal input[type="text"] {
     display: block;
-    background-color: #252525;
+    background-color: #252525 !important;
     color: #CACACA;
-    border: 1px solid #909CFE;
     padding: 10px;
     width: 100%;
     margin-bottom: 15px;
     border-radius: 0;
+    border: none !important;
     font-size: 15px;
 }
 

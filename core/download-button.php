@@ -54,11 +54,24 @@ class Shortcuts_Download_Button extends \Elementor\Widget_Base {
                 display: flex;
                 width: 100%;
             }
-            .elementor-widget-shortcuts_download_button[data-element_type="shortcuts_download_button.default"] .elementor-button {
+            .elementor-widget-shortcuts_download_button .elementor-button {
+                width: 100%;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .elementor-widget-shortcuts_download_button .elementor-button-content-wrapper {
+                display: inline-flex;
+                align-items: center;
+            }
+            .elementor-widget-shortcuts_download_button form {
                 width: 100%;
             }
-            .elementor-widget-shortcuts_download_button .elementor-button-wrapper a {
+            .elementor-widget-shortcuts_download_button button.elementor-button {
                 width: 100%;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
             }
         </style>
         <?php
@@ -67,31 +80,43 @@ class Shortcuts_Download_Button extends \Elementor\Widget_Base {
     public function get_default_settings() {
         return [
             'button_text' => __('Download', 'shortcuts-hub'),
-            'button_icon' => 'fa fa-download',
-            'button_color' => '#FFFFFF',
-            'button_background_color' => '#909CFE',
-            'border_radius' => [
-                'size' => 0,
-                'unit' => 'px',
+            'button_text_logged_out' => __('Log in to Download', 'shortcuts-hub'),
+            'button_icon' => [
+                'value' => 'fas fa-download',
+                'library' => 'fa-solid',
             ],
-            'icon_spacing' => [
-                'size' => 10,
-                'unit' => 'px',
-            ],
-            'button_position' => 'center',
-            'typography_typography' => 'custom',
-            'typography_font_size' => [
-                'size' => 15,
-                'unit' => 'px',
-            ],
-            'typography_font_weight' => '500',
-            'padding' => [
+            'button_size' => 'md',
+            'button_text_color' => '',
+            'button_icon_color' => '',
+            'button_background_color' => '',
+            'button_hover_text_color' => '',
+            'button_hover_icon_color' => '',
+            'button_hover_background_color' => '',
+            'button_padding' => [
                 'top' => '15',
                 'right' => '30',
                 'bottom' => '15',
                 'left' => '30',
                 'unit' => 'px',
                 'isLinked' => false,
+            ],
+            'typography_typography' => 'custom',
+            'typography_font_size' => [
+                'size' => 15,
+                'unit' => 'px',
+            ],
+            'typography_font_weight' => '500',
+            'shortcut_id' => '',
+            'shortcut_name' => '',
+            'version' => '',
+            'download_url' => '',
+            'icon_size' => [
+                'unit' => 'px',
+                'size' => 50,
+            ],
+            'icon_spacing' => [
+                'unit' => 'px',
+                'size' => 8,
             ],
         ];
     }
@@ -108,9 +133,18 @@ class Shortcuts_Download_Button extends \Elementor\Widget_Base {
         $this->add_control(
             'button_text',
             [
-                'label' => __('Button Text', 'shortcuts-hub'),
+                'label' => __('Button Text (Logged In)', 'shortcuts-hub'),
                 'type' => \Elementor\Controls_Manager::TEXT,
                 'default' => $this->get_default_settings()['button_text'],
+            ]
+        );
+
+        $this->add_control(
+            'button_text_logged_out',
+            [
+                'label' => __('Button Text (Logged Out)', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => $this->get_default_settings()['button_text_logged_out'],
             ]
         );
 
@@ -118,73 +152,87 @@ class Shortcuts_Download_Button extends \Elementor\Widget_Base {
             'button_icon',
             [
                 'label' => __('Icon', 'shortcuts-hub'),
-                'type' => \Elementor\Controls_Manager::ICON,
+                'type' => \Elementor\Controls_Manager::ICONS,
                 'default' => $this->get_default_settings()['button_icon'],
-            ]
-        );
-
-        $this->add_control(
-            'button_color',
-            [
-                'label' => __('Text Color', 'shortcuts-hub'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'default' => $this->get_default_settings()['button_color'],
-                'selectors' => [
-                    '{{WRAPPER}} .elementor-button' => 'color: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $this->add_control(
-            'button_background_color',
-            [
-                'label' => __('Background Color', 'shortcuts-hub'),
-                'type' => \Elementor\Controls_Manager::COLOR,
-                'default' => $this->get_default_settings()['button_background_color'],
-                'selectors' => [
-                    '{{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
-                ],
-            ]
-        );
-
-        $this->add_responsive_control(
-            'icon_spacing',
-            [
-                'label' => __('Icon Spacing', 'shortcuts-hub'),
-                'type' => \Elementor\Controls_Manager::SLIDER,
-                'default' => $this->get_default_settings()['icon_spacing'],
-                'range' => [
-                    'px' => [
-                        'min' => 0,
-                        'max' => 50,
-                    ],
-                ],
-                'selectors' => [
-                    '{{WRAPPER}} .elementor-button i' => 'margin-right: {{SIZE}}{{UNIT}};',
-                ],
-            ]
-        );
-
-        $this->add_responsive_control(
-            'border_radius',
-            [
-                'label' => __('Border Radius', 'shortcuts-hub'),
-                'type' => \Elementor\Controls_Manager::DIMENSIONS,
-                'size_units' => ['px', '%'],
-                'default' => $this->get_default_settings()['border_radius'],
-                'selectors' => [
-                    '{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-                ],
             ]
         );
 
         $this->end_controls_section();
 
         $this->start_controls_section(
-            'typography_section',
+            'style_section',
             [
-                'label' => __('Typography', 'shortcuts-hub'),
+                'label' => __('Button', 'shortcuts-hub'),
                 'tab' => \Elementor\Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'icon_size',
+            [
+                'label' => __('Icon Size', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', 'em', 'rem', '%', 'vw'],
+                'range' => [
+                    'px' => [
+                        'min' => 1,
+                        'max' => 200,
+                        'step' => 1,
+                    ],
+                    'em' => [
+                        'min' => 0.1,
+                        'max' => 10,
+                        'step' => 0.1,
+                    ],
+                    'rem' => [
+                        'min' => 0.1,
+                        'max' => 10,
+                        'step' => 0.1,
+                    ],
+                    '%' => [
+                        'min' => 1,
+                        'max' => 100,
+                        'step' => 1,
+                    ],
+                    'vw' => [
+                        'min' => 1,
+                        'max' => 100,
+                        'step' => 1,
+                    ],
+                ],
+                'default' => $this->get_default_settings()['icon_size'],
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-button-icon i' => 'font-size: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .elementor-button-icon svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'icon_spacing',
+            [
+                'label' => __('Icon Spacing', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::SLIDER,
+                'size_units' => ['px', 'em'],
+                'range' => [
+                    'px' => [
+                        'min' => 0,
+                        'max' => 50,
+                        'step' => 1,
+                    ],
+                    'em' => [
+                        'min' => 0,
+                        'max' => 4,
+                        'step' => 0.1,
+                    ],
+                ],
+                'default' => [
+                    'unit' => 'px',
+                    'size' => 8,
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-button .elementor-button-icon' => 'margin-right: {{SIZE}}{{UNIT}};',
+                ],
             ]
         );
 
@@ -197,11 +245,169 @@ class Shortcuts_Download_Button extends \Elementor\Widget_Base {
             ]
         );
 
+        $this->start_controls_tabs('button_style_tabs');
+
+        $this->start_controls_tab(
+            'button_style_normal',
+            [
+                'label' => __('Normal', 'shortcuts-hub'),
+            ]
+        );
+
+        $this->add_control(
+            'button_text_color',
+            [
+                'label' => __('Text Color', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '',
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-button .elementor-button-text' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'button_icon_color',
+            [
+                'label' => __('Icon Color', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '',
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-button .elementor-button-icon i' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .elementor-button .elementor-button-icon svg' => 'fill: {{VALUE}};',
+                ],
+                'separator' => 'after',
+            ]
+        );
+
+        $this->add_control(
+            'button_background_color',
+            [
+                'label' => __('Background Color', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '',
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_tab();
+
+        $this->start_controls_tab(
+            'button_style_hover',
+            [
+                'label' => __('Hover', 'shortcuts-hub'),
+            ]
+        );
+
+        $this->add_control(
+            'button_hover_text_color',
+            [
+                'label' => __('Text Color', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '',
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-button:hover .elementor-button-text' => 'color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'button_hover_icon_color',
+            [
+                'label' => __('Icon Color', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '',
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-button:hover .elementor-button-icon i' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .elementor-button:hover .elementor-button-icon svg' => 'fill: {{VALUE}};',
+                ],
+                'separator' => 'after',
+            ]
+        );
+
+        $this->add_control(
+            'button_hover_background_color',
+            [
+                'label' => __('Background Color', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::COLOR,
+                'default' => '',
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-button:hover' => 'background-color: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_tab();
+
+        $this->end_controls_tabs();
+
+        $this->add_control(
+            'button_padding',
+            [
+                'label' => __('Padding', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', 'em', '%'],
+                'selectors' => [
+                    '{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+                'default' => $this->get_default_settings()['button_padding'],
+            ]
+        );
+
+        $this->end_controls_section();
+
+        $this->start_controls_section(
+            'advanced_section',
+            [
+                'label' => __('Advanced', 'shortcuts-hub'),
+                'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $this->add_control(
+            'shortcut_id',
+            [
+                'label' => __('Shortcut ID', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => $this->get_default_settings()['shortcut_id'],
+            ]
+        );
+
+        $this->add_control(
+            'shortcut_name',
+            [
+                'label' => __('Shortcut Name', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => $this->get_default_settings()['shortcut_name'],
+            ]
+        );
+
+        $this->add_control(
+            'version',
+            [
+                'label' => __('Version', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => $this->get_default_settings()['version'],
+            ]
+        );
+
+        $this->add_control(
+            'download_url',
+            [
+                'label' => __('Download URL', 'shortcuts-hub'),
+                'type' => \Elementor\Controls_Manager::TEXT,
+                'default' => $this->get_default_settings()['download_url'],
+            ]
+        );
+
         $this->end_controls_section();
     }
 
     protected function render() {
         $settings = $this->get_settings_for_display();
+        
         if (empty($settings)) {
             $settings = $this->get_default_settings();
         }
@@ -220,6 +426,9 @@ class Shortcuts_Download_Button extends \Elementor\Widget_Base {
             return;
         }
 
+        // Get the current page URL for redirect
+        $current_url = get_permalink($post_id);
+
         if (is_user_logged_in()) {
             if (!is_singular('shortcut')) {
                 echo '<div class="elementor-alert elementor-alert-warning">This button can only be used on a shortcut post page.</div>';
@@ -228,151 +437,88 @@ class Shortcuts_Download_Button extends \Elementor\Widget_Base {
 
             $response = sb_api_call("shortcuts/{$sb_id}/version/latest", 'GET');
             if (is_wp_error($response)) {
+                error_log('Shortcuts Hub API Error: ' . $response->get_error_message());
                 echo '<div class="elementor-alert elementor-alert-warning">Error fetching download link: ' . esc_html($response->get_error_message()) . '</div>';
                 return;
             }
 
+            error_log('Shortcuts Hub API Response: ' . print_r($response, true));
+
+            // Extract download URL from the correct path in the response
             $download_url = '';
-            if (isset($response['version']['url'])) {
+            if (isset($response['version']) && isset($response['version']['url'])) {
                 $download_url = esc_url($response['version']['url']);
-            }
-
-            if (!empty($download_url)) {
-                $transient_key = 'download_url_' . get_current_user_id();
-                set_transient($transient_key, $download_url, HOUR_IN_SECONDS);
-                
-                $this->add_render_attribute('wrapper', 'class', 'elementor-button-wrapper');
-                $this->add_render_attribute('button', [
-                    'class' => 'elementor-button elementor-size-md shortcuts-download-btn',
-                    'href' => 'javascript:void(0)',
-                    'data-sb-id' => $sb_id,
-                    'data-post-id' => $post_id,
-                    'data-post-url' => get_permalink($post_id),
-                    'data-download-url' => $download_url,
-                    'data-nonce' => wp_create_nonce('shortcut_download'),
-                    'data-shortcut-name' => isset($response['shortcut']['name']) ? esc_attr($response['shortcut']['name']) : '',
-                    'data-version' => isset($response['version']) ? esc_attr($response['version']) : '',
-                ]);
-
-                ?>
-                <div <?php echo $this->get_render_attribute_string('wrapper'); ?>>
-                    <a <?php echo $this->get_render_attribute_string('button'); ?>>
-                        <?php if (!empty($settings['button_icon'])) : ?>
-                            <i class="<?php echo esc_attr($settings['button_icon']); ?>"></i>
-                        <?php endif; ?>
-                        <?php echo esc_html($settings['button_text']); ?>
-                    </a>
-                </div>
-
-                <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const downloadBtn = document.querySelector('.shortcuts-download-btn');
-                    let downloadWindow = null;
-                    let downloadStarted = false;
-                    let downloadTimeout = null;
-                    
-                    function checkPopupStatus() {
-                        if (downloadWindow && downloadWindow.closed) {
-                            downloadWindow = null;
-                            if (!downloadStarted) {
-                                console.log('Download window closed without starting download');
-                            }
-                            if (downloadTimeout) {
-                                clearTimeout(downloadTimeout);
-                            }
-                        }
-                    }
-
-                    function logDownload() {
-                        if (downloadStarted) {
-                            return;
-                        }
-                        
-                        downloadStarted = true;
-                        const shortcutId = downloadBtn.getAttribute('data-sb-id');
-                        const postId = downloadBtn.getAttribute('data-post-id');
-                        const nonce = downloadBtn.getAttribute('data-nonce');
-                        const shortcutName = downloadBtn.getAttribute('data-shortcut-name');
-                        const version = downloadBtn.getAttribute('data-version');
-
-                        const data = new FormData();
-                        data.append('action', 'log_shortcut_download');
-                        data.append('shortcut_id', shortcutId);
-                        data.append('post_id', postId);
-                        data.append('shortcut_name', shortcutName);
-                        data.append('version', version);
-                        data.append('nonce', nonce);
-
-                        fetch(ajaxurl, {
-                            method: 'POST',
-                            credentials: 'same-origin',
-                            body: data
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Download logged successfully:', data);
-                        })
-                        .catch(error => {
-                            console.error('Error logging download:', error);
-                        });
-                    }
-                    
-                    downloadBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        const downloadUrl = this.getAttribute('data-download-url');
-                        
-                        const width = 800;
-                        const height = 600;
-                        const left = (window.innerWidth - width) / 2;
-                        const top = (window.innerHeight - height) / 2;
-                        
-                        downloadWindow = window.open(
-                            downloadUrl,
-                            'ShortcutDownload',
-                            `width=${width},height=${height},left=${left},top=${top},menubar=no,toolbar=no,location=no,status=no`
-                        );
-
-                        const popupChecker = setInterval(() => {
-                            if (downloadWindow && downloadWindow.closed) {
-                                clearInterval(popupChecker);
-                                downloadWindow = null;
-                                if (!downloadStarted) {
-                                    console.log('Download window closed without starting download');
-                                }
-                            }
-                        }, 500);
-
-                        downloadTimeout = setTimeout(() => {
-                            if (downloadWindow && !downloadWindow.closed) {
-                                logDownload();
-                            }
-                        }, 5000);
-
-                        if (downloadWindow) {
-                            downloadWindow.focus();
-                        }
-                    });
-                });
-                </script>
-                <?php
             } else {
-                echo '<div class="elementor-alert elementor-alert-warning">Download link not available. Please try again later.</div>';
+                error_log('Shortcuts Hub: No download URL in response');
+                return;
             }
-        } else {
-            $login_url = 'https://debotchery.ai/shortcuts-gallery/login';
-            
-            $this->add_render_attribute('login_button', [
-                'class' => 'elementor-button elementor-size-md',
-                'href' => esc_url($login_url),
+
+            // Render the button
+            $this->add_render_attribute('wrapper', 'class', 'elementor-button-wrapper');
+            $this->add_render_attribute('button', [
+                'class' => ['elementor-button', 'shortcut-download-btn', $settings['button_size']],
+                'href' => 'javascript:void(0)',
+                'data-download-url' => $download_url,
+                'data-redirect-url' => $current_url,
+                'data-sb-id' => $sb_id,
+                'data-post-id' => $post_id,
+                'data-version' => wp_json_encode($response)  // Store complete response for logging
             ]);
             
             ?>
-            <div class="elementor-button-wrapper">
-                <a <?php echo $this->get_render_attribute_string('login_button'); ?>>
-                    <?php if (!empty($settings['button_icon'])) : ?>
-                        <i class="<?php echo esc_attr($settings['button_icon']); ?>"></i>
-                    <?php endif; ?>
-                    <?php echo esc_html__('Login to Download', 'shortcuts-hub'); ?>
+            <div <?php $this->print_render_attribute_string('wrapper'); ?>>
+                <a <?php $this->print_render_attribute_string('button'); ?>>
+                    <span class="elementor-button-content-wrapper">
+                        <?php if (!empty($settings['button_icon']['value'])) : ?>
+                            <span class="elementor-button-icon">
+                                <?php \Elementor\Icons_Manager::render_icon($settings['button_icon'], ['aria-hidden' => 'true']); ?>
+                            </span>
+                        <?php endif; ?>
+                        <span class="elementor-button-text">
+                            <?php echo esc_html(is_user_logged_in() ? $settings['button_text'] : $settings['button_text_logged_out']); ?>
+                        </span>
+                    </span>
+                </a>
+            </div>
+            <?php
+        } else {
+            // For non-logged in users, render button that will redirect to login
+            $this->add_render_attribute('wrapper', 'class', 'elementor-button-wrapper');
+            
+            // Get version data even for non-logged in users
+            $response = sb_api_call("shortcuts/{$sb_id}/version/latest", 'GET');
+            if (is_wp_error($response)) {
+                error_log('Shortcuts Hub API Error (non-logged in): ' . $response->get_error_message());
+            }
+            
+            $button_attrs = [
+                'class' => ['elementor-button', 'shortcut-download-btn', $settings['button_size']],
+                'href' => 'javascript:void(0)',
+                'data-redirect-url' => $current_url,
+                'data-sb-id' => $sb_id,
+                'data-post-id' => $post_id
+            ];
+            
+            if (!is_wp_error($response) && isset($response['version']) && isset($response['version']['url'])) {
+                $button_attrs['data-download-url'] = esc_url($response['version']['url']);
+                $button_attrs['data-version'] = wp_json_encode($response);
+            }
+            
+            $this->add_render_attribute('button', $button_attrs);
+            
+            ?>
+            <div <?php $this->print_render_attribute_string('wrapper'); ?>>
+                <a <?php $this->print_render_attribute_string('button'); ?>>
+                    <span class="elementor-button-content-wrapper">
+                        <?php if (!empty($settings['button_icon']['value'])) : ?>
+                            <span class="elementor-button-icon">
+                                <?php \Elementor\Icons_Manager::render_icon($settings['button_icon'], ['aria-hidden' => 'true']); ?>
+                            </span>
+                        <?php endif; ?>
+                        <span class="elementor-button-text">
+                            <?php echo esc_html(is_user_logged_in() ? $settings['button_text'] : $settings['button_text_logged_out']); ?>
+                        </span>
+                    </span>
                 </a>
             </div>
             <?php
@@ -404,4 +550,180 @@ class Shortcuts_Test_Widget extends \Elementor\Widget_Base {
     protected function render() {
         echo 'Hello, World!';
     }
+}
+
+function shortcuts_hub_download_button($atts) {
+    $atts = shortcode_atts(array(
+        'download_url' => '',
+        'redirect_url' => get_permalink(),
+        'sb_id' => '',
+        'post_id' => get_the_ID(),
+        'version' => '',
+        'class' => '',
+        'text' => ''
+    ), $atts, 'shortcut_download_button');
+
+    if (empty($atts['download_url'])) {
+        return '';
+    }
+
+    // Set button text based on login status
+    $button_text = !empty($atts['text']) ? $atts['text'] : (is_user_logged_in() ? 'Download' : 'Login to Download');
+    
+    // Build button classes
+    $classes = array('shortcut-download-button');
+    if (!empty($atts['class'])) {
+        $classes[] = $atts['class'];
+    }
+    
+    // Build button attributes
+    $attributes = array(
+        'class' => implode(' ', $classes),
+        'href' => '#',
+        'data-download-url' => esc_url($atts['download_url']),
+        'data-redirect-url' => esc_url($atts['redirect_url']),
+        'data-sb-id' => esc_attr($atts['sb_id']),
+        'data-post-id' => esc_attr($atts['post_id']),
+        'data-version' => esc_attr($atts['version'])
+    );
+    
+    // Build HTML attributes string
+    $html_attributes = '';
+    foreach ($attributes as $key => $value) {
+        $html_attributes .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
+    }
+    
+    return sprintf('<a%s>%s</a>', $html_attributes, esc_html($button_text));
+}
+add_shortcode('shortcut_download_button', 'shortcuts_hub_download_button');
+
+// AJAX handler for storing download URLs
+function store_download_urls() {
+    check_ajax_referer('shortcuts_hub_nonce', '_wpnonce');
+
+    $download_url = sanitize_url($_POST['download_url']);
+    $redirect_url = sanitize_url($_POST['redirect_url']);
+
+    // Generate a unique key for this download session
+    $session_key = wp_generate_password(32, false);
+    
+    // Store URLs in transient with 15-minute expiry
+    set_transient('sh_download_' . $session_key, array(
+        'download_url' => $download_url,
+        'redirect_url' => $redirect_url
+    ), 15 * MINUTE_IN_SECONDS);
+
+    // Set cookie with session key
+    setcookie('sh_download_session', $session_key, time() + (15 * MINUTE_IN_SECONDS), '/');
+
+    wp_send_json_success(array(
+        'message' => 'URLs stored successfully',
+        'session_key' => $session_key
+    ));
+}
+add_action('wp_ajax_store_download_urls', 'store_download_urls');
+
+// AJAX handler for storing download data
+add_action('wp_ajax_log_shortcut_download', 'sh_log_shortcut_download');
+
+function sh_log_shortcut_download() {
+    // Ensure user is logged in
+    if (!is_user_logged_in()) {
+        error_log('[Shortcuts Hub] Download attempt by non-logged-in user');
+        wp_send_json_error('User must be logged in to track downloads');
+        return;
+    }
+
+    // Verify nonce
+    if (!check_ajax_referer('shortcuts_hub_nonce', 'security', false)) {
+        error_log('[Shortcuts Hub] Download logging failed: Invalid nonce');
+        wp_send_json_error('Security check failed');
+        return;
+    }
+
+    // Ensure the downloads table exists
+    ensure_downloads_table_exists();
+
+    $shortcut_id = isset($_POST['shortcut_id']) ? sanitize_text_field($_POST['shortcut_id']) : '';
+    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+    $version_data = isset($_POST['version_data']) ? $_POST['version_data'] : array();
+    
+    // If version_data is a string (JSON), decode it
+    if (is_string($version_data)) {
+        $version_data = json_decode(stripslashes($version_data), true);
+    }
+
+    if (empty($shortcut_id) || empty($post_id)) {
+        error_log('[Shortcuts Hub] Download logging failed: Missing required parameters');
+        wp_send_json_error('Missing required parameters');
+        return;
+    }
+
+    $user_id = get_current_user_id();
+    $logged = sh_log_shortcut_download_to_db($shortcut_id, $post_id, $user_id, $version_data);
+
+    if ($logged) {
+        wp_send_json_success('Download logged successfully');
+    } else {
+        error_log('[Shortcuts Hub] Failed to log download to database');
+        wp_send_json_error('Failed to log download');
+    }
+}
+
+function sh_log_shortcut_download_to_db($shortcut_id, $post_id, $user_id, $version_data) {
+    global $wpdb;
+    
+    $table_name = $wpdb->prefix . 'shortcutshub_downloads';
+
+    // Get IP address
+    $ip_address = $_SERVER['REMOTE_ADDR'];
+    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    }
+
+    // Ensure version_data is an array
+    if (!is_array($version_data)) {
+        $version_data = array();
+    }
+
+    $data = array(
+        'user_id' => $user_id,
+        'shortcut_id' => $shortcut_id,
+        'post_id' => $post_id,
+        'post_url' => get_permalink($post_id),
+        'shortcut_name' => get_the_title($post_id),
+        'version' => isset($version_data['version']) ? sanitize_text_field($version_data['version']) : '',
+        'version_notes' => isset($version_data['notes']) ? sanitize_text_field($version_data['notes']) : '',
+        'minimum_ios' => isset($version_data['minimumiOS']) ? sanitize_text_field($version_data['minimumiOS']) : '',
+        'minimum_mac' => isset($version_data['minimumMac']) ? sanitize_text_field($version_data['minimumMac']) : '',
+        'download_url' => isset($version_data['url']) ? esc_url_raw($version_data['url']) : '',
+        'ip_address' => sanitize_text_field($ip_address),
+        'is_required' => isset($version_data['required']) ? (bool)$version_data['required'] : false,
+        'download_date' => current_time('mysql')
+    );
+    
+    $format = array(
+        '%d', // user_id
+        '%s', // shortcut_id
+        '%d', // post_id
+        '%s', // post_url
+        '%s', // shortcut_name
+        '%s', // version
+        '%s', // version_notes
+        '%s', // minimum_ios
+        '%s', // minimum_mac
+        '%s', // download_url
+        '%s', // ip_address
+        '%d', // is_required
+        '%s'  // download_date
+    );
+
+    $result = $wpdb->insert($table_name, $data, $format);
+
+    if ($result === false) {
+        error_log('[Shortcuts Hub] Database error while logging download: ' . $wpdb->last_error);
+        return false;
+    }
+    
+    return true;
 }

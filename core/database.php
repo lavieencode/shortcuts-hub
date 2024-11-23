@@ -10,47 +10,47 @@ function shortcuts_hub_install_db() {
     $charset_collate = $wpdb->get_charset_collate();
     $table_name = $wpdb->prefix . 'shortcutshub_downloads';
 
-    // Drop existing table to ensure clean installation
-    $wpdb->query("DROP TABLE IF EXISTS $table_name");
+    // Only create table if it doesn't exist
+    if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+        // SQL for creating the downloads table with enhanced fields
+        $sql = "CREATE TABLE $table_name (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            user_id bigint(20) NOT NULL,
+            shortcut_id varchar(255) NOT NULL,
+            post_id bigint(20) NOT NULL,
+            post_url text NOT NULL,
+            shortcut_name varchar(255) NOT NULL,
+            version varchar(50) NOT NULL,
+            version_notes text,
+            minimum_ios varchar(50),
+            minimum_mac varchar(50),
+            download_url text NOT NULL,
+            ip_address varchar(45) NOT NULL,
+            is_required BOOLEAN DEFAULT 0,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            download_date datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            KEY user_id (user_id),
+            KEY shortcut_id (shortcut_id),
+            KEY post_id (post_id),
+            KEY download_date (download_date),
+            KEY ip_address (ip_address)
+        ) $charset_collate;";
 
-    // SQL for creating the downloads table with enhanced fields
-    $sql = "CREATE TABLE $table_name (
-        id bigint(20) NOT NULL AUTO_INCREMENT,
-        user_id bigint(20) NOT NULL,
-        shortcut_id varchar(255) NOT NULL,
-        post_id bigint(20) NOT NULL,
-        post_url text NOT NULL,
-        shortcut_name varchar(255) NOT NULL,
-        version varchar(50) NOT NULL,
-        version_notes text,
-        minimum_ios varchar(50),
-        minimum_mac varchar(50),
-        download_url text NOT NULL,
-        ip_address varchar(45) NOT NULL,
-        is_required BOOLEAN DEFAULT 0,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        download_date datetime DEFAULT CURRENT_TIMESTAMP,
-        PRIMARY KEY (id),
-        KEY user_id (user_id),
-        KEY shortcut_id (shortcut_id),
-        KEY post_id (post_id),
-        KEY download_date (download_date),
-        KEY ip_address (ip_address)
-    ) $charset_collate;";
+        // Include WordPress upgrade functions
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-    // Include WordPress upgrade functions
-    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        // Create/update the table
+        dbDelta($sql);
 
-    // Create/update the table
-    dbDelta($sql);
+        // Log any errors
+        if ($wpdb->last_error) {
+            error_log('Shortcuts Hub DB Installation Error: ' . $wpdb->last_error);
+            return false;
+        }
 
-    // Log any errors
-    if ($wpdb->last_error) {
-        error_log('Shortcuts Hub DB Installation Error: ' . $wpdb->last_error);
-        return false;
+        update_option('shortcuts_hub_db_version', '1.2');
     }
-
-    update_option('shortcuts_hub_db_version', '1.2');
     return true;
 }
 
@@ -117,6 +117,16 @@ function log_shortcut_download($shortcut_name, $version_data, $download_url) {
     }
 }
 
+// Function to ensure the downloads table exists
+function ensure_downloads_table_exists() {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'shortcutshub_downloads';
+    
+    if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+        shortcuts_hub_install_db();
+    }
+}
+
 // Enhanced function to get user's download history
 function get_user_downloads($user_id = null) {
     global $wpdb;
@@ -149,4 +159,7 @@ function get_user_downloads($user_id = null) {
 }
 
 // Register activation hook in your main plugin file
-register_activation_hook(__FILE__, 'shortcuts_hub_install_db');
+register_activation_hook(SHORTCUTS_HUB_PATH . 'shortcuts-hub.php', 'shortcuts_hub_install_db');
+
+// Also ensure table exists on plugin load
+add_action('plugins_loaded', 'ensure_downloads_table_exists');

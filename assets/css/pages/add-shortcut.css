@@ -1,3 +1,7 @@
+h1 {
+    margin-bottom: 40px !important;
+}
+
 #add-shortcut-page {
     display: flex;
     flex-wrap: wrap;
@@ -11,10 +15,20 @@
     width: 100%;
 }
 
+.success-message {
+    color: #909CFE;
+    font-weight: bold;
+}
+
+.error-message {
+    color: #FF5733;
+    font-weight: bold;
+}
+
 .form-columns {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
 }
 
 .form-column {
@@ -43,7 +57,7 @@ textarea,
 select {
     background-color: #252525;
     color: #CACACA;
-    border: 1px solid #909CFE;
+    border: none;
     padding: 10px;
     margin-top: 0;
     margin-bottom: 15px;
@@ -55,45 +69,14 @@ select {
     display: block;
 }
 
-.draft-button {
-    background-color: transparent;
-    color: #909CFE;
-    border: 2px solid #909CFE;
-    padding: 8px 16px;
-    cursor: pointer;
-    font-size: 14px;
-    width: auto;
-    display: inline-block;
-    text-align: center;
-    border-radius: 0 !important;
-}
-
-#message {
-    color: #909CFE;
-    font-weight: bold;
-    display: none;
-}
-
-.error-message {
-    color: #FF5733;
-    font-weight: bold;
-}
-
-@media (max-width: 768px) {
-    .form-column {
-        flex: 100%;
-    }
-}
-
 .color-input-wrapper {
-    display: flex;
+    display: block;
     align-items: center;
     margin: 0;
 }
 
 .color-picker {
     background-color: transparent;
-    border: 1px solid #ccc;
     padding: 5px;
     width: 100px !important;
     margin: 0 !important;
@@ -107,35 +90,156 @@ select {
     cursor: pointer;
 }
 
+#color-picker-container {
+    display: block;
+}
+
 .wp-picker-container {
     background: none !important;
+    margin-bottom: 20px !important;
 }
 
-.wp-picker-container .wp-color-result {
-    background-color: #909cfe !important;
-    background: #909cfe !important;
+.wp-picker-container label,
+.wp-picker-container > label,
+.wp-picker-input-wrap label,
+label.wp-picker-input-wrap {
+    display: none !important;
 }
 
-.wp-picker-container .wp-color-result:hover {
-    background-color: #909cfe !important;
-    background: #909cfe !important;
-}
-
-.wp-picker-input-wrap label{
-    background: none !important;
-    background-color: transparent !important;
-}
-
-.wp-picker-input-wrap input[type=button]{
+.wp-picker-container .wp-color-result.button {
+    background-color: #909CFE !important;
+    border: none !important;
     border-radius: 0 !important;
+    height: 40px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
+.wp-picker-container .wp-color-result-text {
+    background: none !important;
+    color: #252525 !important;
+    font-weight: bold !important;
+    height: 40px !important;
+    line-height: 40px !important;
+    border: none !important;
+    text-align: center !important;
+    padding: 0 15px !important;
+    flex: 1 !important;
+}
+
+.wp-picker-container .wp-picker-input-wrap {
+    display: flex !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.wp-picker-container .wp-picker-input-wrap .wp-color-picker {
+    height: 40px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    width: calc(100% - 30px) !important;
+}
+
+.wp-picker-container .wp-picker-input-wrap:after {
+    content: "×" !important;
+    cursor: pointer !important;
+    font-size: 20px !important;
+    color: #666 !important;
+    margin-left: 10px !important;
+    line-height: 40px !important;
+}
+
+.wp-picker-container .wp-picker-input-wrap .button.wp-picker-clear {
+    display: none !important;
 }
 
 .iris-picker {
     background: none !important;
     background-color: transparent !important;
     border: none !important;
+    margin-top: 0 !important;
 }
 
-label[for="shortcut-color"] {
-    margin-bottom: 5px !important;
+#actions {
+    background-color: #373737;
+    color: #CACACA;
+    border: none;
+    border-radius: 0;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+#color {
+    margin-bottom: 0 !important;
+    border: none !important;
+    outline: none !important;
+}
+
+/* Add shortcut specific styles */
+.draft-button {
+    background-color: transparent;
+    color: #909CFE;
+    border: 2px solid #909CFE;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    width: auto;
+    display: inline-block;
+    text-align: center;
+    border-radius: 0 !important;
+    margin-right: 10px;
+}
+
+.button-container {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+#add-shortcut {
+    background-color: #909CFE;
+    color: #252525;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#message {
+    margin-top: 15px;
+    padding: 10px;
+    display: none;
+}
+
+.icon-preview {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 5px;
+}
+
+.icon-preview i {
+    font-size: 24px;
+    color: #909CFE;
+}
+
+.icon-preview img {
+    max-width: 24px;
+    max-height: 24px;
+    object-fit: contain;
+    margin: auto;
+}
+
+@media (max-width: 768px) {
+    .form-column {
+        flex: 100%;
+    }
 }

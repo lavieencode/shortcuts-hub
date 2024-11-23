@@ -35,7 +35,8 @@ function shortcuts_hub_render_edit_shortcut_page() {
     <div id="edit-shortcut-page" class="wrap">
         <h1><?php esc_html_e('Edit Shortcut', 'shortcuts-hub'); ?></h1>
         <h2 id="shortcut-title"><?php echo esc_html($name); ?></h2>
-        <form id="edit-shortcut-form" class="form-container">
+        <form id="edit-shortcut-form" class="form-container" onsubmit="event.preventDefault(); return false;">
+            <input type="hidden" id="shortcut-post-id" name="post_id" value="<?php echo esc_attr($post_id); ?>">
             <input type="hidden" id="shortcut-id" name="id" value="<?php echo esc_attr($id); ?>">
             <div class="form-columns">
                 <div class="form-column">
@@ -72,14 +73,19 @@ function shortcuts_hub_render_edit_shortcut_page() {
                         <div id="color-picker-container"></div>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="shortcut-icon">Icon</label>
-                        <input type="text" id="shortcut-icon" name="icon" value="<?php echo esc_attr($icon); ?>" readonly>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="id">SB ID</label>
-                        <input type="text" id="id" name="id" value="<?php echo esc_attr($id); ?>" readonly>
+                    <div class="form-group icon-field-wrapper">
+                        <label for="icon-type-selector">Icon</label>
+                        <div class="icon-selector-container">
+                            <div class="icon-input-row">
+                                <select id="icon-type-selector" class="icon-type-selector">
+                                    <option value="fontawesome">Font Awesome Icon</option>
+                                    <option value="custom">Custom Upload</option>
+                                </select>
+                                <div class="icon-preview"></div>
+                            </div>
+                            <div id="icon-selector-content"></div>
+                        </div>
+                        <input type="hidden" id="shortcut-icon" name="icon" value="<?php echo esc_attr($icon); ?>">
                     </div>
                 </div>
             </div>
@@ -91,8 +97,10 @@ function shortcuts_hub_render_edit_shortcut_page() {
                 </select>
             </div>
             
+            <input type="hidden" id="sb-id" name="sb_id" value="<?php echo esc_attr($id); ?>">
+            
             <div class="button-container">
-                <button type="submit" id="publish-shortcut" class="publish-button">Publish</button>
+                <button type="button" id="publish-shortcut" class="publish-button">Publish</button>
                 <button type="button" id="delete-shortcut" class="delete-button">Delete</button>
                 <button type="button" class="cancel-button">Cancel</button>
             </div>
@@ -100,4 +108,26 @@ function shortcuts_hub_render_edit_shortcut_page() {
         <div id="feedback-message"></div>
     </div>
     <?php
+    // Add initialization script inline after all scripts are loaded
+    add_action('admin_footer', function() use ($icon) {
+        ?>
+        <script>
+        jQuery(document).ready(function($) {
+            // Initialize icon selector only once
+            if (typeof IconSelector !== 'undefined' && !window.iconSelector) {
+                window.iconSelector = new IconSelector({
+                    container: document.getElementById('icon-selector-content'),
+                    inputField: document.getElementById('shortcut-icon'),
+                    previewContainer: document.querySelector('.icon-preview'),
+                    onChange: function(value) {
+                        console.log('Icon changed:', value);
+                    }
+                });
+            } else if (!IconSelector) {
+                console.error('IconSelector not loaded');
+            }
+        });
+        </script>
+        <?php
+    });
 }

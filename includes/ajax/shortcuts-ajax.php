@@ -63,6 +63,34 @@ function fetch_shortcut() {
     if ($source === 'WP') {
         $shortcut = get_post($post_id);
         if ($shortcut) {
+            // Get the icon data and ensure it's properly formatted
+            $icon_data = get_post_meta($post_id, 'icon', true);
+            error_log('Raw icon data from DB: ' . print_r($icon_data, true));
+            
+            if (!empty($icon_data)) {
+                // If it's already a JSON string, validate it
+                $decoded = json_decode($icon_data, true);
+                if ($decoded === null) {
+                    // Not valid JSON, try to convert legacy format
+                    if (filter_var($icon_data, FILTER_VALIDATE_URL)) {
+                        $icon_data = wp_json_encode([
+                            'type' => 'custom',
+                            'url' => esc_url_raw($icon_data)
+                        ]);
+                    } else {
+                        $icon_data = wp_json_encode([
+                            'type' => 'fontawesome',
+                            'name' => sanitize_text_field($icon_data)
+                        ]);
+                    }
+                    error_log('Converted legacy format to: ' . print_r($icon_data, true));
+                } else {
+                    // Re-encode to ensure consistent format
+                    $icon_data = wp_json_encode($decoded);
+                    error_log('Re-encoded valid JSON: ' . print_r($icon_data, true));
+                }
+            }
+            
             $response = array(
                 'success' => true,
                 'data' => array(
@@ -71,7 +99,7 @@ function fetch_shortcut() {
                     'headline' => get_post_meta($post_id, 'headline', true),
                     'description' => get_post_meta($post_id, 'description', true),
                     'color' => get_post_meta($post_id, 'color', true),
-                    'icon' => get_post_meta($post_id, 'icon', true),
+                    'icon' => $icon_data,
                     'input' => get_post_meta($post_id, 'input', true),
                     'result' => get_post_meta($post_id, 'result', true),
                     'sb_id' => get_post_meta($post_id, 'sb_id', true),
@@ -80,6 +108,7 @@ function fetch_shortcut() {
                     'draft' => get_post_meta($post_id, 'draft', true),
                 )
             );
+            error_log('Sending response: ' . print_r($response, true));
         } else {
             $response = array('success' => false, 'message' => 'Shortcut not found.');
         }
@@ -152,6 +181,21 @@ function create_shortcut() {
         update_post_meta($post_id, 'sb_id', sanitize_text_field($id));
         update_post_meta($post_id, 'name', sanitize_text_field($shortcut_data['name']));
         
+        // Set the website URL to the WordPress edit page for this shortcut
+        $website_url = get_site_url() . '/wp-admin/admin.php?page=edit-shortcut&id=' . $post_id;
+        update_post_meta($post_id, 'website', esc_url_raw($website_url));
+        
+        // Update the Switchblade data with the website URL
+        $update_sb_data = array(
+            'website' => $website_url
+        );
+        $update_endpoint = 'shortcuts/' . $id;
+        $update_response = sb_api_call($update_endpoint, 'PUT', [], $update_sb_data);
+        
+        if (is_wp_error($update_response)) {
+            error_log('Failed to update Switchblade website URL: ' . $update_response->get_error_message());
+        }
+        
         if (isset($shortcut_data['actions']) && is_array($shortcut_data['actions'])) {
             update_post_meta($post_id, 'actions', $shortcut_data['actions']);
         }
@@ -188,13 +232,66 @@ function update_shortcut() {
         update_post_meta($updated_post_id, 'headline', sanitize_text_field($shortcut_data['headline']));
         update_post_meta($updated_post_id, 'description', sanitize_textarea_field($shortcut_data['description']));
         update_post_meta($updated_post_id, 'color', sanitize_hex_color($shortcut_data['color']));
-        update_post_meta($updated_post_id, 'icon', sanitize_text_field($shortcut_data['icon']));
+        
+        // Handle icon data properly
+        if (isset($shortcut_data['icon']) && !empty($shortcut_data['icon'])) {
+            error_log('Raw icon data received: ' . print_r($shortcut_data['icon'], true));
+            
+            // Ensure we have a clean, unslashed JSON string
+            $icon_data = wp_unslash($shortcut_data['icon']);
+            error_log('After unslash: ' . print_r($icon_data, true));
+            
+            // Decode to validate structure
+            $decoded = json_decode($icon_data, true);
+            error_log('Decoded from JSON string: ' . print_r($decoded, true));
+            
+            // Validate the icon data structure
+            if ($decoded && (
+                // Valid if it's a FontAwesome icon with type and name
+                (isset($decoded['type']) && $decoded['type'] === 'fontawesome' && isset($decoded['name'])) ||
+                // Or if it's a custom icon with type and url
+                (isset($decoded['type']) && $decoded['type'] === 'custom' && isset($decoded['url']))
+            )) {
+                // Re-encode to ensure consistent format
+                $icon_json = wp_json_encode($decoded);
+                error_log('Re-encoded valid icon data: ' . print_r($icon_json, true));
+                update_post_meta($updated_post_id, 'icon', wp_slash($icon_json));
+                
+                // Verify saved data
+                $saved_data = get_post_meta($updated_post_id, 'icon', true);
+                error_log('Verified saved data: ' . print_r($saved_data, true));
+            } else {
+                error_log('Invalid icon data structure: ' . print_r($decoded, true));
+                // If invalid structure, try to convert legacy format
+                if (is_string($icon_data)) {
+                    if (filter_var($icon_data, FILTER_VALIDATE_URL)) {
+                        $legacy_data = [
+                            'type' => 'custom',
+                            'url' => esc_url_raw($icon_data)
+                        ];
+                    } else {
+                        $legacy_data = [
+                            'type' => 'fontawesome',
+                            'name' => sanitize_text_field($icon_data)
+                        ];
+                    }
+                    $legacy_json = wp_json_encode($legacy_data);
+                    error_log('Converting to legacy format: ' . print_r($legacy_json, true));
+                    update_post_meta($updated_post_id, 'icon', wp_slash($legacy_json));
+                }
+            }
+        } else {
+            error_log('No icon data received in shortcut_data');
+        }
+        
         update_post_meta($updated_post_id, 'input', sanitize_text_field($shortcut_data['input']));
         update_post_meta($updated_post_id, 'result', sanitize_text_field($shortcut_data['result']));
         update_post_meta($updated_post_id, 'sb_id', sanitize_text_field($shortcut_data['sb_id']));
-        update_post_meta($updated_post_id, 'name', sanitize_text_field($shortcut_data['name']));
 
-        wp_send_json_success(array('message' => 'Shortcut updated successfully.'));
+        wp_send_json_success(array(
+            'message' => 'Shortcut updated successfully.',
+            'post_id' => $updated_post_id
+        ));
     } else {
         wp_send_json_error(array('message' => 'Failed to update shortcut.'));
     }

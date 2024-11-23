@@ -31,7 +31,7 @@ class Shortcuts_Hub_Elementor {
 
     public function register_widgets($widgets_manager) {
         require_once(__DIR__ . '/download-button.php');
-        $widgets_manager->register(new Shortcuts_Download_Button());
+        $widgets_manager->register(new \Shortcuts_Download_Button());
     }
 
     public function register_dynamic_tags($dynamic_tags_manager) {

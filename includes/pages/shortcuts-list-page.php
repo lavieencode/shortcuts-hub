@@ -13,56 +13,53 @@ function shortcuts_hub_render_shortcuts_list_page() {
     ?>
     <div id="shortcuts-list-page" class="wrap">
         <?php if ($view !== 'versions') : ?>
-        <h1 class="shortcuts-page-title">SHORTCUTS LIST</h1>
-        <h2 id="shortcut-name-display" style="display: none;"></h2>
-
-        <button id="back-to-shortcuts" style="display: none;">Back to Shortcuts</button>
-
-        <div id="shortcuts-header-bar">
-            <input type="text" id="search-input" placeholder="Search shortcuts">
-            <select id="filter-status">
-                <option value="">Any</option>
-                <option value="0">Published</option>
-                <option value="1">Draft</option>
-            </select>
-            <select id="filter-deleted">
-                <option value="">Any</option>
-                <option value="false">Not Deleted</option>
-                <option value="true">Deleted</option>
-            </select>
-            <button id="reset-filters" class="restore-button">Reset filters</button>
-        </div>
-
-        <div id="shortcuts-container" class="shortcuts-container"></div>
-        <?php endif; ?>
-
-        <?php if ($view === 'versions') : ?>
-        <h1 class="versions-page-title">VERSIONS LIST</h1>
-        <?php endif; ?>
-
-        <div id="versions-header-bar" style="display: none;">
-            <div id="versions-filters">
-                <input type="text" id="search-versions-input" class="versions-filters" placeholder="Search versions">
-                <select id="filter-version-status" class="version-filters">
+            <h1 class="shortcuts-page-title">SHORTCUTS LIST</h1>
+            <div id="shortcuts-header-bar">
+                <input type="text" id="search-input" placeholder="Search shortcuts">
+                <select id="filter-status">
                     <option value="">Any</option>
                     <option value="0">Published</option>
                     <option value="1">Draft</option>
                 </select>
-                <select id="filter-version-deleted" class="version-filters">
+                <select id="filter-deleted">
                     <option value="">Any</option>
-                    <option value="true">Deleted</option>
                     <option value="false">Not Deleted</option>
+                    <option value="true">Deleted</option>
                 </select>
-                <select id="filter-required-update" class="version-filters">
-                    <option value="">Any</option>
-                    <option value="true">Required</option>
-                    <option value="false">Not Required</option>
-                </select>
-                <button id="reset-version-filters">Reset filters</button>
-                <a href="#" class="add-version-button">+</a>
+                <button id="reset-filters" class="restore-button">Reset filters</button>
             </div>
-        </div>
-        <div id="versions-container" class="versions-container"></div>
+            <div id="shortcuts-container" class="shortcuts-container"></div>
+        <?php endif; ?>
+
+        <?php if ($view === 'versions') : ?>
+            <h1 class="versions-page-title">VERSIONS LIST</h1>
+            <button id="back-to-shortcuts">Back to Shortcuts</button>
+            <h2 id="shortcut-name-display"></h2>
+
+            <div id="versions-header-bar">
+                <div id="versions-filters">
+                    <input type="text" id="search-versions-input" class="versions-filters" placeholder="Search versions">
+                    <select id="filter-version-status" class="version-filters">
+                        <option value="">Any</option>
+                        <option value="0">Published</option>
+                        <option value="1">Draft</option>
+                    </select>
+                    <select id="filter-version-deleted" class="version-filters">
+                        <option value="">Any</option>
+                        <option value="true">Deleted</option>
+                        <option value="false">Not Deleted</option>
+                    </select>
+                    <select id="filter-required-update" class="version-filters">
+                        <option value="">Any</option>
+                        <option value="true">Required</option>
+                        <option value="false">Not Required</option>
+                    </select>
+                    <button id="reset-version-filters">Reset filters</button>
+                    <a href="#" class="add-version-button">+</a>
+                </div>
+            </div>
+            <div id="versions-container" class="versions-container"></div>
+        <?php endif; ?>
     </div>
     <div id="edit-version-modal" class="modal" style="display: none;">
         <h1>Edit Version</h1>

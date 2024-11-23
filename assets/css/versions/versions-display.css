@@ -2,32 +2,30 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 0px;
+    padding: 0;
 }
 
 .versions-page-title {
     margin-bottom: 10px !important;
-}  
+}
 
 #versions-header-bar {
+    margin: 20px 0 30px !important;
     display: flex;
-    justify-content: flex-start;
     align-items: center;
-    margin-bottom: 30px;
-    gap: 10px;
+    height: 50px !important;
+    margin-bottom: 50px !important;
 }
 
 #back-to-shortcuts {
     position: absolute;
-    top: 0px;
-    right: 0px;
+    top: 0;
+    right: 0;
     width: 160px;
-    color: #909CFE;
-    background-color: #252525;
-    border-style: solid;
-    border-width: 2px;
     height: 50px;
-    transform: translatex(0px) translatey(0px);
+    color: #909CFE !important;
+    background-color: #252525;
+    border: 2px solid;
 }
 
 #shortcut-name-display {
@@ -37,53 +35,36 @@
     margin-top: 5px;
 }
 
-#search-versions-input, #filter-version-status, #filter-version-deleted, #filter-required-update {
+/* Common styles for all filter inputs and selects */
+#search-versions-input,
+#filter-version-status,
+#filter-version-deleted,
+#filter-required-update,
+.version-filters {
     background-color: #252525;
     color: #CACACA;
-    border: 1px solid #909CFE;
-    height: 50px;
-    padding: 10px;
-    gap: 10;
-    margin: 0 !important;
-    border-radius: 0;
+    border: none !important;
+    border-radius: 0 !important;
     font-size: 15px;
+    height: 50px !important;
+    margin: 0 !important;
+    padding: 0 10px;
 }
 
 #search-versions-input {
-    width: 250px;
+    width: 240px !important;
 }
 
 #versions-filters {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 0;
     background-color: transparent;
 }
 
-#versions-filters input,
-#versions-filters select,
-#versions-filters button {
-    height: 50px;
-    display: flex;
-    align-items: center;
-    margin: 0;
-}
-
-.version-filters {
-    background-color: #252525 !important;
-    color: #CACACA !important;
-    border: 1px solid #909CFE !important;
-    height: 50px;
-    padding: 10px;
-    margin-right: 10px;
-    border-radius: 0 !important;
-    font-size: 15px;
-}
-
 #reset-version-filters {
-    background-color: #909CFE;
-    color: #252525;
+    background-color: #909CFE !important;
+    color: #252525 !important;
     font-weight: 600;
     font-size: 15px;
     border: none;
@@ -93,12 +74,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-left: 10px;
-}
-
-.delete-button {
-    background-color: #e46e6e;
-    color: #252525;
 }
 
 .add-version-button {
@@ -114,6 +89,12 @@
     cursor: pointer;
 }
 
+.delete-button {
+    background-color: #e46e6e;
+    color: #252525;
+}
+
+/* Modal styles */
 body.modal-open {
     overflow: hidden;
     pointer-events: none;
