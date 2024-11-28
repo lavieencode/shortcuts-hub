@@ -21,8 +21,17 @@ class My_Account_Widget extends Elementor_My_Account {
         add_filter('woocommerce_account_menu_items', [$this, 'add_shortcuts_menu_item']);
         add_action('woocommerce_account_shortcuts_endpoint', [$this, 'render_shortcuts_content']);
         
-        // Register scripts and styles
+        // Register scripts and styles for both frontend and editor
         add_action('wp_enqueue_scripts', [$this, 'enqueue_widget_assets']);
+        add_action('elementor/editor/after_enqueue_scripts', function() {
+            wp_enqueue_script(
+                'shortcuts-hub-my-account',
+                plugins_url('/assets/js/widgets/my-account.js', dirname(dirname(dirname(__FILE__)))),
+                ['jquery'],
+                filemtime(plugin_dir_path(dirname(dirname(dirname(__FILE__)))) . 'assets/js/widgets/my-account.js'),
+                true
+            );
+        });
     }
 
     public function get_name() {
@@ -241,10 +250,14 @@ class My_Account_Widget extends Elementor_My_Account {
 
     protected function render_html_editor() {
         // Add wrapper class for the widget
-        $this->add_render_attribute('my-account-wrapper', 'class', [
-            'e-my-account-tab',
-            'woocommerce',
-            'e-my-account-tab__' . $this->get_current_endpoint(),
+        $this->add_render_attribute('my-account-wrapper', [
+            'class' => [
+                'e-my-account-tab',
+                'woocommerce',
+                'elementor-grid',
+            ],
+            'e-my-account-page' => 'dashboard',
+            'style' => 'display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: start;'
         ]);
 
         $pages = $this->get_account_pages();
@@ -253,7 +266,7 @@ class My_Account_Widget extends Elementor_My_Account {
             <div class="woocommerce-MyAccount-navigation e-my-account-tab__nav">
                 <ul>
                     <?php foreach ($pages as $page => $label) : ?>
-                        <li class="<?php echo wc_get_account_menu_item_classes($page); ?>">
+                        <li class="woocommerce-MyAccount-navigation-link--<?php echo esc_attr($page); ?> <?php echo $page === 'dashboard' ? 'is-active' : ''; ?>">
                             <a href="#" data-tab="<?php echo esc_attr($page); ?>"><?php echo esc_html($label); ?></a>
                         </li>
                     <?php endforeach; ?>
@@ -262,12 +275,85 @@ class My_Account_Widget extends Elementor_My_Account {
 
             <div class="woocommerce-MyAccount-content e-my-account-tab__content-wrapper">
                 <?php foreach ($pages as $page => $label) : ?>
-                    <div class="e-my-account-tab__<?php echo esc_attr($page); ?> e-my-account-tab__content <?php echo $page === 'dashboard' ? 'e-my-account-tab__content--active' : ''; ?>" data-tab="<?php echo esc_attr($page); ?>">
+                    <div class="e-my-account-tab__<?php echo esc_attr($page); ?> e-my-account-tab__content woocommerce-MyAccount-content" 
+                         e-my-account-page="<?php echo esc_attr($page); ?>" 
+                         style="<?php echo $page === 'dashboard' ? 'display: block;' : 'display: none;'; ?>">
                         <?php
                         if ($page === 'shortcuts') {
                             $this->render_shortcuts_content();
                         } else {
+                            // Get the content without the navigation
+                            global $wp;
+                            $wp->query_vars[$page] = true; // Simulate being on this endpoint
+                            
+                            ob_start();
                             do_action('woocommerce_account_' . $page . '_endpoint');
+                            $content = ob_get_clean();
+                            
+                            unset($wp->query_vars[$page]); // Clean up
+                            
+                            // If no content was generated, show a meaningful preview
+                            if (empty(trim($content))) {
+                                echo '<div class="woocommerce-MyAccount-' . esc_attr($page) . '">';
+                                switch ($page) {
+                                    case 'dashboard':
+                                        echo '<h2>' . esc_html__('Hello', 'woocommerce') . ' ' . esc_html(wp_get_current_user()->display_name) . '</h2>';
+                                        echo '<p>' . esc_html__('From your account dashboard you can view your recent orders, manage your shipping and billing addresses, and edit your password and account details.', 'woocommerce') . '</p>';
+                                        break;
+                                    case 'orders':
+                                        echo '<div class="woocommerce-orders-table">';
+                                        echo '<p>' . esc_html__('Your order history appears here.', 'shortcuts-hub') . '</p>';
+                                        echo '<table class="woocommerce-orders-table shop_table shop_table_responsive">';
+                                        echo '<thead><tr>';
+                                        echo '<th>' . esc_html__('Order', 'woocommerce') . '</th>';
+                                        echo '<th>' . esc_html__('Date', 'woocommerce') . '</th>';
+                                        echo '<th>' . esc_html__('Status', 'woocommerce') . '</th>';
+                                        echo '<th>' . esc_html__('Total', 'woocommerce') . '</th>';
+                                        echo '<th>' . esc_html__('Actions', 'woocommerce') . '</th>';
+                                        echo '</tr></thead>';
+                                        echo '</table>';
+                                        echo '</div>';
+                                        break;
+                                    case 'downloads':
+                                        echo '<div class="woocommerce-downloads">';
+                                        echo '<p>' . esc_html__('Your available downloads appear here.', 'shortcuts-hub') . '</p>';
+                                        echo '</div>';
+                                        break;
+                                    case 'edit-address':
+                                        echo '<div class="woocommerce-Addresses col2-set addresses">';
+                                        echo '<div class="woocommerce-Address">';
+                                        echo '<header class="woocommerce-Address-title title">';
+                                        echo '<h3>' . esc_html__('Billing address', 'woocommerce') . '</h3>';
+                                        echo '</header>';
+                                        echo '<address>' . esc_html__('Add your billing address here.', 'shortcuts-hub') . '</address>';
+                                        echo '</div>';
+                                        echo '</div>';
+                                        break;
+                                    case 'edit-account':
+                                        echo '<div class="woocommerce-EditAccountForm edit-account">';
+                                        echo '<p>' . esc_html__('Edit your account details below:', 'woocommerce') . '</p>';
+                                        echo '<form class="woocommerce-form-preview">';
+                                        echo '<p class="form-row">';
+                                        echo '<label>' . esc_html__('First name', 'woocommerce') . '</label>';
+                                        echo '<input type="text" class="input-text" disabled />';
+                                        echo '</p>';
+                                        echo '<p class="form-row">';
+                                        echo '<label>' . esc_html__('Last name', 'woocommerce') . '</label>';
+                                        echo '<input type="text" class="input-text" disabled />';
+                                        echo '</p>';
+                                        echo '</form>';
+                                        echo '</div>';
+                                        break;
+                                    default:
+                                        echo '<p>' . sprintf(
+                                            esc_html__('Content for the %s section will appear here.', 'shortcuts-hub'),
+                                            esc_html($label)
+                                        ) . '</p>';
+                                }
+                                echo '</div>';
+                            } else {
+                                echo $content;
+                            }
                         }
                         ?>
                     </div>
@@ -278,14 +364,58 @@ class My_Account_Widget extends Elementor_My_Account {
     }
 
     protected function render_html_front_end() {
-        parent::render_html_front_end();
+        $this->add_render_attribute(
+            'my-account-wrapper',
+            [
+                'class' => [
+                    'e-my-account-tab',
+                    'woocommerce',
+                    'elementor-grid',
+                    'e-my-account-tab__' . $this->get_current_endpoint(),
+                ],
+                'style' => 'display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: start;'
+            ]
+        );
+
+        $pages = $this->get_account_pages();
+        ?>
+        <div <?php echo $this->get_render_attribute_string('my-account-wrapper'); ?>>
+            <div class="woocommerce-MyAccount-navigation e-my-account-tab__nav">
+                <ul>
+                    <?php foreach ($pages as $page => $label) : ?>
+                        <li class="<?php echo wc_get_account_menu_item_classes($page); ?>">
+                            <a href="<?php echo esc_url(wc_get_account_endpoint_url($page)); ?>"><?php echo esc_html($label); ?></a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+
+            <div class="woocommerce-MyAccount-content e-my-account-tab__content-wrapper">
+                <?php
+                if ($this->get_current_endpoint() === 'shortcuts') {
+                    $this->render_shortcuts_content();
+                } else {
+                    do_action('woocommerce_account_' . $this->get_current_endpoint() . '_endpoint');
+                }
+                ?>
+            </div>
+        </div>
+        <?php
     }
 
     public function enqueue_widget_assets() {
-        if (is_account_page()) {
+        // Only handle enqueuing, registration is done in Elementor_Manager
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode() || is_account_page()) {
             wp_enqueue_style('shortcuts-hub-download-log');
             wp_enqueue_script('shortcuts-hub-download-log');
         }
+    }
+
+    public function enqueue_editor_scripts() {
+    }
+
+    public function get_script_depends() {
+        return [];
     }
 
     /**

@@ -22,6 +22,8 @@ class Elementor_Manager {
         
         add_action('elementor/elements/categories_registered', [$this, 'register_widget_categories']);
         add_action('elementor/widgets/register', [$this, 'register_widgets']);
+        
+        // Register scripts for both frontend and editor
         add_action('elementor/frontend/after_register_scripts', [$this, 'register_frontend_scripts']);
         add_action('elementor/frontend/after_register_styles', [$this, 'register_frontend_styles']);
     }
@@ -50,10 +52,23 @@ class Elementor_Manager {
             true
         );
 
+        wp_register_script(
+            'shortcuts-hub-my-account',
+            plugins_url('/assets/js/widgets/my-account.js', dirname(dirname(__FILE__))),
+            ['jquery', 'elementor-frontend'],
+            filemtime(plugin_dir_path(dirname(dirname(__FILE__))) . 'assets/js/widgets/my-account.js'),
+            true
+        );
+
         wp_localize_script('shortcuts-hub-download-log', 'shortcuts_hub_params', [
             'ajax_url' => admin_url('admin-ajax.php'),
             'nonce' => wp_create_nonce('shortcuts_hub_nonce')
         ]);
+
+        // If in editor, enqueue immediately
+        if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+            wp_enqueue_script('shortcuts-hub-my-account');
+        }
     }
 
     public function register_frontend_styles() {
