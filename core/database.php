@@ -43,10 +43,8 @@ function shortcuts_hub_install_db() {
         // Create/update the table
         dbDelta($sql);
 
-        // Log any errors
         if ($wpdb->last_error) {
             error_log('Shortcuts Hub DB Installation Error: ' . $wpdb->last_error);
-            return false;
         }
 
         update_option('shortcuts_hub_db_version', '1.2');
@@ -61,7 +59,6 @@ function log_shortcut_download($shortcut_name, $version_data, $download_url) {
     try {
         $user_id = get_current_user_id();
         if (!$user_id) {
-            error_log('Attempted to log download for non-logged-in user');
             return false;
         }
 
@@ -96,9 +93,6 @@ function log_shortcut_download($shortcut_name, $version_data, $download_url) {
             'is_required' => isset($version_data['required']) ? (bool)$version_data['required'] : false
         );
 
-        // Log the complete download data for debugging
-        error_log('Complete download data: ' . print_r($data, true));
-        
         $result = $wpdb->insert(
             $table_name,
             $data,
@@ -146,10 +140,6 @@ function get_user_downloads($user_id = null) {
             "SELECT * FROM $table_name WHERE user_id = %d ORDER BY download_date DESC",
             $user_id
         ));
-
-        // Log the download history for the specified user
-        error_log(sprintf('Download history for user %d:', $user_id));
-        error_log(print_r($downloads, true));
 
         return $downloads;
     } catch (Exception $e) {

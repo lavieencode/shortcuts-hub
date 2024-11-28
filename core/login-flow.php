@@ -13,8 +13,6 @@ function shortcuts_hub_validate_login($record, $ajax_handler) {
         return;
     }
 
-    error_log('Validating login form submission');
-    
     $fields = $record->get_formatted_data();
     
     // Get login fields
@@ -24,7 +22,6 @@ function shortcuts_hub_validate_login($record, $ajax_handler) {
     // Validate required fields
     if (empty($username_email) || empty($password)) {
         $ajax_handler->add_error_message('Please enter both username/email and password.');
-        error_log('Login validation failed: Empty fields');
         return;
     }
 
@@ -37,14 +34,12 @@ function shortcuts_hub_validate_login($record, $ajax_handler) {
 
     if (!$user) {
         $ajax_handler->add_error_message('Invalid username or email.');
-        error_log('Login validation failed: Invalid user');
         return;
     }
 
     // Verify password
     if (!wp_check_password($password, $user->user_pass, $user->ID)) {
         $ajax_handler->add_error_message('Invalid password.');
-        error_log('Login validation failed: Invalid password');
         return;
     }
 
@@ -59,12 +54,9 @@ function shortcuts_hub_process_login($record, $ajax_handler) {
         return;
     }
 
-    error_log('Processing login form submission');
-    
     // Get the validated user
     $user = $record->get_form_settings('validated_user');
     if (!$user) {
-        error_log('Login processing failed: No validated user found');
         return;
     }
 
@@ -82,7 +74,6 @@ function shortcuts_hub_process_login($record, $ajax_handler) {
 
     if (is_wp_error($login)) {
         $ajax_handler->add_error_message('Login failed. Please try again.');
-        error_log('Login processing failed: ' . $login->get_error_message());
         return;
     }
 
@@ -102,15 +93,12 @@ function shortcuts_hub_process_login($record, $ajax_handler) {
 
     if (!empty($button_data['shortcut_id'])) {
         $response_data['shortcut_id'] = $button_data['shortcut_id'];
-        error_log('Login: Setting shortcut_id for download: ' . $button_data['shortcut_id']);
     }
 
     // Set the response data
     foreach ($response_data as $key => $value) {
         $ajax_handler->add_response_data($key, $value);
     }
-
-    error_log('Login successful: Setting response data');
 }
 
 // Add hooks
@@ -228,8 +216,6 @@ function shortcuts_hub_handle_ajax_logout() {
     
     // Get the redirect URL before logout
     $redirect_url = isset($_POST['redirect_url']) ? esc_url_raw($_POST['redirect_url']) : '';
-    
-    error_log('Handling AJAX logout. Redirect URL: ' . $redirect_url);
     
     wp_logout();
     

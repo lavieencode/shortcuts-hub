@@ -140,6 +140,52 @@ function shortcuts_hub_enqueue_assets($hook) {
             ));
             break;
     }
+
+    // Enqueue download log assets
+    wp_register_style(
+        'shortcuts-hub-download-log',
+        plugins_url('../assets/css/widgets/download-log.css', __FILE__),
+        array(),
+        filemtime(plugin_dir_path(__FILE__) . '../assets/css/widgets/download-log.css')
+    );
+
+    wp_register_script(
+        'shortcuts-hub-download-log',
+        plugins_url('../assets/js/widgets/download-log.js', __FILE__),
+        array('jquery'),
+        filemtime(plugin_dir_path(__FILE__) . '../assets/js/widgets/download-log.js'),
+        true
+    );
+
+    wp_localize_script('shortcuts-hub-download-log', 'shortcuts_hub_params', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('shortcuts_hub_nonce')
+    ));
+
+    // Always enqueue these files since the widget could be on any page
+    wp_enqueue_style('shortcuts-hub-download-log');
+    wp_enqueue_script('shortcuts-hub-download-log');
 }
 
 add_action('admin_enqueue_scripts', 'shortcuts_hub_enqueue_assets');
+add_action('wp_enqueue_scripts', 'shortcuts_hub_enqueue_assets');
+
+// Add shortcut data to frontend scripts when needed
+function shortcuts_hub_enqueue_frontend_assets() {
+    // Add shortcut data if we're on a shortcut page
+    $post_id = get_the_ID();
+    if ($post_id && is_singular('shortcut')) {
+        $sb_id = get_post_meta($post_id, 'sb_id', true);
+        if ($sb_id) {
+            $response = sb_api_call("shortcuts/{$sb_id}/version/latest", 'GET');
+            if (!is_wp_error($response)) {
+                // Add shortcut data to the existing shortcuts_hub object
+                wp_localize_script('shortcuts-hub-login-redirect', 'shortcuts_hub_shortcut', array(
+                    'shortcut' => $response
+                ));
+            }
+        }
+    }
+}
+
+add_action('wp_enqueue_scripts', 'shortcuts_hub_enqueue_frontend_assets', 20);

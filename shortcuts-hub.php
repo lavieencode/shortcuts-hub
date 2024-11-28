@@ -7,151 +7,136 @@ Author: Nicole Archambault
 */
 
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit;
 }
 
-// Define the plugin path
 define('SHORTCUTS_HUB_PATH', plugin_dir_path(__FILE__));
 
-// Include essential files
-require_once SHORTCUTS_HUB_PATH . 'includes/security.php'; // Security & nonce
-require_once SHORTCUTS_HUB_PATH . 'core/database.php'; // Database functions
-require_once SHORTCUTS_HUB_PATH . 'core/enqueue-core.php'; // Core functionality loader
-require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php'; // Asset loader
-require_once SHORTCUTS_HUB_PATH . 'includes/ajax/shortcuts-ajax.php'; // Shortcuts-related AJAX handlers
-require_once SHORTCUTS_HUB_PATH . 'includes/ajax/versions-ajax.php'; // Version-related AJAX handlers
-require_once SHORTCUTS_HUB_PATH . 'includes/sb-api.php'; // Switchblade integration and API calls
-require_once SHORTCUTS_HUB_PATH . 'includes/auth.php'; // Authorization & token management
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/shortcuts-list-page.php'; // Shortcuts list page logic
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-shortcut-page.php'; // Add shortcut page logic
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-shortcut-page.php'; // Edit shortcut page logic
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-version-page.php'; // Add version page logic
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-version-page.php'; // Edit version page logic
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/settings.php'; // Settings page logic
+// Load the main plugin class
+require_once SHORTCUTS_HUB_PATH . 'includes/class-shortcuts-hub.php';
 
-// Include Elementor integration
-if (did_action('elementor/loaded')) {
-    require_once SHORTCUTS_HUB_PATH . 'core/elementor-init.php';
+// Initialize the plugin
+function shortcuts_hub_init() {
+    return ShortcutsHub\Shortcuts_Hub::instance();
 }
 
-// Register activation hook
-register_activation_hook(__FILE__, 'shortcuts_hub_activate');
+// Start the plugin
+add_action('plugins_loaded', 'shortcuts_hub_init');
 
-function shortcuts_hub_activate() {
-    // Install/update database tables
-    shortcuts_hub_install_db();
-    
-    // Ensure the post type is registered before flushing
-    register_shortcuts_post_type();
-    
-    // Flush rewrite rules
-    flush_rewrite_rules();
-}
+// Register activation/deactivation hooks
+register_activation_hook(__FILE__, [shortcuts_hub_init(), 'activate']);
+register_deactivation_hook(__FILE__, [shortcuts_hub_init(), 'deactivate']);
 
-// Plugin deactivation hook
-register_deactivation_hook(__FILE__, 'shortcuts_hub_deactivate');
-
-function shortcuts_hub_deactivate() {
-    // Flush rewrite rules on deactivation
-    flush_rewrite_rules();
-}
+// Load core files
+require_once SHORTCUTS_HUB_PATH . 'core/database.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/security.php';
+require_once SHORTCUTS_HUB_PATH . 'core/enqueue-core.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/ajax/shortcuts-ajax.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/ajax/versions-ajax.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/sb-api.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/auth.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/pages/shortcuts-list-page.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-shortcut-page.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-shortcut-page.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-version-page.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-version-page.php';
+require_once SHORTCUTS_HUB_PATH . 'includes/pages/settings.php';
 
 function register_shortcuts_post_type() {
     $labels = array(
-        'name'                  => 'Shortcuts',
-        'singular_name'         => 'Shortcut',
-        'menu_name'             => 'Shortcuts',
-        'all_items'             => 'All Shortcuts',
-        'edit_item'             => 'Edit Shortcut',
-        'view_item'             => 'View Shortcut',
-        'view_items'            => 'View Shortcuts',
-        'add_new_item'          => 'Add New Shortcut',
-        'add_new'               => 'Add New Shortcut',
-        'new_item'              => 'New Shortcut',
-        'parent_item_colon'     => 'Parent Shortcut:',
-        'search_items'          => 'Search Shortcuts',
-        'not_found'             => 'No Shortcuts found',
-        'not_found_in_trash'    => 'No Shortcuts found in Trash'
+        'name' => 'Shortcuts',
+        'singular_name' => 'Shortcut',
+        'menu_name' => 'Shortcuts',
+        'add_new' => 'Add New',
+        'add_new_item' => 'Add New Shortcut',
+        'edit_item' => 'Edit Shortcut',
+        'new_item' => 'New Shortcut',
+        'view_item' => 'View Shortcut',
+        'search_items' => 'Search Shortcuts',
+        'not_found' => 'No shortcuts found',
+        'not_found_in_trash' => 'No shortcuts found in trash',
+        'parent_item_colon' => '',
+        'all_items' => 'All Shortcuts'
     );
 
     $args = array(
-        'labels'             => $labels,
-        'public'             => true,
+        'labels' => $labels,
+        'public' => true,
         'publicly_queryable' => true,
-        'show_ui'            => true,
-        'show_in_menu'       => true,
-        'query_var'          => true,
-        'rewrite'            => array(
+        'show_ui' => true,
+        'show_in_menu' => false,
+        'query_var' => true,
+        'rewrite' => array(
             'slug' => 'shortcut',
             'with_front' => false
         ),
-        'capability_type'    => 'post',
-        'has_archive'        => true,
-        'hierarchical'       => false,
-        'menu_position'      => null,
-        'supports'           => array('title', 'editor', 'thumbnail', 'custom-fields')
+        'capability_type' => 'post',
+        'has_archive' => true,
+        'hierarchical' => false,
+        'menu_position' => null,
+        'supports' => array('title', 'editor', 'thumbnail')
     );
 
     register_post_type('shortcut', $args);
 }
-add_action('init', 'register_shortcuts_post_type', 0);
 
 function register_shortcuts_menu() {
     remove_menu_page('shortcuts-hub');
 
     add_menu_page(
-        'Shortcuts Hub', 
-        'Shortcuts Hub', 
-        'manage_options', 
+        'Shortcuts Hub',
+        'Shortcuts Hub',
+        'manage_options',
         'shortcuts-hub', 
-        'shortcuts_hub_render_shortcuts_list_page', 
-        'dashicons-list-view', 
-        6 
+        'shortcuts_hub_render_shortcuts_list_page',
+        'dashicons-list-view',
+        6
     );
 
     add_submenu_page(
-        'shortcuts-hub', 
-        'Shortcuts List', 
-        'Shortcuts List', 
-        'manage_options', 
-        'shortcuts-list', 
-        'shortcuts_hub_render_shortcuts_list_page' 
+        'shortcuts-hub',
+        'Shortcuts List',
+        'Shortcuts List',
+        'manage_options',
+        'shortcuts-list',
+        'shortcuts_hub_render_shortcuts_list_page'
     );
 
     add_submenu_page(
-        'shortcuts-hub', 
-        'Add Shortcut', 
-        'Add Shortcut', 
-        'manage_options', 
-        'add-shortcut', 
-        'shortcuts_hub_render_add_shortcut_page' 
+        'shortcuts-hub',
+        'Add Shortcut',
+        'Add Shortcut',
+        'manage_options',
+        'add-shortcut',
+        'shortcuts_hub_render_add_shortcut_page'
     );
 
     add_submenu_page(
-        'shortcuts-hub', 
-        'Edit Shortcut', 
-        'Edit Shortcut', 
-        'manage_options', 
-        'edit-shortcut', 
-        'shortcuts_hub_render_edit_shortcut_page' 
+        'shortcuts-hub',
+        'Edit Shortcut',
+        'Edit Shortcut',
+        'manage_options',
+        'edit-shortcut',
+        'shortcuts_hub_render_edit_shortcut_page'
     );
 
     add_submenu_page(
-        'shortcuts-hub', 
-        'Add Version', 
-        'Add Version', 
-        'manage_options', 
-        'add-version', 
-        'shortcuts_hub_render_add_version_page' 
+        'shortcuts-hub',
+        'Add Version',
+        'Add Version',
+        'manage_options',
+        'add-version',
+        'shortcuts_hub_render_add_version_page'
     );
 
     add_submenu_page(
-        'shortcuts-hub', 
-        'Edit Version', 
-        'Edit Version', 
-        'manage_options', 
-        'edit-version', 
-        'shortcuts_hub_render_edit_version_page' 
+        'shortcuts-hub',
+        'Edit Version',
+        'Edit Version',
+        'manage_options',
+        'edit-version',
+        'shortcuts_hub_render_edit_version_page'
     );
 
     global $submenu;
@@ -183,5 +168,3 @@ function shortcuts_hub_admin_body_class($classes) {
     return $classes;
 }
 add_filter('admin_body_class', 'shortcuts_hub_admin_body_class');
-
-// Note: Download logging functionality moved to core/download-button.php for better modularity

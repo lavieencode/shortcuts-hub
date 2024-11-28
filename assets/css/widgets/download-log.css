@@ -1,0 +1,11 @@
+.shortcuts-hub-download-log .shortcut-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.shortcuts-hub-download-log .shortcut-actions .elementor-button {
+    margin: 0;
+    min-width: 80px;
+    text-align: center;
+}

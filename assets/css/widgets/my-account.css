@@ -1,0 +1,91 @@
+.elementor-shortcuts-hub-my-account-wrapper .woocommerce-MyAccount-navigation {
+    margin-bottom: 2em;
+}
+
+.elementor-shortcuts-hub-my-account-wrapper .woocommerce-MyAccount-navigation ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.elementor-shortcuts-hub-my-account-wrapper .woocommerce-MyAccount-navigation ul li {
+    margin: 0;
+    padding: 0;
+}
+
+.elementor-shortcuts-hub-my-account-wrapper .woocommerce-MyAccount-navigation ul li a {
+    display: block;
+    padding: 1em;
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.elementor-shortcuts-hub-my-account-wrapper .woocommerce-MyAccount-navigation ul li.is-active a {
+    background-color: rgba(0, 0, 0, 0.03);
+    font-weight: bold;
+}
+
+/* Editor-specific styles */
+.elementor-editor-active .e-my-account-tab .woocommerce-MyAccount-content > div[e-my-account-page] {
+    display: none;
+}
+
+.elementor-editor-active .e-my-account-tab .woocommerce-MyAccount-content > div[e-my-account-page].e-my-account-page-active {
+    display: block;
+}
+
+/* Frontend-specific styles */
+.elementor-shortcuts-hub-my-account-wrapper .woocommerce-shortcuts {
+    padding: 1em;
+}
+
+.elementor-shortcuts-hub-my-account-wrapper .woocommerce-shortcuts h2 {
+    margin-bottom: 1em;
+}
+
+.elementor-shortcuts-hub-my-account-wrapper .shortcuts-content {
+    background: #fff;
+    padding: 1em;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Tab Layout Styles */
+.e-my-account-tabs-horizontal .woocommerce-MyAccount-navigation ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.e-my-account-tabs-horizontal .woocommerce-MyAccount-navigation ul li {
+    flex: 1;
+    text-align: center;
+}
+
+.e-my-account-tabs-vertical .woocommerce-MyAccount-navigation {
+    float: left;
+    width: 30%;
+}
+
+.e-my-account-tabs-vertical .woocommerce-MyAccount-content {
+    float: right;
+    width: 65%;
+}
+
+/* Content Wrapper */
+.woocommerce-MyAccount-content-wrapper {
+    background: #fff;
+    padding: 2em;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+/* Hide other tabs when one is active */
+.elementor-shortcuts-hub-my-account-wrapper .woocommerce-MyAccount-content > div:not(.woocommerce-shortcuts) {
+    display: none;
+}
+
+.elementor-shortcuts-hub-my-account-wrapper .woocommerce-MyAccount-content > div.active {
+    display: block;
+}
