@@ -37,10 +37,8 @@ class Shortcuts_Hub {
         // Initialize Elementor integration
         if (did_action('elementor/loaded')) {
             add_action('elementor/init', function() {
-                error_log('Shortcuts Hub: Loading Elementor Manager');
                 require_once SHORTCUTS_HUB_PATH . 'includes/elementor/classes/class-elementor-manager.php';
                 \ShortcutsHub\Elementor\Elementor_Manager::get_instance();
-                error_log('Shortcuts Hub: Elementor Manager loaded');
             });
         }
     }

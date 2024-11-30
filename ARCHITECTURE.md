@@ -137,6 +137,179 @@ Shortcuts Hub is a WordPress plugin that manages and displays shortcuts in an or
   - Error handling and logging
   - Secure credential management
 
+### 10. My Account Widget Implementation Details
+
+#### Script Loading and Initialization
+1. **Proper Hook Usage**:
+   ```php
+   // Add script loading for both editor and preview contexts
+   add_action('elementor/editor/after_enqueue_scripts', function() {
+       wp_enqueue_script('shortcuts-hub-my-account', /* ... */);
+   });
+   add_action('elementor/preview/enqueue_scripts', function() {
+       wp_enqueue_script('shortcuts-hub-my-account', /* ... */);
+   });
+   ```
+   - Editor hook loads script in Elementor's editing interface
+   - Preview hook ensures script runs in the preview iframe
+   - Both are necessary for full functionality
+
+2. **JavaScript Initialization**:
+   ```javascript
+   // Promise-based initialization for reliable elementorFrontend detection
+   const waitForElementorFrontend = () => {
+       return new Promise((resolve) => {
+           if (typeof elementorFrontend !== 'undefined') {
+               resolve(elementorFrontend);
+               return;
+           }
+           const checkElementor = () => {
+               if (typeof elementorFrontend !== 'undefined') {
+                   resolve(elementorFrontend);
+                   return;
+               }
+               requestAnimationFrame(checkElementor);
+           };
+           requestAnimationFrame(checkElementor);
+       });
+   };
+
+   // Async initialization function
+   async function initializeWidget() {
+       try {
+           await waitForElementorFrontend();
+           elementorFrontend.hooks.addAction('frontend/element_ready/shortcuts-hub-my-account.default', function($scope) {
+               // Widget initialization code
+           });
+       } catch (error) {
+           console.error('Failed to initialize widget:', error);
+       }
+   }
+
+   // Start initialization when document is ready
+   jQuery(document).ready(initializeWidget);
+   ```
+   - Uses promise-based approach for reliable elementorFrontend detection
+   - Leverages `requestAnimationFrame` for efficient polling
+   - Handles slow-loading editor environments gracefully
+   - Provides comprehensive error handling
+   - Maintains proper scoping and event handling
+
+#### Content Rendering Strategy
+1. **Editor vs Frontend Rendering**:
+   - Editor mode shows all tabs with preview content
+   - Frontend mode only shows current tab's content
+   - Different rendering methods prevent conflicts
+
+2. **Preventing Duplicate Content**:
+   ```php
+   if ($page === 'shortcuts') {
+       // Only output shortcuts content once
+       ob_start();
+       $this->render_shortcuts_content();
+       echo ob_get_clean();
+   }
+   ```
+   - Use output buffering to capture content
+   - Prevents duplicate rendering in editor mode
+   - Maintains clean DOM structure
+
+3. **Tab Content Structure**:
+   ```php
+   <div class="e-my-account-tab__<?php echo esc_attr($page); ?> e-my-account-tab__content">
+   ```
+   - Each tab's content wrapped in specific classes
+   - Enables proper styling and JavaScript targeting
+   - Maintains WooCommerce class hierarchy
+
+#### Layout Implementation
+1. **Grid-based Layout**:
+   ```php
+   'style' => 'display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: start;'
+   ```
+   - Uses CSS Grid for reliable layout
+   - 200px fixed width for navigation
+   - Flexible content area
+   - Proper vertical alignment
+
+2. **Class Structure**:
+   ```php
+   'class' => [
+       'e-my-account-tab',
+       'woocommerce',
+       'elementor-grid',
+   ]
+   ```
+   - Maintains compatibility with Elementor
+   - Preserves WooCommerce styling
+   - Enables proper grid functionality
+
+#### Tab Switching Implementation
+1. **Event Handling**:
+   ```javascript
+   $tabLinks.on('click', function(e) {
+       e.preventDefault();
+       // Get tab ID and update display
+   });
+   ```
+   - Prevents default link behavior
+   - Updates active states
+   - Handles content visibility
+
+2. **Content Visibility**:
+   ```javascript
+   $tabContents.hide().removeClass('e-my-account-tab__content--active');
+   $scope.find('[e-my-account-page="' + tabId + '"]')
+       .show()
+       .addClass('e-my-account-tab__content--active');
+   ```
+   - Hides all content first
+   - Shows only active tab content
+   - Maintains proper state classes
+
+#### Common Issues and Solutions
+
+1. **Script Loading Timing**:
+   - **Issue**: Scripts not loading in preview
+   - **Solution**: Use both editor and preview hooks
+   - **Why it Works**: Ensures script loads in all contexts
+
+2. **Duplicate Content**:
+   - **Issue**: Content appearing twice in editor
+   - **Solution**: Use output buffering for content rendering
+   - **Why it Works**: Captures and controls output timing
+
+3. **Tab Switching**:
+   - **Issue**: Tabs not working in preview
+   - **Solution**: Proper initialization timing with Elementor hooks
+   - **Why it Works**: Ensures code runs after widget is ready
+
+4. **Layout Problems**:
+   - **Issue**: Inconsistent tab/content alignment
+   - **Solution**: CSS Grid with fixed navigation width
+   - **Why it Works**: Provides stable, responsive layout
+
+#### Best Practices
+1. **Initialization**:
+   - Always use proper Elementor hooks
+   - Wait for frontend initialization
+   - Use widget-specific action names
+
+2. **Content Handling**:
+   - Buffer output when needed
+   - Separate editor and frontend rendering
+   - Maintain proper class hierarchy
+
+3. **Event Management**:
+   - Prevent default when necessary
+   - Use proper event delegation
+   - Maintain state consistently
+
+4. **Layout Structure**:
+   - Use CSS Grid for main layout
+   - Maintain WooCommerce classes
+   - Follow Elementor structural patterns
+
 ## WooCommerce My Account Widget Integration Notes
 
 ### Endpoint Registration

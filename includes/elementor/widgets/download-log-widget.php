@@ -25,7 +25,7 @@ class Download_Log extends Widget_Base {
     }
 
     public function get_title() {
-        return esc_html__('Shortcuts Download Log', 'shortcuts-hub');
+        return esc_html__('Download Log', 'shortcuts-hub');
     }
 
     public function get_icon() {
