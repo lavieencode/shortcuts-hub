@@ -1,94 +1,82 @@
 jQuery(document).ready(function($) {
     'use strict';
     
-    // Function to get cookie value
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) {
-            return parts.pop().split(';').shift();
-        }
-        return null;
+    // Helper function to log to both console and PHP
+    function logRedirect(message, data = null) {
+        console.log(message, data);
+        $.ajax({
+            url: shortcutsHubAjax.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'shortcuts_hub_log',
+                message: message,
+                data: JSON.stringify(data),
+                nonce: shortcutsHubAjax.nonce
+            }
+        });
     }
     
-    // Function to get stored data from both sessionStorage and cookies
-    function getStoredData() {
-        // Try sessionStorage first
-        const shortcutData = sessionStorage.getItem('shortcuts_hub_shortcut_data');
-        const redirectUrl = sessionStorage.getItem('shortcuts_hub_redirect_url');
-        
-        // Try cookies as fallback
-        const cookieShortcutData = getCookie('shortcuts_hub_shortcut_data');
-        const cookieRedirectUrl = getCookie('shortcuts_hub_redirect_url');
-        
-        // Use whichever source has the data
-        const finalShortcutData = shortcutData || cookieShortcutData;
-        const finalRedirectUrl = redirectUrl || cookieRedirectUrl;
-        
-        if (finalShortcutData) {
-            try {
-                const parsedData = JSON.parse(finalShortcutData);
-                if (parsedData.version?.url) {
-                    return {
-                        shortcut_data: parsedData,
-                        redirect_url: finalRedirectUrl
-                    };
-                }
-            } catch (e) {
-                console.error('Error parsing stored data:', e);
-            }
-        }
-        return null;
-    }
-
-    // Function to safely open a popup window
-    function openDownloadPopup(url) {
-        const popup = window.open(url, '_blank');
-        if (popup) {
-            popup.focus();
-        }
-    }
-
-    // Function to handle redirect with proper URL encoding
-    function handleRedirect(url) {
-        if (url) {
-            window.location.href = decodeURIComponent(url);
-        }
-    }
-
-    // Handle both login and registration form submissions
+    // Handle form submissions
     $(document).on('elementor-pro/forms/submit_success', function(event, response) {
-        const storedData = getStoredData();
+        logRedirect('[Login Redirect] Form submission success, full response:', response);
         
-        if (storedData && storedData.shortcut_data) {
-            // Make AJAX call to handle the download
+        if (!response.data) {
+            logRedirect('[Login Redirect] Error: No response data found');
+            return;
+        }
+        
+        logRedirect('[Login Redirect] Processing response data:', response.data);
+        
+        // Handle download data if present
+        if (response.data.download_data) {
+            logRedirect('[Login Redirect] Found download data:', response.data.download_data);
+            
             $.ajax({
                 url: shortcutsHubAjax.ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'shortcuts_hub_handle_download',
+                    action: 'log_shortcut_download',
                     security: shortcutsHubAjax.nonce,
-                    shortcut_data: JSON.stringify(storedData.shortcut_data)
+                    shortcut_id: response.data.download_data.shortcut.id,
+                    version_data: JSON.stringify(response.data.download_data.version)
                 },
-                success: function(response) {
-                    if (response.success && response.data.download_url) {
-                        openDownloadPopup(response.data.download_url);
+                success: function(downloadResponse) {
+                    logRedirect('[Login Redirect] Download request success:', downloadResponse);
+                    
+                    if (downloadResponse.success && response.data.download_data.version.url) {
+                        logRedirect('[Login Redirect] Opening download popup for URL:', response.data.download_data.version.url);
+                        const popup = window.open(response.data.download_data.version.url, '_blank', 'width=800,height=600');
+                        if (popup) {
+                            popup.focus();
+                        }
                     }
                     
-                    // Clear stored data
-                    sessionStorage.removeItem('shortcuts_hub_shortcut_data');
-                    sessionStorage.removeItem('shortcuts_hub_redirect_url');
+                    // Handle redirect after download processing
+                    if (response.data.redirect_url) {
+                        logRedirect('[Login Redirect] Will redirect to URL after delay:', response.data.redirect_url);
+                        setTimeout(() => {
+                            logRedirect('[Login Redirect] Executing redirect to:', response.data.redirect_url);
+                            window.location.href = response.data.redirect_url;
+                        }, 500);
+                    } else {
+                        logRedirect('[Login Redirect] No redirect URL found in response');
+                    }
                 },
                 error: function(xhr, status, error) {
-                    console.error('Download request failed:', error);
+                    logRedirect('[Login Redirect] Download request failed:', { status, error });
+                    // Still redirect on error
+                    if (response.data.redirect_url) {
+                        logRedirect('[Login Redirect] Redirecting after error to:', response.data.redirect_url);
+                        window.location.href = response.data.redirect_url;
+                    }
                 }
             });
-        }
-        
-        // Handle the redirect
-        const redirectUrl = storedData?.redirect_url || response?.data?.redirect_url;
-        if (redirectUrl) {
-            handleRedirect(redirectUrl);
+        } else if (response.data.redirect_url) {
+            // Direct redirect if no download data
+            logRedirect('[Login Redirect] No download data, direct redirect to:', response.data.redirect_url);
+            window.location.href = response.data.redirect_url;
+        } else {
+            logRedirect('[Login Redirect] No redirect URL or download data found in response');
         }
     });
 });

@@ -43,9 +43,17 @@ class Elementor_Manager {
         // Register dynamic tags (priority 10)
         add_action('elementor/dynamic_tags/register', [$this, 'register_dynamic_tags'], 10);
         
-        // Register frontend assets
+        // Register scripts and styles for both Elementor and standard WordPress
+        add_action('wp_enqueue_scripts', [$this, 'register_frontend_scripts']);
         add_action('elementor/frontend/after_register_scripts', [$this, 'register_frontend_scripts']);
+        add_action('elementor/preview/enqueue_scripts', [$this, 'register_frontend_scripts']);
+        add_action('elementor/editor/after_enqueue_scripts', [$this, 'register_frontend_scripts']);
+        
+        // Register styles
+        add_action('wp_enqueue_scripts', [$this, 'register_frontend_styles']);
         add_action('elementor/frontend/after_register_styles', [$this, 'register_frontend_styles']);
+        add_action('elementor/preview/enqueue_styles', [$this, 'register_frontend_styles']);
+        add_action('elementor/editor/after_enqueue_styles', [$this, 'register_frontend_styles']);
     }
 
     public function load_widget_files() {
@@ -147,57 +155,67 @@ class Elementor_Manager {
     }
 
     public function register_frontend_scripts() {
-        // Download Button scripts
+        // Prevent double registration
+        if (wp_script_is('shortcuts-hub-download-button', 'registered')) {
+            return;
+        }
+
+        $plugin_url = plugins_url('', dirname(dirname(dirname(__FILE__))));
+        $version = defined('SHORTCUTS_HUB_VERSION') ? SHORTCUTS_HUB_VERSION : '1.0.0';
+
+        // Register download button script
         wp_register_script(
             'shortcuts-hub-download-button',
-            plugins_url('assets/js/core/download-button.js', SHORTCUTS_HUB_PATH),
+            $plugin_url . '/assets/js/core/download-button.js',
             ['jquery'],
-            filemtime(SHORTCUTS_HUB_PATH . 'assets/js/core/download-button.js'),
+            $version,
             true
         );
 
-        // Download Log scripts
+        // Register download log script
         wp_register_script(
             'shortcuts-hub-download-log',
-            plugins_url('assets/js/core/download-log.js', SHORTCUTS_HUB_PATH),
+            $plugin_url . '/assets/js/core/download-log.js',
             ['jquery'],
-            @filemtime(SHORTCUTS_HUB_PATH . 'assets/js/core/download-log.js'),
+            $version,
             true
         );
 
-        wp_localize_script('shortcuts-hub-download-log', 'shortcuts_hub_params', [
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('shortcuts_hub_nonce')
+        // Get the appropriate login URL based on context
+        $login_url = wp_login_url();
+        if (!Plugin::$instance->editor->is_edit_mode() && function_exists('get_permalink')) {
+            $login_url = wp_login_url(get_permalink());
+        }
+
+        // Localize the script with necessary data
+        wp_localize_script('shortcuts-hub-download-button', 'shortcutsHubDownload', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('shortcuts_hub_download'),
+            'loginUrl' => $login_url,
+            'isUserLoggedIn' => is_user_logged_in()
         ]);
-        
-        // If in editor, enqueue immediately
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
+
+        // If in editor or preview, enqueue scripts immediately
+        if (Plugin::$instance->editor->is_edit_mode() || Plugin::$instance->preview->is_preview_mode()) {
             wp_enqueue_script('shortcuts-hub-download-button');
             wp_enqueue_script('shortcuts-hub-download-log');
         }
     }
 
     public function register_frontend_styles() {
-        // Download Button styles
+        // Prevent double registration
+        if (wp_style_is('shortcuts-hub-download-button', 'registered')) {
+            return;
+        }
+
+        $plugin_url = plugins_url('', dirname(dirname(dirname(__FILE__))));
+        $version = defined('SHORTCUTS_HUB_VERSION') ? SHORTCUTS_HUB_VERSION : '1.0.0';
+
         wp_register_style(
             'shortcuts-hub-download-button',
-            plugins_url('assets/css/core/download-button.css', SHORTCUTS_HUB_PATH),
+            $plugin_url . '/assets/css/core/download-button.css',
             [],
-            filemtime(SHORTCUTS_HUB_PATH . 'assets/css/core/download-button.css')
+            $version
         );
-
-        // Download Log styles
-        wp_register_style(
-            'shortcuts-hub-download-log',
-            plugins_url('assets/css/core/download-log.css', SHORTCUTS_HUB_PATH),
-            [],
-            @filemtime(SHORTCUTS_HUB_PATH . 'assets/css/core/download-log.css')
-        );
-        
-        // If in editor, enqueue immediately
-        if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {
-            wp_enqueue_style('shortcuts-hub-download-button');
-            wp_enqueue_style('shortcuts-hub-download-log');
-        }
     }
 }

@@ -382,7 +382,7 @@ class Input_Dynamic_Tag extends Tag {
         }
 
         if (!empty($input)) {
-            echo $settings['before'] . esc_html($input) . $settings['after'];
+            echo esc_html($input);
         }
     }
 }
@@ -441,14 +441,14 @@ class Result_Dynamic_Tag extends Tag {
         }
 
         if (!empty($result)) {
-            echo $settings['before'] . esc_html($result) . $settings['after'];
+            echo esc_html($result);
         }
     }
 }
 
 class Latest_Version_Dynamic_Tag extends Tag {
     public function get_name() {
-        return 'latest_version';
+        return 'latest_version';  
     }
 
     public function get_title() {
@@ -465,22 +465,6 @@ class Latest_Version_Dynamic_Tag extends Tag {
 
     protected function register_controls() {
         $this->add_control(
-            'before',
-            [
-                'label' => esc_html__('Before', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => esc_html__('After', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
             'fallback',
             [
                 'label' => esc_html__('Fallback', 'shortcuts-hub'),
@@ -491,23 +475,23 @@ class Latest_Version_Dynamic_Tag extends Tag {
 
     public function render() {
         $settings = $this->get_settings();
-        $response = get_option('shortcut_hub_latest_version', []);
-
-        $value = !empty($response['version']) ? $response['version'] : '';
-
-        if (empty($value) && !empty($settings['fallback'])) {
-            $value = $settings['fallback'];
+        
+        $post_id = get_the_ID();
+        $shortcut_id = get_post_meta($post_id, 'sb_id', true);
+        
+        if ($shortcut_id) {
+            $endpoint = "shortcuts/{$shortcut_id}/version/latest";
+            $response = sb_api_call($endpoint, 'GET');
+            
+            if (isset($response['version']['version'])) {
+                echo esc_html($response['version']['version']);
+                return;
+            }
         }
-
-        if (!empty($settings['before'])) {
-            $value = $settings['before'] . $value;
+        
+        if (!empty($settings['fallback'])) {
+            echo esc_html($settings['fallback']);
         }
-
-        if (!empty($settings['after'])) {
-            $value .= $settings['after'];
-        }
-
-        echo wp_kses_post($value);
     }
 }
 
@@ -529,7 +513,49 @@ class Latest_Version_URL_Dynamic_Tag extends Tag {
     }
 
     public function render() {
-        $response = get_option('shortcut_hub_latest_version', []);
-        echo !empty($response['download_url']) ? $response['download_url'] : '';
+        $post_id = get_the_ID();
+        if (!$post_id) {
+            error_log('[Shortcuts Hub] Dynamic Tag: No post ID found');
+            return '';
+        }
+
+        // Get the shortcut ID from post meta
+        $shortcut_id = get_post_meta($post_id, '_shortcut_id', true);
+        if (!$shortcut_id) {
+            error_log('[Shortcuts Hub] Dynamic Tag: No shortcut ID found for post ' . $post_id);
+            return '';
+        }
+
+        error_log('[Shortcuts Hub] Dynamic Tag: Fetching latest version for shortcut ' . $shortcut_id);
+
+        // Make AJAX call to fetch latest version
+        $response = wp_remote_post(admin_url('admin-ajax.php'), [
+            'body' => [
+                'action' => 'fetch_latest_version',
+                'security' => wp_create_nonce('shortcuts_hub_nonce'),
+                'id' => $shortcut_id
+            ]
+        ]);
+
+        if (is_wp_error($response)) {
+            error_log('[Shortcuts Hub] Dynamic Tag: Error fetching version - ' . $response->get_error_message());
+            return '';
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        error_log('[Shortcuts Hub] Dynamic Tag: API Response - ' . print_r($data, true));
+
+        // Check if we have a successful response with version URL
+        if (!$data || !$data['success'] || !isset($data['data']['version']['url'])) {
+            error_log('[Shortcuts Hub] Dynamic Tag: Invalid response structure');
+            return '';
+        }
+
+        $url = $data['data']['version']['url'];
+        error_log('[Shortcuts Hub] Dynamic Tag: Successfully retrieved URL - ' . $url);
+        
+        echo esc_url($url);
     }
 }

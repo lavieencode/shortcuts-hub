@@ -80,25 +80,25 @@ function shortcuts_hub_process_login($record, $ajax_handler) {
     // Set the user's auth cookie
     wp_set_auth_cookie($user->ID, $remember);
 
-    // Get button data from cookie
-    $button_data = isset($_COOKIE['shortcuts_hub_button_data']) ? stripslashes($_COOKIE['shortcuts_hub_button_data']) : '';
-    $button_data = json_decode($button_data, true);
-
+    // Get parameters from URL
+    $redirect_url = isset($_GET['redirect_url']) ? urldecode($_GET['redirect_url']) : '';
+    $shortcut_data = isset($_GET['shortcut_data']) ? json_decode(urldecode($_GET['shortcut_data']), true) : '';
+    
     // Prepare response data
-    $response_data = [
-        'success' => true,
-        'login_success' => true,
-        'redirect_url' => !empty($button_data['redirect_url']) ? $button_data['redirect_url'] : home_url()
-    ];
-
-    if (!empty($button_data['shortcut_id'])) {
-        $response_data['shortcut_id'] = $button_data['shortcut_id'];
+    $response_data = array();
+    
+    if ($shortcut_data) {
+        $response_data['download_data'] = $shortcut_data;
+    }
+    
+    if ($redirect_url) {
+        $response_data['redirect_url'] = esc_url_raw($redirect_url);
+    } else {
+        $response_data['redirect_url'] = home_url();
     }
 
-    // Set the response data
-    foreach ($response_data as $key => $value) {
-        $ajax_handler->add_response_data($key, $value);
-    }
+    $ajax_handler->add_response_data('success', true);
+    $ajax_handler->add_response_data('data', $response_data);
 }
 
 // Add hooks
@@ -209,6 +209,46 @@ function shortcuts_hub_handle_login() {
 
 add_action('wp_ajax_nopriv_shortcuts_hub_login', 'shortcuts_hub_handle_login');
 add_action('wp_ajax_shortcuts_hub_login', 'shortcuts_hub_handle_login');
+
+// Handle storing pending downloads
+function shortcuts_hub_store_pending_download() {
+    check_ajax_referer('shortcuts_hub_ajax', 'security');
+    
+    error_log('[Login Flow] Starting store_pending_download');
+    
+    // Get and validate the data
+    $shortcut_data = isset($_POST['shortcut_data']) ? json_decode(stripslashes($_POST['shortcut_data']), true) : null;
+    $redirect_url = isset($_POST['redirect_url']) ? esc_url_raw($_POST['redirect_url']) : '';
+    
+    error_log('[Login Flow] Received shortcut data: ' . print_r($shortcut_data, true));
+    error_log('[Login Flow] Received redirect URL: ' . $redirect_url);
+    
+    if (!$shortcut_data) {
+        error_log('[Login Flow] Error: No shortcut data provided');
+        wp_send_json_error('No shortcut data provided');
+        return;
+    }
+    
+    // Start session if not already started
+    if (!session_id()) {
+        session_start();
+        error_log('[Login Flow] Started new session');
+    }
+    
+    // Store the data in session
+    $_SESSION['shortcuts_hub_pending_download'] = $shortcut_data;
+    $_SESSION['shortcuts_hub_redirect_url'] = $redirect_url;
+    
+    error_log('[Login Flow] Successfully stored in session:');
+    error_log('[Login Flow] - Pending download: ' . print_r($shortcut_data, true));
+    error_log('[Login Flow] - Redirect URL: ' . $redirect_url);
+    
+    wp_send_json_success(array(
+        'message' => 'Data stored successfully',
+        'stored_url' => $redirect_url
+    ));
+}
+add_action('wp_ajax_nopriv_shortcuts_hub_store_pending_download', 'shortcuts_hub_store_pending_download');
 
 // Handle AJAX logout
 function shortcuts_hub_handle_ajax_logout() {

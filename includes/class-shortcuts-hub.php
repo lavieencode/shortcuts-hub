@@ -22,6 +22,47 @@ class Shortcuts_Hub {
     }
 
     public function init() {
+        // Start session if not already started
+        if (!session_id() && !headers_sent()) {
+            // Configure session to work in all cases
+            ini_set('session.use_only_cookies', 0);
+            ini_set('session.use_trans_sid', 1);
+            ini_set('session.cache_limiter', 'nocache');
+            
+            // Set cookie parameters before starting session
+            session_set_cookie_params([
+                'lifetime' => 0,  // Session cookie
+                'path' => '/',
+                'domain' => $_SERVER['HTTP_HOST'],
+                'secure' => is_ssl(),
+                'httponly' => true,
+                'samesite' => 'Lax'
+            ]);
+            
+            session_start([
+                'cookie_lifetime' => 0,  // Session cookie
+                'gc_maxlifetime' => 3600,
+                'cookie_secure' => is_ssl(),
+                'cookie_httponly' => true,
+                'use_strict_mode' => true,
+                'use_cookies' => 1,
+                'use_only_cookies' => 0  // Allow passing session ID in URL if needed
+            ]);
+            
+            // Debug logging for session
+            if (isset($_SESSION)) {
+                error_log('[Shortcuts Hub] Session started successfully. Session ID: ' . session_id());
+                error_log('[Shortcuts Hub] Session data: ' . print_r($_SESSION, true));
+            } else {
+                error_log('[Shortcuts Hub] Failed to start session');
+            }
+            
+            // Ensure session works by setting a test value
+            if (!isset($_SESSION['shortcuts_hub_session_test'])) {
+                $_SESSION['shortcuts_hub_session_test'] = true;
+            }
+        }
+        
         // Register post type first
         $this->register_post_type();
         

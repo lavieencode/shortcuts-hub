@@ -84,13 +84,13 @@ function log_shortcut_download($shortcut_name, $version_data, $download_url) {
             'post_id' => $post_id,
             'post_url' => $post_url,
             'shortcut_name' => sanitize_text_field($shortcut_name),
-            'version' => sanitize_text_field($version_data['version'] ?? ''),
-            'version_notes' => sanitize_text_field($version_data['notes'] ?? ''),
-            'minimum_ios' => sanitize_text_field($version_data['minimumiOS'] ?? ''),
-            'minimum_mac' => sanitize_text_field($version_data['minimumMac'] ?? ''),
+            'version' => isset($version_data['version']['version']) ? sanitize_text_field($version_data['version']['version']) : '',
+            'version_notes' => isset($version_data['version']['notes']) ? sanitize_text_field($version_data['version']['notes']) : '',
+            'minimum_ios' => isset($version_data['version']['minimumiOS']) ? sanitize_text_field($version_data['version']['minimumiOS']) : '',
+            'minimum_mac' => isset($version_data['version']['minimumMac']) ? sanitize_text_field($version_data['version']['minimumMac']) : '',
             'download_url' => esc_url_raw($download_url),
             'ip_address' => sanitize_text_field($ip_address),
-            'is_required' => isset($version_data['required']) ? (bool)$version_data['required'] : false
+            'is_required' => isset($version_data['version']['required']) ? (bool)$version_data['version']['required'] : false
         );
 
         $result = $wpdb->insert(
