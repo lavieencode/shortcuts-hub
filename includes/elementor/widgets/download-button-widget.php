@@ -1,17 +1,22 @@
 <?php
-
 namespace ShortcutsHub\Elementor\Widgets;
-
-use Elementor\Widget_Base;
-use Elementor\Controls_Manager;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
-class Download_Button extends Widget_Base {
+// Check if Elementor is loaded
+if (!did_action('elementor/loaded')) {
+    error_log('Elementor not loaded when trying to register Download_Button widget');
+    return;
+}
+
+use \Elementor\Widget_Base;
+use \Elementor\Controls_Manager;
+
+class Download_Button_Widget extends Widget_Base {
     public function get_name() {
-        return 'shortcuts-download-button';
+        return 'shortcuts-hub-download-button';
     }
 
     public function get_title() {
@@ -26,23 +31,54 @@ class Download_Button extends Widget_Base {
         return ['shortcuts-hub'];
     }
 
+    public function get_script_depends() {
+        return ['shortcuts-hub-download-button'];
+    }
+
     protected function register_controls() {
         $this->start_controls_section(
-            'content_section',
+            'section_button',
             [
-                'label' => esc_html__('Content', 'shortcuts-hub'),
-                'tab' => Controls_Manager::TAB_CONTENT,
+                'label' => esc_html__('Button', 'shortcuts-hub'),
             ]
         );
 
         $this->add_control(
-            'button_text',
+            'button_type',
             [
-                'label' => esc_html__('Button Text', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-                'default' => esc_html__('Download Shortcut', 'shortcuts-hub'),
+                'label' => esc_html__('Type', 'shortcuts-hub'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'info',
+                'options' => [
+                    'info' => esc_html__('Info', 'shortcuts-hub'),
+                    'success' => esc_html__('Success', 'shortcuts-hub'),
+                    'warning' => esc_html__('Warning', 'shortcuts-hub'),
+                    'danger' => esc_html__('Danger', 'shortcuts-hub'),
+                ],
             ]
         );
+
+        $this->add_control(
+            'text',
+            [
+                'label' => esc_html__('Text', 'shortcuts-hub'),
+                'type' => Controls_Manager::TEXT,
+                'default' => esc_html__('Download', 'shortcuts-hub'),
+                'placeholder' => esc_html__('Download', 'shortcuts-hub'),
+            ]
+        );
+
+        $this->end_controls_section();
+
+        $this->start_controls_section(
+            'section_download_settings',
+            [
+                'label' => esc_html__('Download Settings', 'shortcuts-hub'),
+                'tab' => Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        // Add your custom download controls here
 
         $this->end_controls_section();
     }
@@ -58,15 +94,44 @@ class Download_Button extends Widget_Base {
             return;
         }
 
-        echo do_shortcode('[shortcut_download_button text="' . esc_attr($settings['button_text']) . '"]');
+        $download_url = get_post_meta($post->ID, '_shortcut_download_url', true);
+        $version = get_post_meta($post->ID, '_shortcut_version', true);
+        
+        // Set default text based on login status if not set
+        if (empty($settings['text'])) {
+            $settings['text'] = is_user_logged_in() ? 
+                esc_html__('Download', 'shortcuts-hub') : 
+                esc_html__('Login to Download', 'shortcuts-hub');
+        }
+
+        // Add download-specific attributes
+        $this->add_render_attribute('button', is_user_logged_in() ? [
+            'data-download-url' => esc_url($download_url),
+            'data-post-id' => $post->ID,
+            'data-version' => esc_attr($version),
+            'href' => '#',
+        ] : [
+            'href' => site_url('/shortcuts-gallery/login/'),
+        ]);
+
+        $this->add_render_attribute('button', 'class', [
+            'elementor-button',
+            'elementor-button-' . $settings['button_type'],
+            'shortcuts-hub-download-button'
+        ]);
+        
+        ?>
+        <button <?php echo $this->get_render_attribute_string('button'); ?>>
+            <span class="elementor-button-content-wrapper">
+                <span class="elementor-button-icon">
+                    <i class="eicon-download" aria-hidden="true"></i>
+                </span>
+                <span class="elementor-button-text"><?php echo esc_html($settings['text']); ?></span>
+            </span>
+        </button>
+        <?php
     }
 }
-
-// Register widget
-function register_download_button_widget($widgets_manager) {
-    $widgets_manager->register(new Download_Button());
-}
-add_action('elementor/widgets/register', 'ShortcutsHub\Elementor\Widgets\register_download_button_widget');
 
 function shortcuts_hub_download_button($atts) {
     $atts = shortcode_atts(array(
@@ -79,12 +144,21 @@ function shortcuts_hub_download_button($atts) {
         'text' => ''
     ), $atts, 'shortcut_download_button');
 
+    // Get the post ID if not provided
+    $post_id = empty($atts['post_id']) ? get_the_ID() : $atts['post_id'];
+    
+    // Get the download URL if not provided
     if (empty($atts['download_url'])) {
-        return '';
+        $atts['download_url'] = get_post_meta($post_id, '_shortcut_download_url', true);
+    }
+
+    // Get the version if not provided
+    if (empty($atts['version'])) {
+        $atts['version'] = get_post_meta($post_id, '_shortcut_version', true);
     }
 
     // Set button text based on login status
-    $button_text = !empty($atts['text']) ? $atts['text'] : (is_user_logged_in() ? 'Download' : 'Login to Download');
+    $button_text = !empty($atts['text']) ? $atts['text'] : (is_user_logged_in() ? esc_html__('Download', 'shortcuts-hub') : esc_html__('Login to Download', 'shortcuts-hub'));
     
     // Build button classes
     $classes = array('shortcut-download-button');
@@ -92,23 +166,41 @@ function shortcuts_hub_download_button($atts) {
         $classes[] = $atts['class'];
     }
     
-    // Build button attributes
+    // If user is not logged in, store the button data in a cookie for later use
+    if (!is_user_logged_in()) {
+        $button_data = array(
+            'redirect_url' => $atts['redirect_url'],
+            'shortcut_id' => $post_id,
+            'version' => $atts['version']
+        );
+        setcookie('shortcuts_hub_button_data', json_encode($button_data), time() + 3600, '/');
+        
+        // Return login button that redirects to login page
+        $login_url = site_url('/shortcuts-gallery/login/');
+        return sprintf(
+            '<a href="%s" class="%s">%s</a>',
+            esc_url($login_url),
+            esc_attr(implode(' ', $classes)),
+            esc_html($button_text)
+        );
+    }
+
+    // For logged-in users, create the download button
     $attributes = array(
         'class' => implode(' ', $classes),
         'href' => '#',
         'data-download-url' => esc_url($atts['download_url']),
         'data-redirect-url' => esc_url($atts['redirect_url']),
-        'data-sb-id' => esc_attr($atts['sb_id']),
-        'data-post-id' => esc_attr($atts['post_id']),
+        'data-post-id' => esc_attr($post_id),
         'data-version' => esc_attr($atts['version'])
     );
-    
+
     // Build HTML attributes string
     $html_attributes = '';
     foreach ($attributes as $key => $value) {
-        $html_attributes .= sprintf(' %s="%s"', esc_attr($key), esc_attr($value));
+        $html_attributes .= sprintf(' %s="%s"', $key, $value);
     }
-    
+
     return sprintf('<a%s>%s</a>', $html_attributes, esc_html($button_text));
 }
 add_shortcode('shortcut_download_button', 'shortcuts_hub_download_button');
@@ -243,3 +335,6 @@ function sh_log_shortcut_download_to_db($shortcut_id, $post_id, $user_id, $versi
     
     return true;
 }
+
+// Remove the old registration hook as it's now handled by the Elementor Manager
+remove_action('elementor/widgets/register', 'ShortcutsHub\Elementor\Widgets\register_download_button_widget');
