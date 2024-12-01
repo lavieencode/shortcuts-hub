@@ -16,11 +16,11 @@ if (!did_action('elementor/loaded')) {
 
 class Name_Dynamic_Tag extends Tag {
     public function get_name() {
-        return 'name';  // Revert to original name
+        return 'name';  
     }
 
     public function get_title() {
-        return __('Name', 'shortcuts-hub');  // Revert to original title
+        return __('Name', 'shortcuts-hub');  
     }
 
     public function get_group() {
@@ -31,49 +31,10 @@ class Name_Dynamic_Tag extends Tag {
         return [Module::TEXT_CATEGORY];
     }
 
-    protected function register_controls() {
-        $this->add_control(
-            'before',
-            [
-                'label' => esc_html__('Before', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => esc_html__('After', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => esc_html__('Fallback', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-    }
-
     public function render() {
-        $settings = $this->get_settings();
-        
         $post_id = get_the_ID();
-        $name = get_post_meta($post_id, 'name', true);
-        
-        if (empty($name)) {
-            $name = get_the_title($post_id);
-        }
-        
-        if (empty($name) && !empty($settings['fallback'])) {
-            $name = $settings['fallback'];
-        }
-
-        if (!empty($name)) {
-            echo $settings['before'] . esc_html($name) . $settings['after'];
-        }
+        $value = get_post_meta($post_id, 'name', true) ?: get_the_title($post_id);
+        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
     }
 }
 
@@ -94,45 +55,9 @@ class Headline_Dynamic_Tag extends Tag {
         return [Module::TEXT_CATEGORY];
     }
 
-    protected function register_controls() {
-        $this->add_control(
-            'before',
-            [
-                'label' => esc_html__('Before', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => esc_html__('After', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => esc_html__('Fallback', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-    }
-
     public function render() {
-        $settings = $this->get_settings();
-        
-        $post_id = get_the_ID();
-        $headline = get_post_meta($post_id, 'headline', true);
-        
-        if (empty($headline) && !empty($settings['fallback'])) {
-            $headline = $settings['fallback'];
-        }
-
-        if (!empty($headline)) {
-            echo $settings['before'] . esc_html($headline) . $settings['after'];
-        }
+        $value = get_post_meta(get_the_ID(), 'headline', true);
+        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
     }
 }
 
@@ -153,45 +78,9 @@ class Description_Dynamic_Tag extends Tag {
         return [Module::TEXT_CATEGORY];
     }
 
-    protected function register_controls() {
-        $this->add_control(
-            'before',
-            [
-                'label' => esc_html__('Before', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => esc_html__('After', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => esc_html__('Fallback', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-    }
-
     public function render() {
-        $settings = $this->get_settings();
-        
-        $post_id = get_the_ID();
-        $description = get_post_meta($post_id, 'description', true);
-        
-        if (empty($description) && !empty($settings['fallback'])) {
-            $description = $settings['fallback'];
-        }
-
-        if (!empty($description)) {
-            echo $settings['before'] . esc_html($description) . $settings['after'];
-        }
+        $value = get_post_meta(get_the_ID(), 'description', true);
+        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
     }
 }
 
@@ -219,115 +108,6 @@ class Color_Dynamic_Tag extends Tag {
     }
 }
 
-class Icon_Dynamic_Tag extends Tag {
-    public function get_name() {
-        return 'icon';  
-    }
-
-    public function get_title() {
-        return __('Icon', 'shortcuts-hub');
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
-    }
-
-    public function get_categories() {
-        return [Module::TEXT_CATEGORY];
-    }
-
-    protected function register_controls() {
-        $this->add_control(
-            'before',
-            [
-                'label' => esc_html__('Before', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => esc_html__('After', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => esc_html__('Fallback', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-    }
-
-    public function render() {
-        $settings = $this->get_settings();
-        
-        $post_id = get_the_ID();
-        
-        $icon_data = get_post_meta($post_id, 'icon', true);
-        
-        if (!empty($icon_data)) {
-            $decoded = json_decode($icon_data, true);
-            if ($decoded && isset($decoded['type'])) {
-                if ($decoded['type'] === 'fontawesome' && isset($decoded['name'])) {
-                    $icon_html = \Elementor\Icons_Manager::render_icon(
-                        [
-                            'value' => $decoded['name'],
-                            'library' => $decoded['library'] ?? 'fa-solid'
-                        ],
-                        ['aria-hidden' => 'true']
-                    );
-                } elseif ($decoded['type'] === 'svg' && isset($decoded['url'])) {
-                    $icon_html = \Elementor\Icons_Manager::render_icon(
-                        [
-                            'value' => [
-                                'url' => $decoded['url'],
-                                'id' => $decoded['id'] ?? ''
-                            ],
-                            'library' => 'svg'
-                        ],
-                        ['aria-hidden' => 'true']
-                    );
-                }
-            } else {
-                // Legacy format handling
-                if (strpos($icon_data, 'fa-') !== false) {
-                    $library = 'fa-solid';
-                    if (strpos($icon_data, 'fab ') === 0) {
-                        $library = 'fa-brands';
-                    } elseif (strpos($icon_data, 'far ') === 0) {
-                        $library = 'fa-regular';
-                    }
-                    $icon_html = \Elementor\Icons_Manager::render_icon(
-                        [
-                            'value' => $icon_data,
-                            'library' => $library
-                        ],
-                        ['aria-hidden' => 'true']
-                    );
-                }
-            }
-        }
-        
-        if (empty($icon_html)) {
-            $icon_html = \Elementor\Icons_Manager::render_icon(
-                [
-                    'value' => 'fas fa-mobile-alt',
-                    'library' => 'fa-solid'
-                ],
-                ['aria-hidden' => 'true']
-            );
-        }
-
-        if (!empty($icon_html)) {
-            echo $settings['before'] . $icon_html . $settings['after'];
-        }
-    }
-}
-
 class Input_Dynamic_Tag extends Tag {
     public function get_name() {
         return 'input';  
@@ -345,45 +125,9 @@ class Input_Dynamic_Tag extends Tag {
         return [Module::TEXT_CATEGORY];
     }
 
-    protected function register_controls() {
-        $this->add_control(
-            'before',
-            [
-                'label' => esc_html__('Before', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => esc_html__('After', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => esc_html__('Fallback', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-    }
-
     public function render() {
-        $settings = $this->get_settings();
-        
-        $post_id = get_the_ID();
-        $input = get_post_meta($post_id, 'input', true);
-        
-        if (empty($input) && !empty($settings['fallback'])) {
-            $input = $settings['fallback'];
-        }
-
-        if (!empty($input)) {
-            echo esc_html($input);
-        }
+        $value = get_post_meta(get_the_ID(), 'input', true);
+        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
     }
 }
 
@@ -404,45 +148,9 @@ class Result_Dynamic_Tag extends Tag {
         return [Module::TEXT_CATEGORY];
     }
 
-    protected function register_controls() {
-        $this->add_control(
-            'before',
-            [
-                'label' => esc_html__('Before', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'after',
-            [
-                'label' => esc_html__('After', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-
-        $this->add_control(
-            'fallback',
-            [
-                'label' => esc_html__('Fallback', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-    }
-
     public function render() {
-        $settings = $this->get_settings();
-        
-        $post_id = get_the_ID();
-        $result = get_post_meta($post_id, 'result', true);
-        
-        if (empty($result) && !empty($settings['fallback'])) {
-            $result = $settings['fallback'];
-        }
-
-        if (!empty($result)) {
-            echo esc_html($result);
-        }
+        $value = get_post_meta(get_the_ID(), 'result', true);
+        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
     }
 }
 
@@ -463,35 +171,9 @@ class Latest_Version_Dynamic_Tag extends Tag {
         return [Module::TEXT_CATEGORY];
     }
 
-    protected function register_controls() {
-        $this->add_control(
-            'fallback',
-            [
-                'label' => esc_html__('Fallback', 'shortcuts-hub'),
-                'type' => Controls_Manager::TEXT,
-            ]
-        );
-    }
-
     public function render() {
-        $settings = $this->get_settings();
-        
-        $post_id = get_the_ID();
-        $shortcut_id = get_post_meta($post_id, 'sb_id', true);
-        
-        if ($shortcut_id) {
-            $endpoint = "shortcuts/{$shortcut_id}/version/latest";
-            $response = sb_api_call($endpoint, 'GET');
-            
-            if (isset($response['version']['version'])) {
-                echo esc_html($response['version']['version']);
-                return;
-            }
-        }
-        
-        if (!empty($settings['fallback'])) {
-            echo esc_html($settings['fallback']);
-        }
+        $value = get_post_meta(get_the_ID(), 'latest_version', true);
+        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
     }
 }
 
