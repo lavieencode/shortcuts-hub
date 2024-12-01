@@ -26,6 +26,12 @@ function shortcuts_hub_enqueue_scripts() {
         true
     );
     
+    // Localize login redirect script
+    wp_localize_script('shortcuts-hub-login-redirect', 'shortcutsHubAjax', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'nonce' => wp_create_nonce('shortcuts_hub_log')
+    ));
+    
     // Enqueue logout handler script for logged-in users
     if (is_user_logged_in()) {
         wp_enqueue_script(
@@ -48,9 +54,11 @@ function shortcuts_hub_enqueue_scripts() {
     }
     
     // Basic data for all pages
+    $nonce = wp_create_nonce('shortcuts_hub_log');  // Changed to match AJAX handler
+    
     $shortcuts_hub_data = array(
         'ajax_url' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('shortcuts_hub_nonce'),
+        'nonce' => $nonce,
         'is_user_logged_in' => is_user_logged_in(),
         'login_url' => site_url('/shortcuts-gallery/login/'),
         'redirect_url' => $current_url

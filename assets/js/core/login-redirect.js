@@ -2,81 +2,271 @@ jQuery(document).ready(function($) {
     'use strict';
     
     // Helper function to log to both console and PHP
-    function logRedirect(message, data = null) {
-        console.log(message, data);
-        $.ajax({
-            url: shortcutsHubAjax.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'shortcuts_hub_log',
-                message: message,
-                data: JSON.stringify(data),
-                nonce: shortcutsHubAjax.nonce
-            }
-        });
-    }
-    
-    // Handle form submissions
-    $(document).on('elementor-pro/forms/submit_success', function(event, response) {
-        logRedirect('[Login Redirect] Form submission success, full response:', response);
+    function logFormFlow(message, data = null, isRegistration = false) {
+        const prefix = isRegistration ? '[REGISTRATION FORM FLOW]' : '[LOGIN FORM FLOW]';
+        const fullMessage = prefix + ' ' + message;
         
-        if (!response.data) {
-            logRedirect('[Login Redirect] Error: No response data found');
-            return;
+        // Only log to console in development
+        if (typeof shortcutsHubAjax !== 'undefined' && shortcutsHubAjax.debug) {
+            if (data) {
+                console.log(fullMessage, data);
+            } else {
+                console.log(fullMessage);
+            }
         }
         
-        logRedirect('[Login Redirect] Processing response data:', response.data);
-        
-        // Handle download data if present
-        if (response.data.download_data) {
-            logRedirect('[Login Redirect] Found download data:', response.data.download_data);
-            
+        // Log to PHP
+        if (typeof shortcutsHubAjax !== 'undefined') {
             $.ajax({
                 url: shortcutsHubAjax.ajaxurl,
                 type: 'POST',
                 data: {
-                    action: 'log_shortcut_download',
-                    security: shortcutsHubAjax.nonce,
-                    shortcut_id: response.data.download_data.shortcut.id,
-                    version_data: JSON.stringify(response.data.download_data.version)
+                    action: 'shortcuts_hub_handle_log',
+                    message: fullMessage,
+                    data: data ? JSON.stringify(data) : '',
+                    nonce: shortcutsHubAjax.nonce
+                }
+            });
+        }
+    }
+
+    // Function to get URL parameter
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        if (results === null) return '';
+        
+        try {
+            return decodeURIComponent(decodeURIComponent(results[1].replace(/\+/g, ' ')));
+        } catch (e) {
+            try {
+                return decodeURIComponent(results[1].replace(/\+/g, ' '));
+            } catch (e2) {
+                return results[1].replace(/\+/g, ' ');
+            }
+        }
+    }
+    
+    // Get URL parameters
+    const downloadToken = getUrlParameter('download_token');
+    const redirectUrl = getUrlParameter('redirect_url');
+    
+    // Function to determine if form is registration
+    function isRegistrationForm($form) {
+        const formId = $form.attr('id') || '';
+        const formName = $form.data('form-name') || '';
+        return formId === 'shortcuts_gallery_reg_form' || formName === 'Shortcuts Gallery Registration';
+    }
+    
+    // Function to handle form submission and show popup
+    function handleFormSubmission($form, $tokenField, $redirectField, isRegistration) {
+        console.log('handleFormSubmission called', {
+            token: $tokenField.val(),
+            redirect: $redirectField.val(),
+            isRegistration
+        });
+
+        const redirectTo = $redirectField.val();
+        if (redirectTo) {
+            console.log('Making AJAX request to log download');
+            // Log the download
+            $.ajax({
+                url: shortcutsHubAjax.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'shortcuts_hub_log_download',
+                    nonce: shortcutsHubAjax.nonce,
+                    token: $tokenField.val(),
+                    redirect_url: redirectTo,
+                    download_url: redirectTo
                 },
-                success: function(downloadResponse) {
-                    logRedirect('[Login Redirect] Download request success:', downloadResponse);
-                    
-                    if (downloadResponse.success && response.data.download_data.version.url) {
-                        logRedirect('[Login Redirect] Opening download popup for URL:', response.data.download_data.version.url);
-                        const popup = window.open(response.data.download_data.version.url, '_blank', 'width=800,height=600');
-                        if (popup) {
-                            popup.focus();
-                        }
-                    }
-                    
-                    // Handle redirect after download processing
-                    if (response.data.redirect_url) {
-                        logRedirect('[Login Redirect] Will redirect to URL after delay:', response.data.redirect_url);
-                        setTimeout(() => {
-                            logRedirect('[Login Redirect] Executing redirect to:', response.data.redirect_url);
-                            window.location.href = response.data.redirect_url;
-                        }, 500);
+                success: function(response) {
+                    console.log('AJAX response:', response);
+                    if (response.success) {
+                        console.log('Showing popup for:', redirectTo);
+                        showPopup(redirectTo);
                     } else {
-                        logRedirect('[Login Redirect] No redirect URL found in response');
+                        console.error('Failed to log download:', response);
                     }
                 },
-                error: function(xhr, status, error) {
-                    logRedirect('[Login Redirect] Download request failed:', { status, error });
-                    // Still redirect on error
-                    if (response.data.redirect_url) {
-                        logRedirect('[Login Redirect] Redirecting after error to:', response.data.redirect_url);
-                        window.location.href = response.data.redirect_url;
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('AJAX request failed:', {
+                        status: textStatus,
+                        error: errorThrown,
+                        response: jqXHR.responseText
+                    });
+                }
+            });
+        } else {
+            console.error('No redirect URL found');
+        }
+    }
+    
+    // Function to show popup
+    function showPopup(redirectTo) {
+        const popupHtml = `
+            <div class="shortcuts-popup-overlay">
+                <div class="shortcuts-popup-content">
+                    <div class="shortcuts-popup-header">
+                        <h3>Loading Shortcut...</h3>
+                        <button class="shortcuts-popup-close">&times;</button>
+                    </div>
+                    <iframe src="${redirectTo}" frameborder="0" style="width:100%;height:80vh;"></iframe>
+                </div>
+            </div>
+        `;
+
+        // Add popup styles if not already added
+        if (!document.getElementById('shortcuts-popup-styles')) {
+            const styles = `
+                <style id="shortcuts-popup-styles">
+                    .shortcuts-popup-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.7);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                    }
+                    .shortcuts-popup-content {
+                        background: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        width: 90%;
+                        max-width: 1200px;
+                        max-height: 90vh;
+                        position: relative;
+                    }
+                    .shortcuts-popup-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 15px;
+                    }
+                    .shortcuts-popup-close {
+                        background: none;
+                        border: none;
+                        font-size: 24px;
+                        cursor: pointer;
+                        padding: 5px;
+                    }
+                    .shortcuts-popup-close:hover {
+                        color: #666;
+                    }
+                </style>
+            `;
+            $('head').append(styles);
+        }
+
+        // Add popup to page
+        const $popup = $(popupHtml);
+        $('body').append($popup);
+
+        // Handle close button
+        $popup.find('.shortcuts-popup-close').on('click', function() {
+            $popup.remove();
+        });
+
+        // Close on overlay click
+        $popup.on('click', function(e) {
+            if ($(e.target).hasClass('shortcuts-popup-overlay')) {
+                $popup.remove();
+            }
+        });
+    }
+    
+    // Function to set form fields
+    function setFormFields($form) {
+        if (!$form?.length) {
+            console.error('Form not found');
+            return;
+        }
+        
+        const isRegistration = isRegistrationForm($form);
+        console.log('Setting up form fields for:', isRegistration ? 'registration' : 'login');
+        
+        const fields = {
+            token: {
+                name: isRegistration ? 'reg_download_token' : 'login_download_token',
+                value: downloadToken
+            },
+            redirect: {
+                name: isRegistration ? 'reg_redirect_url' : 'login_redirect_url',
+                value: redirectUrl
+            }
+        };
+        
+        // Find form fields
+        const elements = {};
+        for (const [key, field] of Object.entries(fields)) {
+            const selector = `[name="form_fields[${field.name}]"], [name="${field.name}"]`;
+            const $element = $form.find(selector);
+            
+            if (!$element.length) {
+                console.error(`${key} field not found with selector:`, selector);
+                return;
+            }
+            elements[key] = $element;
+            
+            // Set field value if available
+            if (field.value) {
+                $element.val(field.value);
+                console.log(`Set ${key} value:`, field.value);
+            }
+        }
+        
+        // Listen for successful form submission using Elementor's event
+        const formId = $form.attr('data-form-id');
+        console.log('Setting up form submission listener for form ID:', formId);
+        
+        jQuery(document).on('submit_success', function(e, response) {
+            console.log('Form submit_success event fired:', {
+                targetFormId: jQuery(e.target).attr('data-form-id'),
+                expectedFormId: formId,
+                response
+            });
+            
+            const $targetForm = jQuery(e.target);
+            if ($targetForm.attr('data-form-id') === formId) {
+                console.log('Form ID matched, handling submission');
+                handleFormSubmission($form, elements.token, elements.redirect, isRegistration);
+            }
+        });
+    }
+    
+    // Process forms when they appear
+    function processForm($form) {
+        if (!$form || $form.length === 0) return;
+        setFormFields($form);
+    }
+    
+    // Find and process initial forms
+    $('.elementor-form').each(function() {
+        processForm($(this));
+    });
+    
+    // Watch for dynamically added forms
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) { // Element node
+                    const $form = $(node).find('.elementor-form');
+                    if ($form.length > 0) {
+                        processForm($form);
                     }
                 }
             });
-        } else if (response.data.redirect_url) {
-            // Direct redirect if no download data
-            logRedirect('[Login Redirect] No download data, direct redirect to:', response.data.redirect_url);
-            window.location.href = response.data.redirect_url;
-        } else {
-            logRedirect('[Login Redirect] No redirect URL or download data found in response');
-        }
+        });
+    });
+    
+    // Start observing
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
     });
 });

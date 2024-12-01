@@ -7,7 +7,18 @@ if (!defined('ABSPATH')) {
 function shortcuts_hub_enqueue_assets($hook) {
     wp_enqueue_script('jquery');
 
-    if (in_array($hook, ['shortcuts-hub_page_shortcuts-list', 'shortcuts-hub_page_add-shortcut', 'shortcuts-hub_page_edit-shortcut', 'shortcuts-hub_page_shortcuts-settings', 'shortcuts-hub_page_add-version', 'shortcuts-hub_page_edit-version'])) {
+    // Check if we're in the admin area
+    $is_admin_page = in_array($hook, [
+        'shortcuts-hub_page_shortcuts-list',
+        'shortcuts-hub_page_add-shortcut',
+        'shortcuts-hub_page_edit-shortcut',
+        'shortcuts-hub_page_shortcuts-settings',
+        'shortcuts-hub_page_add-version',
+        'shortcuts-hub_page_edit-version'
+    ]);
+
+    // Continue with existing admin page-specific enqueues
+    if ($is_admin_page) {
         wp_enqueue_style(
             'general-styles',
             plugins_url('../assets/css/general.css', __FILE__),
@@ -25,7 +36,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             wp_enqueue_style('version-single-style', plugins_url('../assets/css/versions/version-single.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/versions/version-single.css'));
             wp_enqueue_style('versions-display-style', plugins_url('../assets/css/versions/versions-display.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/versions/versions-display.css'));
 
-            wp_enqueue_script('shortcuts-handlers-script', plugins_url('../assets/js/shortcuts/shortcuts-handlers.js', __FILE__), array('jquery', 'shortcuts-delete-script'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/shortcuts/shortcuts-handlers.js'));
+            wp_enqueue_script('shortcuts-handlers-script', plugins_url('../assets/js/shortcuts/shortcuts-handlers.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/shortcuts/shortcuts-handlers.js'));
             wp_enqueue_script('shortcuts-render-script', plugins_url('../assets/js/shortcuts/shortcuts-render.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/shortcuts/shortcuts-render.js'));
             wp_enqueue_script('shortcuts-fetch-script', plugins_url('../assets/js/shortcuts/shortcuts-fetch.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/shortcuts/shortcuts-fetch.js'));
             wp_enqueue_script('shortcuts-filters-script', plugins_url('../assets/js/shortcuts/shortcuts-filters.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/shortcuts/shortcuts-filters.js'));
@@ -141,51 +152,12 @@ function shortcuts_hub_enqueue_assets($hook) {
             break;
     }
 
-    // Enqueue download log assets
-    wp_register_style(
-        'shortcuts-hub-download-log',
-        plugins_url('../assets/css/widgets/download-log.css', __FILE__),
-        array(),
-        filemtime(plugin_dir_path(__FILE__) . '../assets/css/widgets/download-log.css')
-    );
-
-    wp_register_script(
-        'shortcuts-hub-download-log',
-        plugins_url('../assets/js/widgets/download-log.js', __FILE__),
-        array('jquery'),
-        filemtime(plugin_dir_path(__FILE__) . '../assets/js/widgets/download-log.js'),
-        true
-    );
-
-    wp_localize_script('shortcuts-hub-download-log', 'shortcuts_hub_params', array(
+    // AJAX parameters for use across the site
+    wp_localize_script('jquery', 'shortcuts_hub_params', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce' => wp_create_nonce('shortcuts_hub_nonce')
     ));
-
-    // Always enqueue these files since the widget could be on any page
-    wp_enqueue_style('shortcuts-hub-download-log');
-    wp_enqueue_script('shortcuts-hub-download-log');
 }
 
 add_action('admin_enqueue_scripts', 'shortcuts_hub_enqueue_assets');
 add_action('wp_enqueue_scripts', 'shortcuts_hub_enqueue_assets');
-
-// Add shortcut data to frontend scripts when needed
-function shortcuts_hub_enqueue_frontend_assets() {
-    // Add shortcut data if we're on a shortcut page
-    $post_id = get_the_ID();
-    if ($post_id && is_singular('shortcut')) {
-        $sb_id = get_post_meta($post_id, 'sb_id', true);
-        if ($sb_id) {
-            $response = sb_api_call("shortcuts/{$sb_id}/version/latest", 'GET');
-            if (!is_wp_error($response)) {
-                // Add shortcut data to the existing shortcuts_hub object
-                wp_localize_script('shortcuts-hub-login-redirect', 'shortcuts_hub_shortcut', array(
-                    'shortcut' => $response
-                ));
-            }
-        }
-    }
-}
-
-add_action('wp_enqueue_scripts', 'shortcuts_hub_enqueue_frontend_assets', 20);

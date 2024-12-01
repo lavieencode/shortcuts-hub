@@ -5,7 +5,18 @@ if (!defined('ABSPATH')) {
 }
 
 function fetch_shortcuts() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    // Only verify nonce for logged-in users
+    if (is_user_logged_in()) {
+        if (!isset($_POST['nonce'])) {
+            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+    }
 
     $filter = isset($_POST['filter']) ? sanitize_text_field($_POST['filter']) : '';
     $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'WP'; // Default to WP
@@ -55,7 +66,18 @@ function fetch_shortcuts() {
 }
 
 function fetch_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    // Only verify nonce for logged-in users
+    if (is_user_logged_in()) {
+        if (!isset($_POST['nonce'])) {
+            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+    }
 
     $post_id = intval($_POST['post_id']);
     $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'WP';
@@ -127,7 +149,18 @@ function fetch_shortcut() {
 }
 
 function create_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    // Only verify nonce for logged-in users
+    if (is_user_logged_in()) {
+        if (!isset($_POST['nonce'])) {
+            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+    }
 
     $shortcut_data = isset($_POST['shortcut_data']) ? $_POST['shortcut_data'] : [];
 
@@ -207,7 +240,18 @@ function create_shortcut() {
 }
 
 function update_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    // Only verify nonce for logged-in users
+    if (is_user_logged_in()) {
+        if (!isset($_POST['nonce'])) {
+            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+    }
 
     $shortcut_data = $_POST['shortcut_data'];
     $post_id = intval($shortcut_data['post_id']);
@@ -298,7 +342,18 @@ function update_shortcut() {
 }
 
 function toggle_draft() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    // Only verify nonce for logged-in users
+    if (is_user_logged_in()) {
+        if (!isset($_POST['nonce'])) {
+            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+    }
 
     $post_id = intval($_POST['post_id']);
     $current_status = get_post_status($post_id);
@@ -330,7 +385,18 @@ function toggle_draft() {
 }
 
 function toggle_delete() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    // Only verify nonce for logged-in users
+    if (is_user_logged_in()) {
+        if (!isset($_POST['nonce'])) {
+            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+    }
 
     $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
 
@@ -344,9 +410,59 @@ function toggle_delete() {
     }
 }
 
+function process_download_token() {
+    // Verify nonce
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce')) {
+        wp_send_json_error(['message' => 'Invalid security token']);
+        return;
+    }
+
+    // Get and validate download token
+    $download_token = isset($_POST['download_token']) ? sanitize_text_field($_POST['download_token']) : '';
+    if (empty($download_token)) {
+        wp_send_json_error(['message' => 'No download token provided']);
+        return;
+    }
+
+    // Get the download URL from transient
+    $download_data = get_transient('sh_download_' . $download_token);
+    if (!$download_data) {
+        wp_send_json_error(['message' => 'Invalid or expired download token']);
+        return;
+    }
+
+    // Delete the transient as it's one-time use
+    delete_transient('sh_download_' . $download_token);
+
+    // Get shortcut and version data
+    $shortcut_id = isset($download_data['shortcut_id']) ? intval($download_data['shortcut_id']) : 0;
+    $version_id = isset($download_data['version_id']) ? intval($download_data['version_id']) : 0;
+
+    if (!$shortcut_id || !$version_id) {
+        wp_send_json_error(['message' => 'Invalid download data']);
+        return;
+    }
+
+    // Get version data
+    $version_data = get_post_meta($version_id, 'version_data', true);
+    if (!$version_data || !isset($version_data['url'])) {
+        wp_send_json_error(['message' => 'Version data not found']);
+        return;
+    }
+
+    // Return success with download URL and metadata
+    wp_send_json_success([
+        'download_url' => $version_data['url'],
+        'shortcut_id' => $shortcut_id,
+        'version_data' => $version_data
+    ]);
+}
+
 add_action('wp_ajax_fetch_shortcuts', 'fetch_shortcuts');
 add_action('wp_ajax_fetch_shortcut', 'fetch_shortcut');
 add_action('wp_ajax_create_shortcut', 'create_shortcut');
 add_action('wp_ajax_update_shortcut', 'update_shortcut');
 add_action('wp_ajax_toggle_draft', 'toggle_draft');
 add_action('wp_ajax_toggle_delete', 'toggle_delete');
+add_action('wp_ajax_process_download_token', 'process_download_token');
+add_action('wp_ajax_nopriv_process_download_token', 'process_download_token');

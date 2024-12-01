@@ -22,32 +22,30 @@ class Elementor_Manager {
         // Load dynamic fields first
         require_once plugin_dir_path(dirname(__FILE__)) . 'elementor-dynamic-fields.php';
 
-        try {
-            // Try to register category immediately if Elementor is loaded
-            if (did_action('elementor/loaded')) {
-                $this->register_widget_category();
+        // Register category early
+        add_action('init', function() {
+            if (did_action('elementor/init')) {
+                $elements_manager = \Elementor\Plugin::instance()->elements_manager;
+                $this->register_widget_category($elements_manager);
             } else {
-                // If Elementor isn't loaded yet, hook into its initialization
-                add_action('elementor/loaded', [$this, 'register_widget_category']);
+                add_action('elementor/init', function() {
+                    $elements_manager = \Elementor\Plugin::instance()->elements_manager;
+                    $this->register_widget_category($elements_manager);
+                });
             }
-        } catch (\Exception $e) {
-            // Silent fail - Elementor might not be active
-        }
+        }, 5);
 
-        // Load widget files
-        $this->load_widget_files();
+        // Load widget files and register widgets
+        add_action('elementor/widgets/register', [$this, 'load_widget_files_and_register'], 10);
         
-        // Register widgets after category (priority 10)
-        add_action('elementor/widgets/register', [$this, 'register_widgets'], 10);
-        
-        // Register dynamic tags (priority 10)
+        // Register dynamic tags
         add_action('elementor/dynamic_tags/register', [$this, 'register_dynamic_tags'], 10);
         
         // Register scripts and styles for both Elementor and standard WordPress
-        add_action('wp_enqueue_scripts', [$this, 'register_frontend_scripts']);
-        add_action('elementor/frontend/after_register_scripts', [$this, 'register_frontend_scripts']);
-        add_action('elementor/preview/enqueue_scripts', [$this, 'register_frontend_scripts']);
-        add_action('elementor/editor/after_enqueue_scripts', [$this, 'register_frontend_scripts']);
+        add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
+        add_action('elementor/frontend/after_register_scripts', [$this, 'register_scripts']);
+        add_action('elementor/preview/enqueue_scripts', [$this, 'register_scripts']);
+        add_action('elementor/editor/after_enqueue_scripts', [$this, 'register_scripts']);
         
         // Register styles
         add_action('wp_enqueue_scripts', [$this, 'register_frontend_styles']);
@@ -56,7 +54,7 @@ class Elementor_Manager {
         add_action('elementor/editor/after_enqueue_styles', [$this, 'register_frontend_styles']);
     }
 
-    public function load_widget_files() {
+    public function load_widget_files_and_register($widgets_manager) {
         $widget_files = [
             'download-button-widget.php',
             'download-log-widget.php',
@@ -70,9 +68,7 @@ class Elementor_Manager {
                 require_once $file_path;
             }
         }
-    }
 
-    public function register_widgets($widgets_manager) {
         // Register all widgets
         $widgets = [
             'Download_Button' => Widgets\Download_Button_Widget::class,
@@ -88,7 +84,8 @@ class Elementor_Manager {
                     $widgets_manager->register($widget);
                 }
             } catch (\Exception $e) {
-                // Silent fail - individual widget registration failure shouldn't break the site
+                // Log the error for debugging
+                error_log('Failed to register widget ' . $name . ': ' . $e->getMessage());
             }
         }
     }
@@ -130,76 +127,50 @@ class Elementor_Manager {
         }
     }
 
-    public function register_widget_category() {
-        try {
-            if (!class_exists('\Elementor\Plugin')) {
-                return;
-            }
-
-            $elements_manager = \Elementor\Plugin::instance()->elements_manager;
-            if (!$elements_manager) {
-                return;
-            }
-            
-            $category_args = [
+    public function register_widget_category($elements_manager) {
+        $elements_manager->add_category(
+            'shortcuts-hub',
+            [
                 'title' => esc_html__('Shortcuts Hub', 'shortcuts-hub'),
                 'icon' => 'fa fa-plug',
                 'position' => 1,
-            ];
-            
-            $elements_manager->add_category('shortcuts-hub', $category_args);
-            
-        } catch (\Exception $e) {
-            // Silent fail - category registration failure shouldn't break the site
-        }
+            ]
+        );
     }
 
-    public function register_frontend_scripts() {
-        // Prevent double registration
-        if (wp_script_is('shortcuts-hub-download-button', 'registered')) {
-            return;
-        }
-
-        $plugin_url = plugins_url('', dirname(dirname(dirname(__FILE__))));
-        $version = defined('SHORTCUTS_HUB_VERSION') ? SHORTCUTS_HUB_VERSION : '1.0.0';
+    public function register_scripts() {
+        $plugin_url = trailingslashit(plugins_url('', dirname(dirname(__FILE__))));
+        $version = defined('WP_DEBUG') && WP_DEBUG ? time() : SHORTCUTS_HUB_VERSION;
 
         // Register download button script
         wp_register_script(
             'shortcuts-hub-download-button',
-            $plugin_url . '/assets/js/core/download-button.js',
+            $plugin_url . 'assets/js/core/download-button.js',
             ['jquery'],
             $version,
             true
         );
+
+        // Consolidated localization for download button
+        wp_localize_script('shortcuts-hub-download-button', 'shortcuts_hub', [
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('shortcuts_hub_nonce'),
+            'post_url' => get_permalink(),
+            'logged_in_text' => __('Download', 'shortcuts-hub'),
+            'logged_out_text' => __('Login to Download', 'shortcuts-hub'),
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'is_user_logged_in' => is_user_logged_in(),
+            'loginUrl' => wp_login_url()
+        ]);
 
         // Register download log script
         wp_register_script(
             'shortcuts-hub-download-log',
-            $plugin_url . '/assets/js/core/download-log.js',
+            $plugin_url . 'assets/js/core/download-log.js',
             ['jquery'],
             $version,
             true
         );
-
-        // Get the appropriate login URL based on context
-        $login_url = wp_login_url();
-        if (!Plugin::$instance->editor->is_edit_mode() && function_exists('get_permalink')) {
-            $login_url = wp_login_url(get_permalink());
-        }
-
-        // Localize the script with necessary data
-        wp_localize_script('shortcuts-hub-download-button', 'shortcutsHubDownload', [
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('shortcuts_hub_download'),
-            'loginUrl' => $login_url,
-            'isUserLoggedIn' => is_user_logged_in()
-        ]);
-
-        // If in editor or preview, enqueue scripts immediately
-        if (Plugin::$instance->editor->is_edit_mode() || Plugin::$instance->preview->is_preview_mode()) {
-            wp_enqueue_script('shortcuts-hub-download-button');
-            wp_enqueue_script('shortcuts-hub-download-log');
-        }
     }
 
     public function register_frontend_styles() {

@@ -4,9 +4,28 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Register AJAX actions
+add_action('wp_ajax_fetch_versions', 'fetch_versions');
+add_action('wp_ajax_fetch_latest_version', 'fetch_latest_version');
+add_action('wp_ajax_nopriv_fetch_latest_version', 'fetch_latest_version');
+add_action('wp_ajax_fetch_version', 'fetch_version');
+add_action('wp_ajax_create_version', 'create_version');
+add_action('wp_ajax_update_version', 'update_version');
+add_action('wp_ajax_version_toggle_delete', 'version_toggle_delete');
+add_action('wp_ajax_version_toggle_draft', 'version_toggle_draft');
+
 // Fetch all versions with filtering options
 function fetch_versions() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    if (!isset($_POST['nonce'])) {
+        wp_send_json_error(['message' => 'No nonce provided']);
+        return;
+    }
+
+    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+        wp_send_json_error(['message' => 'Invalid nonce']);
+        return;
+    }
+
     $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
     $search_term = isset($_POST['search_term']) ? sanitize_text_field($_POST['search_term']) : '';
     $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
@@ -42,7 +61,18 @@ function fetch_versions() {
 }
 
 function fetch_latest_version() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    // Only verify nonce for logged-in users
+    if (is_user_logged_in()) {
+        if (!isset($_POST['nonce'])) {
+            wp_send_json_error(['message' => 'No nonce provided']);
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+    }
 
     $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
 
@@ -51,22 +81,17 @@ function fetch_latest_version() {
         return;
     }
 
-    error_log('Fetching latest version for shortcut ID: ' . $id);
-    
     $endpoint = "shortcuts/{$id}/version/latest";
+    
     $response = sb_api_call($endpoint, 'GET');
 
     if (is_wp_error($response)) {
-        error_log('Error fetching latest version: ' . $response->get_error_message());
         wp_send_json_error(['message' => 'Error fetching latest version: ' . $response->get_error_message()]);
         return;
     }
 
-    error_log('API Response: ' . print_r($response, true));
-
     // Ensure we have a valid version object with a URL
     if (!isset($response['version']) || !isset($response['version']['url'])) {
-        error_log('Invalid version response structure: ' . print_r($response, true));
         wp_send_json_error(['message' => 'Invalid version response structure']);
         return;
     }
@@ -76,7 +101,16 @@ function fetch_latest_version() {
 
 // Fetch a specific version
 function fetch_version() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    if (!isset($_POST['nonce'])) {
+        wp_send_json_error(['message' => 'No nonce provided']);
+        return;
+    }
+
+    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+        wp_send_json_error(['message' => 'Invalid nonce']);
+        return;
+    }
+
     $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
     $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
     $latest = isset($_POST['latest']) ? filter_var($_POST['latest'], FILTER_VALIDATE_BOOLEAN) : false;
@@ -104,7 +138,15 @@ function fetch_version() {
 
 // Create a new version
 function create_version() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    if (!isset($_POST['nonce'])) {
+        wp_send_json_error(['message' => 'No nonce provided']);
+        return;
+    }
+
+    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+        wp_send_json_error(['message' => 'Invalid nonce']);
+        return;
+    }
 
     $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
     $version = isset($_POST['version']) ? sanitize_text_field($_POST['version']) : '';
@@ -141,7 +183,16 @@ function create_version() {
 
 // Update an existing version
 function update_version() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    if (!isset($_POST['nonce'])) {
+        wp_send_json_error(['message' => 'No nonce provided']);
+        return;
+    }
+
+    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+        wp_send_json_error(['message' => 'Invalid nonce']);
+        return;
+    }
+
     $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
     $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
     $version_data = isset($_POST['version_data']) ? $_POST['version_data'] : array();
@@ -163,7 +214,16 @@ function update_version() {
 
 // Toggle delete/restore a version
 function version_toggle_delete() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    if (!isset($_POST['nonce'])) {
+        wp_send_json_error(['message' => 'No nonce provided']);
+        return;
+    }
+
+    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+        wp_send_json_error(['message' => 'Invalid nonce']);
+        return;
+    }
+
     $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
     $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
     $is_restore = isset($_POST['is_restore']) ? filter_var($_POST['is_restore'], FILTER_VALIDATE_BOOLEAN) : false;
@@ -183,11 +243,18 @@ function version_toggle_delete() {
     wp_send_json_success(['message' => 'Version toggled successfully']);
 }
 
-add_action('wp_ajax_version_toggle_delete', 'version_toggle_delete');
-
 // Toggle version state (publish/draft)
 function version_toggle_draft() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    if (!isset($_POST['nonce'])) {
+        wp_send_json_error(['message' => 'No nonce provided']);
+        return;
+    }
+
+    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+        wp_send_json_error(['message' => 'Invalid nonce']);
+        return;
+    }
+
     $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
     $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
     $new_state = isset($_POST['state']['value']) ? intval($_POST['state']['value']) : null;
@@ -206,12 +273,3 @@ function version_toggle_draft() {
 
     wp_send_json_success(['message' => 'Version state toggled successfully']);
 }
-
-add_action('wp_ajax_fetch_versions', 'fetch_versions');
-add_action('wp_ajax_fetch_latest_version', 'fetch_latest_version');
-add_action('wp_ajax_nopriv_fetch_latest_version', 'fetch_latest_version');
-add_action('wp_ajax_fetch_version', 'fetch_version');
-add_action('wp_ajax_create_version', 'create_version');
-add_action('wp_ajax_update_version', 'update_version');
-add_action('wp_ajax_version_toggle_delete', 'version_toggle_delete');
-add_action('wp_ajax_version_toggle_draft', 'version_toggle_draft');

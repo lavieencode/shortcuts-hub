@@ -33,8 +33,7 @@ class Name_Dynamic_Tag extends Tag {
 
     public function render() {
         $post_id = get_the_ID();
-        $value = get_post_meta($post_id, 'name', true) ?: get_the_title($post_id);
-        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
+        echo esc_html(get_post_meta($post_id, 'name', true) ?: get_the_title($post_id));
     }
 }
 
@@ -56,8 +55,7 @@ class Headline_Dynamic_Tag extends Tag {
     }
 
     public function render() {
-        $value = get_post_meta(get_the_ID(), 'headline', true);
-        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
+        echo esc_html(get_post_meta(get_the_ID(), 'headline', true));
     }
 }
 
@@ -79,8 +77,7 @@ class Description_Dynamic_Tag extends Tag {
     }
 
     public function render() {
-        $value = get_post_meta(get_the_ID(), 'description', true);
-        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
+        echo esc_html(get_post_meta(get_the_ID(), 'description', true));
     }
 }
 
@@ -102,8 +99,7 @@ class Color_Dynamic_Tag extends Tag {
     }
 
     public function render() {
-        $post_id = get_the_ID();
-        $color = get_post_meta($post_id, 'color', true);
+        $color = get_post_meta(get_the_ID(), 'color', true);
         echo !empty($color) ? esc_html($color) : '';
     }
 }
@@ -126,8 +122,7 @@ class Input_Dynamic_Tag extends Tag {
     }
 
     public function render() {
-        $value = get_post_meta(get_the_ID(), 'input', true);
-        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
+        echo esc_html(get_post_meta(get_the_ID(), 'input', true));
     }
 }
 
@@ -149,8 +144,7 @@ class Result_Dynamic_Tag extends Tag {
     }
 
     public function render() {
-        $value = get_post_meta(get_the_ID(), 'result', true);
-        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
+        echo esc_html(get_post_meta(get_the_ID(), 'result', true));
     }
 }
 
@@ -172,8 +166,7 @@ class Latest_Version_Dynamic_Tag extends Tag {
     }
 
     public function render() {
-        $value = get_post_meta(get_the_ID(), 'latest_version', true);
-        echo $this->get_settings('before') . esc_html($value) . $this->get_settings('after');
+        echo esc_html(get_post_meta(get_the_ID(), 'latest_version', true));
     }
 }
 

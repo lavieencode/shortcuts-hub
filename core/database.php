@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-function shortcuts_hub_install_db() {
+function install_db() {
     global $wpdb;
 
     $charset_collate = $wpdb->get_charset_collate();
@@ -53,7 +53,7 @@ function shortcuts_hub_install_db() {
 }
 
 // Function to log shortcut downloads with enhanced data
-function log_shortcut_download($shortcut_name, $version_data, $download_url) {
+function log_download($shortcut_name, $version_data, $download_url) {
     global $wpdb;
     
     try {
@@ -112,17 +112,17 @@ function log_shortcut_download($shortcut_name, $version_data, $download_url) {
 }
 
 // Function to ensure the downloads table exists
-function ensure_downloads_table_exists() {
+function check_exists() {
     global $wpdb;
     $table_name = $wpdb->prefix . 'shortcutshub_downloads';
     
     if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
-        shortcuts_hub_install_db();
+        install_db();
     }
 }
 
 // Enhanced function to get user's download history
-function get_user_downloads($user_id = null) {
+function get_downloads($user_id = null) {
     global $wpdb;
     
     if (!$user_id) {
@@ -149,7 +149,75 @@ function get_user_downloads($user_id = null) {
 }
 
 // Register activation hook in your main plugin file
-register_activation_hook(SHORTCUTS_HUB_PATH . 'shortcuts-hub.php', 'shortcuts_hub_install_db');
+register_activation_hook(SHORTCUTS_HUB_PATH . 'shortcuts-hub.php', 'install_db');
 
 // Also ensure table exists on plugin load
-add_action('plugins_loaded', 'ensure_downloads_table_exists');
+add_action('plugins_loaded', 'check_exists');
+
+add_action('wp_ajax_log_shortcut_download', function() {
+    check_ajax_referer('shortcuts_hub_nonce', 'security');
+
+    $shortcut_id = isset($_POST['shortcut_id']) ? sanitize_text_field($_POST['shortcut_id']) : '';
+    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+    $version_data = isset($_POST['version_data']) ? $_POST['version_data'] : [];
+
+    if (empty($shortcut_id) || empty($post_id)) {
+        wp_send_json_error(['message' => 'Missing required data']);
+        return;
+    }
+
+    $result = log_download(
+        get_the_title($post_id),
+        [
+            'shortcut' => ['id' => $shortcut_id],
+            'version' => $version_data
+        ],
+        isset($version_data['url']) ? $version_data['url'] : ''
+    );
+    
+    if (!$result) {
+        wp_send_json_error(['message' => 'Failed to log download']);
+        return;
+    }
+
+    wp_send_json_success(['message' => 'Download logged successfully']);
+});
+
+// AJAX handler for logging downloads
+function ajax_log_download() {
+    // Only verify nonce for logged-in users
+    if (is_user_logged_in()) {
+        if (!isset($_POST['nonce'])) {
+            error_log('[Download Log] No nonce provided for logged-in user');
+            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
+            return;
+        }
+
+        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+            error_log('[Download Log] Invalid nonce');
+            wp_send_json_error(['message' => 'Invalid nonce']);
+            return;
+        }
+    }
+    
+    // Handle both token-based and direct shortcut data logging
+    $token = isset($_POST['token']) ? sanitize_text_field($_POST['token']) : '';
+    $download_url = isset($_POST['download_url']) ? esc_url_raw($_POST['download_url']) : '';
+    $redirect_url = isset($_POST['redirect_url']) ? esc_url_raw($_POST['redirect_url']) : '';
+
+    error_log('[Download Log] Processing request:');
+    error_log('[Download Log] - Download URL: ' . $download_url);
+    error_log('[Download Log] - Redirect URL: ' . $redirect_url);
+    error_log('[Download Log] - Token: ' . $token);
+
+    // Generate a new token for the download
+    $new_token = wp_generate_password(12, false);
+    set_transient('sh_download_' . $new_token, [
+        'download_url' => $download_url,
+        'redirect_url' => $redirect_url
+    ], HOUR_IN_SECONDS);
+
+    error_log('[Download Log] Generated token: ' . $new_token);
+    wp_send_json_success(['token' => $new_token]);
+}
+add_action('wp_ajax_ajax_log_download', 'ajax_log_download');

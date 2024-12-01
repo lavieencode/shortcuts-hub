@@ -16,7 +16,6 @@ function get_refresh_sb_token() {
     }
     
     $api_url = SB_URL . '/login';
-
     $request_body = json_encode([
         'username' => SB_USERNAME,
         'password' => SB_PASSWORD
@@ -31,19 +30,16 @@ function get_refresh_sb_token() {
     ]);
 
     if (is_wp_error($response)) {
-        error_log('Error during login request: ' . $response->get_error_message(), 0);
         return false;
     }
 
     $body = wp_remote_retrieve_body($response);
     $data = json_decode($body, true);
-
+    
     if (!empty($data['token'])) {
         set_transient('SB_TOKEN', $data['token'], HOUR_IN_SECONDS);
         return $data['token'];
     }
 
-    error_log('Failed to retrieve token. Response: ' . $body, 0);
     return false;
 }
-

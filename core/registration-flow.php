@@ -34,29 +34,40 @@ add_action('elementor_pro/forms/process', function($record, $ajax_handler) {
     wp_set_current_user($user_id);
     wp_set_auth_cookie($user_id, true);
 
-    // Get button data from cookie
-    $button_data = isset($_COOKIE['shortcuts_hub_button_data']) ? stripslashes($_COOKIE['shortcuts_hub_button_data']) : '';
-    $button_data = json_decode($button_data, true);
+    // Get download token and redirect URL from form fields first
+    $download_token = '';
+    $redirect_url = home_url();
 
-    error_log('Button data from cookie: ' . print_r($button_data, true));
+    if (!empty($fields['reg_download_token']['value'])) {
+        $download_token = sanitize_text_field($fields['reg_download_token']['value']);
+    }
+
+    if (!empty($fields['reg_redirect_url']['value'])) {
+        $redirect_url = esc_url_raw($fields['reg_redirect_url']['value']);
+    }
 
     // Prepare the response data
     $response_data = [
         'success' => true,
         'registration_success' => true,
-        'redirect_url' => !empty($button_data['redirect_url']) ? $button_data['redirect_url'] : home_url()
+        'redirect_url' => esc_url_raw($redirect_url)
     ];
 
-    if (!empty($button_data['shortcut_id'])) {
-        $response_data['shortcut_id'] = $button_data['shortcut_id'];
-        error_log('Registration: Setting shortcut_id for download: ' . $button_data['shortcut_id']);
-    } else {
-        error_log('Registration: No shortcut_id found in button data');
+    // If we have a download token, process it
+    if (!empty($download_token)) {
+        // Get the download data from the token
+        $download_data = get_transient('sh_download_' . $download_token);
+        if ($download_data) {
+            // Add download data to response
+            $response_data['download_data'] = $download_data;
+            
+            // Clean up the transient
+            delete_transient('sh_download_' . $download_token);
+        }
     }
 
     // Set the response data
     foreach ($response_data as $key => $value) {
-        error_log('Setting response data: ' . $key . ' = ' . print_r($value, true));
         $ajax_handler->add_response_data($key, $value);
     }
 
@@ -69,6 +80,4 @@ add_action('elementor_pro/forms/form_submitted', function($record, $ajax_handler
     if ('Shortcuts Gallery Registration' !== $form_name) {
         return;
     }
-    
-    error_log('Form submitted hook triggered for registration form');
 }, 10, 2);
