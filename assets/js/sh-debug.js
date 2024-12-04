@@ -22,11 +22,13 @@ jQuery(document).ready(function() {
 });
 
 function sh_debug_log(message, data = null, source = null) {
-    // Wait for session log to complete before sending new logs
+    if (!source) {
+        source = new Error();
+    }
+    
     if (window.sessionLogPromise) {
         window.sessionLogPromise.then(() => {
             sendLog(message, data, source);
-            window.sessionLogPromise = null;
         });
     } else {
         sendLog(message, data, source);
@@ -34,10 +36,21 @@ function sh_debug_log(message, data = null, source = null) {
 }
 
 function sendLog(message, data = null, source = null) {
-    // Get the source file and line number from the stack trace
-    const stackLine = new Error().stack.split('\n')[2];
-    const match = stackLine.match(/.*\/([^/]+\.js\?ver=\d+:\d+:\d+)/);
-    const sourceInfo = match ? `[SOURCE] ${match[1]}` : '[SOURCE] unknown';
+    if (source instanceof Error) {
+        const stackTrace = source.stack;
+        const stackLines = stackTrace ? stackTrace.split('\n') : [];
+        const sourceLine = stackLines.find(line => 
+            line.includes('/plugins/shortcuts-hub/') && 
+            !line.includes('sh-debug.js')
+        );
+        
+        if (sourceLine) {
+            const match = sourceLine.match(/\((.*?)\)/);
+            source = match ? match[1] : sourceLine.trim();
+        } else {
+            source = null;
+        }
+    }
 
     // Send to PHP for logging
     jQuery.ajax({
@@ -48,14 +61,14 @@ function sendLog(message, data = null, source = null) {
             security: shortcutsHubData.security,
             message: message,
             data: JSON.stringify(data, null, 4),
-            source: sourceInfo
+            source: source ? `[SOURCE] ${source}` : ''
         }
     });
 
     // Style console output
     const debugStyle = 'background: #909cfe; color: #252525; font-weight: bold;';
     const sourceTagStyle = 'color: #909cfe; font-weight: bold;';
-    const fileNameStyle = 'font-weight: bold; text-decoration: underline;';
+    const fileNameStyle = 'font-weight: bold;';
     const jsonKeyStyle = 'color: #909cfe; font-weight: bold;';
 
     if (source === 'session-start') {
@@ -93,8 +106,8 @@ function sendLog(message, data = null, source = null) {
         groupMethod.call(console, '%c[DEBUG] ' + message, debugStyle);
         
         // Split source info into parts and style separately
-        if (match) {
-            const [fullMatch, fileName] = match;
+        if (source) {
+            const [fullMatch, fileName] = source.split(' ');
             const questionMarkIndex = fileName.indexOf('?');
             if (questionMarkIndex !== -1) {
                 const beforeQuestion = fileName.substring(0, questionMarkIndex);
@@ -112,7 +125,7 @@ function sendLog(message, data = null, source = null) {
                 logMethod.call(console, '%c[SOURCE] %c%s', sourceTagStyle, fileNameStyle, fileName);
             }
         } else {
-            logMethod.call(console, '%c[SOURCE] unknown', sourceTagStyle);
+            logMethod.call(console, '%c[SOURCE] %c%s', sourceTagStyle, '', callerLine);
         }
         
         if (data) {
