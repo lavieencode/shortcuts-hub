@@ -3,6 +3,10 @@ jQuery(document).ready(function() {
 });
 
 function initializeFilters() {
+    // Set default values
+    jQuery('#filter-status').val('publish');
+    jQuery('#filter-deleted').val('false');
+    
     // Handle filter changes
     jQuery('#filter-status, #filter-deleted').on('change', function() {
         console.log('Filter changed:', {
@@ -23,7 +27,8 @@ function initializeFilters() {
 
     // Handle reset button
     jQuery('#reset-filters').on('click', function() {
-        jQuery('#filter-status, #filter-deleted').val('');
+        jQuery('#filter-status').val('publish');
+        jQuery('#filter-deleted').val('false');
         jQuery('#search-input').val('');
         fetchShortcuts();
     });
