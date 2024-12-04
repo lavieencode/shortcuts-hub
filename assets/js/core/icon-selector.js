@@ -1,3 +1,101 @@
+/**
+ * Icon Selector Refactor Plan
+ * -------------------------
+ * Based on analysis of Premium Addons for Elementor's implementation
+ * Reference: /wp-content/plugins/premium-addons-for-elementor/admin/assets/js/jquery-fonticonpicker.js
+ * 
+ * 1. File Structure
+ * ----------------
+ * - icon-selector.js (main functionality)
+ * - icon-selector.css (styles)
+ * - icon-categories.js (icon categorization data)
+ * 
+ * 2. HTML Structure
+ * ----------------
+ * <div class="icon-selector">
+ *   <div class="selector-preview">
+ *     <span class="selected-icon"><i class="fa fa-icon"></i></span>
+ *     <span class="selector-button"><i class="fa fa-chevron-down"></i></span>
+ *   </div>
+ *   <div class="selector-popup">
+ *     <div class="selector-search">
+ *       <input type="text" class="search-input" placeholder="Search icons...">
+ *     </div>
+ *     <div class="selector-categories">
+ *       <select class="category-select"></select>
+ *     </div>
+ *     <div class="icons-container"></div>
+ *     <div class="selector-pagination">
+ *       <span class="page-info">1/10</span>
+ *       <button class="prev-page">←</button>
+ *       <button class="next-page">→</button>
+ *     </div>
+ *   </div>
+ * </div>
+ * 
+ * 3. Core Features
+ * ---------------
+ * a) Icon Loading & Display
+ *    - Load icons in paginated chunks (20 per page)
+ *    - Cache loaded icons for performance
+ *    - Use event delegation for icon clicks
+ * 
+ * b) Search Functionality
+ *    - Debounced search input (300ms)
+ *    - Search in both icon names and categories
+ *    - Cache search results
+ *    - Show/hide clear search button
+ * 
+ * c) Category Management
+ *    - Group icons by category (Solid, Regular, Brands)
+ *    - Quick category switching
+ *    - Remember last selected category
+ * 
+ * d) Popup Management
+ *    - Position popup relative to button
+ *    - Handle window resize and scroll
+ *    - Close on outside click
+ *    - Keyboard navigation (arrows, enter, escape)
+ * 
+ * 4. Performance Optimizations
+ * --------------------------
+ * - Use DocumentFragment for bulk DOM updates
+ * - Virtualize long lists of icons
+ * - Debounce search and scroll handlers
+ * - Cache DOM queries
+ * - Lazy load categories
+ * 
+ * 5. CSS Requirements
+ * -----------------
+ * - Responsive design (mobile-friendly)
+ * - Smooth transitions for popup
+ * - Loading states and animations
+ * - Clear hover and active states
+ * - Accessible focus states
+ * 
+ * 6. Implementation Steps
+ * ---------------------
+ * 1. Create basic HTML structure and CSS
+ * 2. Implement core icon display and selection
+ * 3. Add pagination system
+ * 4. Implement search functionality
+ * 5. Add category filtering
+ * 6. Add keyboard navigation
+ * 7. Optimize performance
+ * 8. Add loading states and error handling
+ * 
+ * 7. Dependencies
+ * -------------
+ * - jQuery (for DOM manipulation)
+ * - Font Awesome (icon library)
+ * - Lodash/Underscore (for debounce/throttle)
+ * 
+ * 8. Browser Support
+ * ----------------
+ * - Modern browsers (Chrome, Firefox, Safari, Edge)
+ * - IE11 support if needed (requires polyfills)
+ */
+
 // Define the IconSelector class in the global scope
 window.IconSelector = class IconSelector {
     constructor(options) {

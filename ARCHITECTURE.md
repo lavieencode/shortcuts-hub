@@ -290,25 +290,30 @@ Shortcuts Hub is a WordPress plugin that manages and displays shortcuts in an or
    - **Why it Works**: Provides stable, responsive layout
 
 #### Best Practices
-1. **Initialization**:
-   - Always use proper Elementor hooks
-   - Wait for frontend initialization
-   - Use widget-specific action names
+1. **Icon Data**:
+   - Always store in JSON format
+   - Include type identifier
+   - Validate structure before save
+   - Handle legacy data gracefully
 
-2. **Content Handling**:
-   - Buffer output when needed
-   - Separate editor and frontend rendering
-   - Maintain proper class hierarchy
+2. **Error Handling**:
+   - Validate data at each step
+   - Provide meaningful fallbacks
+   - Log important operations
+   - Clear user feedback
 
-3. **Event Management**:
-   - Prevent default when necessary
-   - Use proper event delegation
-   - Maintain state consistently
+3. **AJAX Security**:
+   - Use WordPress nonces for all AJAX requests
+   - Nonce parameter should be named 'security' in both PHP and JavaScript
+   - Access via $_POST['security'] in PHP handlers
+   - Send via shortcutsHubData.security in JavaScript
+   - Always verify for logged-in users using wp_verify_nonce()
 
-4. **Layout Structure**:
-   - Use CSS Grid for main layout
-   - Maintain WooCommerce classes
-   - Follow Elementor structural patterns
+4. **Performance**:
+   - Cache expensive operations
+   - Minimize DOM operations
+   - Optimize media uploads
+   - Use WordPress core functions
 
 ## WooCommerce My Account Widget Integration Notes
 
@@ -559,17 +564,21 @@ This partial success suggests we're on the right track with the widget extension
 ## Best Practices
 1. **Icon Data**:
    - Always store in JSON format
-   - Include type identifier
-   - Validate structure before save
-   - Handle legacy data gracefully
 
-2. **Error Handling**:
+2. **AJAX Security**:
+   - Use WordPress nonces for all AJAX requests
+   - Nonce parameter should be named 'security' in both PHP and JavaScript
+   - Access via $_POST['security'] in PHP handlers
+   - Send via shortcutsHubData.security in JavaScript
+   - Always verify for logged-in users using wp_verify_nonce()
+
+3. **Error Handling**:
    - Validate data at each step
    - Provide meaningful fallbacks
    - Log important operations
    - Clear user feedback
 
-3. **Performance**:
+4. **Performance**:
    - Cache expensive operations
    - Minimize DOM operations
    - Optimize media uploads

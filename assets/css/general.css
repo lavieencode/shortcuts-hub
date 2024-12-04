@@ -25,6 +25,12 @@ h2#shortcut-name-display {
     margin-bottom: 30px !important;
 }
 
+.shortcut-item h3 {
+    width: auto;
+    border: none;
+    margin: 0;
+}
+
 /* Form Labels */
 label {
     display: inline-block;
@@ -35,7 +41,6 @@ label {
     padding: 5px 20px;
     width: auto;
     border: none;
-    margin-bottom: 10px;
 }
 
 /* Form Elements */
@@ -151,18 +156,6 @@ button {
     gap: 10px;
     align-items: center;
     margin-top: 30px !important;
-}
-
-/* Badges */
-.badge {
-    position: relative;
-    margin-left: 5px;
-    background-color: #9e9e9e;
-    color: #252525;
-    font-weight: 800;
-    padding: 5px 10px;
-    border-radius: 0px;
-    font-size: 13px;
 }
 
 /* Link Styles */

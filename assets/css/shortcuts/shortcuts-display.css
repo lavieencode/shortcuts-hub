@@ -34,11 +34,12 @@
 
 #shortcuts-header-bar {
     display: flex;
-    align-items: stretch;
-    gap: 20px;
-    margin-bottom: 30px;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    background-color: transparent;
+    height: 50px;
+    margin: 20px 0 30px;
 }
 
 #shortcuts-header-bar input,
@@ -55,6 +56,7 @@
     border-radius: 0;
     box-sizing: border-box;
     flex: 0 1 auto;
+    margin-bottom: 0 !important;
 }
 
 #shortcuts-header-bar select {
@@ -87,4 +89,45 @@
     gap: 10px;
     padding: 10px 0;
     background-color: transparent;
+}
+
+#search-input,
+#filter-status,
+#filter-deleted,
+#reset-filters {
+    height: 50px;
+    margin: 0;
+    padding: 0 10px;
+    background-color: #252525;
+    color: #CACACA;
+    border: none;
+    border-radius: 0;
+    font-size: 15px;
+}
+
+#search-input {
+    width: 240px;
+}
+
+#reset-filters {
+    background-color: #909CFE !important;
+    color: #252525 !important;
+    font-weight: 600;
+    min-width: 120px;
+    cursor: pointer;
+}
+
+.add-version-button,
+.add-shortcut-button {
+    width: auto;
+    height: 50px;
+    font-size: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #909CFE;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
 }

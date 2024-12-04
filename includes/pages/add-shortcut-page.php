@@ -8,6 +8,10 @@ function shortcuts_hub_render_add_shortcut_page() {
     ?>
     <div id="add-shortcut-page" class="wrap">
         <h1><?php esc_html_e('Add New Shortcut', 'shortcuts-hub'); ?></h1>
+        <?php 
+            wp_enqueue_style('font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', array(), '6.4.0');
+            wp_nonce_field('shortcuts_hub_nonce', 'shortcuts_hub_nonce');
+        ?>
         <form id="add-shortcut-form" class="form-container">
             <input type="hidden" id="state" name="state" value="published">
             <input type="hidden" id="id" name="id" value="">

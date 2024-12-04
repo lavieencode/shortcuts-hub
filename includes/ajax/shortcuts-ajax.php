@@ -4,77 +4,129 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function fetch_shortcuts() {
-    // Only verify nonce for logged-in users
-    if (is_user_logged_in()) {
-        if (!isset($_POST['nonce'])) {
-            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
-            return;
-        }
+// Include required files
+require_once dirname(__FILE__) . '/../settings.php';
+require_once dirname(__FILE__) . '/../sb-api.php';
 
-        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
-            wp_send_json_error(['message' => 'Invalid nonce']);
-            return;
-        }
+function fetch_shortcuts() {
+    if (is_user_logged_in() && (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce'))) {
+        wp_send_json_error(['message' => 'Invalid security token']);
+        return;
     }
 
     $filter = isset($_POST['filter']) ? sanitize_text_field($_POST['filter']) : '';
-    $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'WP'; // Default to WP
+    $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'WP';
+    $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+    $deleted = isset($_POST['deleted']) ? $_POST['deleted'] : null;
 
-    if ($source === 'WP') {
-        $args = array(
-            'post_type' => 'shortcut',
-            'numberposts' => -1,
-        );
+    error_log('Shortcuts Hub - Fetch Request Parameters:');
+    error_log('Filter: ' . print_r($filter, true));
+    error_log('Source: ' . print_r($source, true));
+    error_log('Status: ' . print_r($status, true));
+    error_log('Deleted: ' . print_r($deleted, true));
 
+    // Handle Switchblade source
+    if ($source === 'SB') {
+        $params = array();
+        
+        // Add filter if present
         if (!empty($filter)) {
-            $args['s'] = $filter;
+            $params['filter'] = $filter;
         }
 
-        $shortcuts = get_posts($args);
-        $data = array();
-
-        foreach ($shortcuts as $shortcut) {
-            $data[] = array(
-                'post_id' => $shortcut->ID, // Renamed from 'id' to 'post_id' for clarity
-                'name' => $shortcut->post_title,
-                'headline' => get_post_meta($shortcut->ID, 'headline', true),
-                'description' => get_post_meta($shortcut->ID, 'description', true),
-                'color' => get_post_meta($shortcut->ID, 'color', true),
-                'icon' => get_post_meta($shortcut->ID, 'icon', true),
-                'input' => get_post_meta($shortcut->ID, 'input', true),
-                'result' => get_post_meta($shortcut->ID, 'result', true),
-                'sb_id' => get_post_meta($shortcut->ID, 'sb_id', true), // Changed to 'sb_id' for consistency
-                'post_date' => $shortcut->post_date,
-                'deleted' => get_post_meta($shortcut->ID, 'deleted', true),
-                'draft' => get_post_meta($shortcut->ID, 'draft', true),
-            );
+        // Add status filter for drafts
+        if ($status !== '' && $status !== 'any') {
+            $params['draft'] = $status === '1';
         }
 
-        wp_send_json_success($data);
-    } elseif ($source === 'SB') {
-        $sb_response = sb_api_call('/shortcuts', 'GET', ['filter' => $filter]);
+        // Add deleted filter
+        if ($deleted !== null && $deleted !== 'any') {
+            $params['deleted'] = $deleted === true || $deleted === 'true';
+        }
+
+        error_log('Shortcuts Hub - Switchblade Query Params:');
+        error_log(print_r($params, true));
+
+        $sb_response = sb_api_call('shortcuts', 'GET', $params);
         if (is_wp_error($sb_response)) {
             wp_send_json_error(['message' => 'Error fetching from Switchblade: ' . $sb_response->get_error_message()]);
             return;
         }
 
         wp_send_json_success($sb_response);
-    } else {
-        wp_send_json_error(['message' => 'Invalid source specified.']);
+        return;
     }
+
+    // Default WordPress handling
+    $args = array(
+        'post_type' => 'shortcut',
+        'posts_per_page' => -1,
+        'post_status' => array('publish', 'draft', 'trash')
+    );
+
+    if (!empty($filter)) {
+        $args['s'] = $filter;
+    }
+
+    // Handle deleted filter using post status
+    if ($deleted !== null && $deleted !== '' && $deleted !== 'any') {
+        $args['post_status'] = ($deleted === true || $deleted === 'true') ? 'trash' : array('publish', 'draft');
+    }
+
+    // Handle draft filter using post status
+    if ($status !== '' && $status !== 'any') {
+        $args['post_status'] = array($status);
+        // If we're not specifically filtering for non-deleted items, include trash
+        if ($deleted === null || $deleted === '' || $deleted === 'any' || $deleted === true || $deleted === 'true') {
+            $args['post_status'][] = 'trash';
+        }
+    }
+
+    error_log('Shortcuts Hub - WP Query Args:');
+    error_log(print_r($args, true));
+
+    $shortcuts = get_posts($args);
+    error_log('Shortcuts Hub - Number of shortcuts found: ' . count($shortcuts));
+
+    $data = array();
+
+    foreach ($shortcuts as $shortcut) {
+        $is_trashed = $shortcut->post_status === 'trash';
+        $sb_id = get_post_meta($shortcut->ID, 'sb_id', true);
+        
+        $shortcut_data = array(
+            'post_id' => $shortcut->ID,
+            'name' => $shortcut->post_title,
+            'headline' => get_post_meta($shortcut->ID, 'headline', true),
+            'description' => get_post_meta($shortcut->ID, 'description', true),
+            'color' => get_post_meta($shortcut->ID, 'color', true),
+            'icon' => get_post_meta($shortcut->ID, 'icon', true),
+            'input' => get_post_meta($shortcut->ID, 'input', true),
+            'result' => get_post_meta($shortcut->ID, 'result', true),
+            'sb_id' => $sb_id,
+            'post_date' => $shortcut->post_date,
+            'post_status' => $shortcut->post_status
+        );
+
+        error_log('Shortcut data for ID ' . $shortcut->ID . ':');
+        error_log(print_r($shortcut_data, true));
+
+        $data[] = $shortcut_data;
+    }
+
+    wp_send_json_success($data);
 }
 
 function fetch_shortcut() {
     // Only verify nonce for logged-in users
     if (is_user_logged_in()) {
-        if (!isset($_POST['nonce'])) {
-            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
+        if (!isset($_POST['security'])) {
+            wp_send_json_error(['message' => 'No security token provided for logged-in user']);
             return;
         }
 
-        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
-            wp_send_json_error(['message' => 'Invalid nonce']);
+        if (!wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce')) {
+            wp_send_json_error(['message' => 'Invalid security token']);
             return;
         }
     }
@@ -126,8 +178,7 @@ function fetch_shortcut() {
                     'result' => get_post_meta($post_id, 'result', true),
                     'sb_id' => get_post_meta($post_id, 'sb_id', true),
                     'post_date' => $shortcut->post_date,
-                    'deleted' => get_post_meta($post_id, 'deleted', true),
-                    'draft' => get_post_meta($post_id, 'draft', true),
+                    'post_status' => $shortcut->post_status
                 )
             );
             error_log('Sending response: ' . print_r($response, true));
@@ -135,7 +186,9 @@ function fetch_shortcut() {
             $response = array('success' => false, 'message' => 'Shortcut not found.');
         }
     } elseif ($source === 'SB') {
-        $sb_response = sb_api_call($id);
+        // Get settings
+        $settings = get_shortcuts_hub_settings();
+        $sb_response = sb_api_call('shortcuts/' . $post_id);
         if (is_wp_error($sb_response)) {
             $response = array('success' => false, 'message' => 'Error fetching from Switchblade: ' . $sb_response->get_error_message());
         } else {
@@ -151,13 +204,13 @@ function fetch_shortcut() {
 function create_shortcut() {
     // Only verify nonce for logged-in users
     if (is_user_logged_in()) {
-        if (!isset($_POST['nonce'])) {
-            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
+        if (!isset($_POST['security'])) {
+            wp_send_json_error(['message' => 'No security token provided for logged-in user']);
             return;
         }
 
-        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
-            wp_send_json_error(['message' => 'Invalid nonce']);
+        if (!wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce')) {
+            wp_send_json_error(['message' => 'Invalid security token']);
             return;
         }
     }
@@ -170,30 +223,6 @@ function create_shortcut() {
     }
 
     $state = isset($shortcut_data['state']) && $shortcut_data['state'] === 'draft' ? 1 : 0;
-
-    $sb_data = array(
-        'name' => sanitize_text_field($shortcut_data['name']),
-        'headline' => sanitize_text_field($shortcut_data['headline']),
-        'description' => isset($shortcut_data['description']) ? sanitize_textarea_field($shortcut_data['description']) : '',
-        'state' => $state,
-    );
-
-    $endpoint = 'shortcuts';
-    $api_url = SB_URL . '/' . ltrim($endpoint, '/');
-
-    $sb_response = sb_api_call($endpoint, 'POST', [], $sb_data);
-    
-    if (is_wp_error($sb_response)) {
-        wp_send_json_error(array('message' => 'Failed to create shortcut in Switchblade: ' . $sb_response->get_error_message()));
-        return;
-    }
-
-    $id = isset($sb_response['shortcut']['id']) ? $sb_response['shortcut']['id'] : null;
-
-    if (!$id) {
-        wp_send_json_error(array('message' => 'Switchblade did not return a valid ID.'));
-        return;
-    }
 
     $post_data = array(
         'post_title'   => sanitize_text_field($shortcut_data['name']),
@@ -211,27 +240,38 @@ function create_shortcut() {
         update_post_meta($post_id, 'icon', isset($shortcut_data['icon']) ? sanitize_text_field($shortcut_data['icon']) : '');
         update_post_meta($post_id, 'input', isset($shortcut_data['input']) ? sanitize_text_field($shortcut_data['input']) : '');
         update_post_meta($post_id, 'result', isset($shortcut_data['result']) ? sanitize_text_field($shortcut_data['result']) : '');
-        update_post_meta($post_id, 'sb_id', sanitize_text_field($id));
-        update_post_meta($post_id, 'name', sanitize_text_field($shortcut_data['name']));
         
         // Set the website URL to the WordPress edit page for this shortcut
         $website_url = get_site_url() . '/wp-admin/admin.php?page=edit-shortcut&id=' . $post_id;
         update_post_meta($post_id, 'website', esc_url_raw($website_url));
         
-        // Update the Switchblade data with the website URL
-        $update_sb_data = array(
+        // Create the shortcut in Switchblade
+        $sb_data = array(
+            'name' => sanitize_text_field($shortcut_data['name']),
+            'headline' => sanitize_text_field($shortcut_data['headline']),
+            'description' => isset($shortcut_data['description']) ? sanitize_textarea_field($shortcut_data['description']) : '',
+            'input' => isset($shortcut_data['input']) ? sanitize_text_field($shortcut_data['input']) : '',
+            'result' => isset($shortcut_data['result']) ? sanitize_text_field($shortcut_data['result']) : '',
+            'state' => $state,
             'website' => $website_url
         );
-        $update_endpoint = 'shortcuts/' . $id;
-        $update_response = sb_api_call($update_endpoint, 'PUT', [], $update_sb_data);
+        // Get settings
+        $settings = get_shortcuts_hub_settings();
+        $sb_response = sb_api_call('shortcuts', 'POST', [], $sb_data);
         
-        if (is_wp_error($update_response)) {
-            error_log('Failed to update Switchblade website URL: ' . $update_response->get_error_message());
+        if (is_wp_error($sb_response)) {
+            wp_send_json_error(array('message' => 'Failed to create shortcut in Switchblade: ' . $sb_response->get_error_message()));
+            return;
         }
-        
-        if (isset($shortcut_data['actions']) && is_array($shortcut_data['actions'])) {
-            update_post_meta($post_id, 'actions', $shortcut_data['actions']);
+
+        $id = isset($sb_response['shortcut']['id']) ? $sb_response['shortcut']['id'] : null;
+
+        if (!$id) {
+            wp_send_json_error(array('message' => 'Switchblade did not return a valid ID.'));
+            return;
         }
+
+        update_post_meta($post_id, 'sb_id', sanitize_text_field($id));
 
         wp_send_json_success(array('message' => 'Shortcut created successfully.', 'post_id' => $post_id, 'sb_id' => $id));
     } else {
@@ -242,13 +282,13 @@ function create_shortcut() {
 function update_shortcut() {
     // Only verify nonce for logged-in users
     if (is_user_logged_in()) {
-        if (!isset($_POST['nonce'])) {
-            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
+        if (!isset($_POST['security'])) {
+            wp_send_json_error(['message' => 'No security token provided for logged-in user']);
             return;
         }
 
-        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
-            wp_send_json_error(['message' => 'Invalid nonce']);
+        if (!wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce')) {
+            wp_send_json_error(['message' => 'Invalid security token']);
             return;
         }
     }
@@ -332,6 +372,14 @@ function update_shortcut() {
         update_post_meta($updated_post_id, 'result', sanitize_text_field($shortcut_data['result']));
         update_post_meta($updated_post_id, 'sb_id', sanitize_text_field($shortcut_data['sb_id']));
 
+        // Get settings
+        $settings = get_shortcuts_hub_settings();
+        $sb_response = sb_api_call('shortcuts/' . $shortcut_data['sb_id'], 'PUT', [], $shortcut_data);
+        if (is_wp_error($sb_response)) {
+            wp_send_json_error(array('message' => 'Error updating Switchblade: ' . $sb_response->get_error_message()));
+            return;
+        }
+
         wp_send_json_success(array(
             'message' => 'Shortcut updated successfully.',
             'post_id' => $updated_post_id
@@ -342,42 +390,44 @@ function update_shortcut() {
 }
 
 function toggle_draft() {
-    // Only verify nonce for logged-in users
-    if (is_user_logged_in()) {
-        if (!isset($_POST['nonce'])) {
-            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
-            return;
-        }
-
-        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
-            wp_send_json_error(['message' => 'Invalid nonce']);
-            return;
-        }
-    }
-
-    $post_id = intval($_POST['post_id']);
-    $current_status = get_post_status($post_id);
-    $new_status = $current_status === 'draft' ? 'publish' : 'draft';
-
-    $post_data = array(
-        'post_id' => $post_id,
-        'post_status' => $new_status,
-    );
-
-    $updated_post_id = wp_update_post($post_data);
-
-    if (is_wp_error($updated_post_id)) {
-        wp_send_json_error(array('message' => $updated_post_id->get_error_message()));
+    if (!is_user_logged_in() || !check_ajax_referer('shortcuts_hub_nonce', 'security', false)) {
+        wp_send_json_error(['message' => 'Invalid security token']);
         return;
     }
 
-    $id = get_post_meta($post_id, 'sb_id', true);
-    $sb_response = sb_api_call('/shortcuts/' . $id , 'PATCH', [], array(
-        'state' => $new_status
+    $post_id = intval($_POST['post_id']);
+    $sb_id = get_post_meta($post_id, 'sb_id', true);
+    $current_status = get_post_status($post_id);
+    $new_status = $current_status === 'draft' ? 'publish' : 'draft';
+
+    // Try to update Switchblade first
+    if (!empty($sb_id)) {
+        $sb_response = sb_api_call('shortcuts/' . $sb_id, 'PATCH', array(
+            'draft' => $new_status === 'draft'
+        ));
+
+        if (is_wp_error($sb_response)) {
+            wp_send_json_error(array(
+                'message' => 'Failed to update draft status in Switchblade: ' . $sb_response->get_error_message()
+            ));
+            return;
+        }
+    }
+
+    // If Switchblade update succeeded or there was no Switchblade ID, update WordPress
+    $updated_post_id = wp_update_post(array(
+        'ID' => $post_id,
+        'post_status' => $new_status,
     ));
 
-    if (is_wp_error($sb_response)) {
-        wp_send_json_error(array('message' => $sb_response->get_error_message()));
+    if (is_wp_error($updated_post_id)) {
+        // If WordPress update fails, try to revert Switchblade
+        if (!empty($sb_id)) {
+            sb_api_call('shortcuts/' . $sb_id, 'PATCH', array(
+                'draft' => $current_status === 'draft'
+            ));
+        }
+        wp_send_json_error(array('message' => 'Failed to update draft status in WordPress: ' . $updated_post_id->get_error_message()));
         return;
     }
 
@@ -385,28 +435,118 @@ function toggle_draft() {
 }
 
 function toggle_delete() {
-    // Only verify nonce for logged-in users
-    if (is_user_logged_in()) {
-        if (!isset($_POST['nonce'])) {
-            wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
-            return;
-        }
+    if (!is_user_logged_in() || !check_ajax_referer('shortcuts_hub_nonce', 'security', false)) {
+        wp_send_json_error(['message' => 'Invalid security token']);
+        return;
+    }
 
-        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
-            wp_send_json_error(['message' => 'Invalid nonce']);
+    $post_id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+    $sb_id = isset($_POST['sb_id']) ? sanitize_text_field($_POST['sb_id']) : '';
+    $is_deleted = isset($_POST['deleted']) ? filter_var($_POST['deleted'], FILTER_VALIDATE_BOOLEAN) : null;
+
+    // Try to update Switchblade first if we have an ID
+    if (!empty($sb_id)) {
+        $sb_response = sb_api_call('shortcuts/' . $sb_id, 'PATCH', array(
+            'deleted' => $is_deleted
+        ));
+
+        if (is_wp_error($sb_response)) {
+            wp_send_json_error(array(
+                'message' => 'Failed to update delete status in Switchblade: ' . $sb_response->get_error_message()
+            ));
             return;
         }
     }
 
-    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
-
-    if ($post_id > 0) {
-        $deleted = wp_trash_post($post_id);
-
-        $id = get_post_meta($post_id, 'sb_id', true);
-        wp_send_json_success(array('message' => 'Shortcut deleted successfully.', 'sb_id' => $id));
+    // If Switchblade update succeeded or there was no Switchblade ID, update WordPress
+    if ($is_deleted) {
+        $result = wp_trash_post($post_id);
+        $action_text = 'moved to trash';
     } else {
-        wp_send_json_error(array('message' => 'Invalid shortcut ID.'));
+        $result = wp_untrash_post($post_id);
+        $action_text = 'restored from trash';
+    }
+
+    if (!$result) {
+        // If WordPress update fails, try to revert Switchblade
+        if (!empty($sb_id)) {
+            sb_api_call('shortcuts/' . $sb_id, 'PATCH', array(
+                'deleted' => !$is_deleted
+            ));
+        }
+        wp_send_json_error(array(
+            'message' => 'Failed to ' . $action_text . ' in WordPress'
+        ));
+        return;
+    }
+
+    wp_send_json_success(array(
+        'message' => 'Shortcut successfully ' . $action_text,
+        'id' => $post_id
+    ));
+}
+
+function delete_shortcut() {
+    if (!is_user_logged_in()) {
+        wp_send_json_error(['message' => 'User must be logged in']);
+        return;
+    }
+
+    // Debug logging
+    error_log('POST data received: ' . print_r($_POST, true));
+    
+    // Check for either 'nonce' or 'security' parameter
+    $nonce = isset($_POST['security']) ? $_POST['security'] : '';
+    error_log('Nonce received: ' . $nonce);
+    
+    if (empty($nonce)) {
+        wp_send_json_error(['message' => 'No security token provided']);
+        return;
+    }
+
+    if (!wp_verify_nonce($nonce, 'shortcuts_hub_nonce')) {
+        wp_send_json_error(['message' => 'Invalid security token']);
+        return;
+    }
+
+    $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+    $sb_id = isset($_POST['sb_id']) ? sanitize_text_field($_POST['sb_id']) : '';
+
+    $errors = [];
+    $success_messages = [];
+
+    // Handle WordPress deletion if post_id exists
+    if ($post_id > 0) {
+        $deleted = wp_delete_post($post_id, true);
+        if (!$deleted) {
+            $errors[] = 'Failed to delete WordPress post';
+        } else {
+            $success_messages[] = 'WordPress post deleted';
+        }
+    }
+
+    // Handle Switchblade deletion if sb_id exists
+    if (!empty($sb_id)) {
+        // Get settings
+        $settings = get_shortcuts_hub_settings();
+        $sb_response = sb_api_call('shortcuts/' . $sb_id, 'DELETE');
+        if (is_wp_error($sb_response)) {
+            $errors[] = 'Error deleting from Switchblade: ' . $sb_response->get_error_message();
+        } else {
+            $success_messages[] = 'Switchblade shortcut deleted';
+        }
+    }
+
+    // Handle response based on results
+    if (!empty($errors)) {
+        wp_send_json_error([
+            'message' => implode('; ', $errors),
+            'partial_success' => !empty($success_messages)
+        ]);
+    } else {
+        wp_send_json_success([
+            'message' => implode('; ', $success_messages)
+        ]);
     }
 }
 
@@ -458,11 +598,14 @@ function process_download_token() {
     ]);
 }
 
-add_action('wp_ajax_fetch_shortcuts', 'fetch_shortcuts');
-add_action('wp_ajax_fetch_shortcut', 'fetch_shortcut');
-add_action('wp_ajax_create_shortcut', 'create_shortcut');
-add_action('wp_ajax_update_shortcut', 'update_shortcut');
-add_action('wp_ajax_toggle_draft', 'toggle_draft');
-add_action('wp_ajax_toggle_delete', 'toggle_delete');
-add_action('wp_ajax_process_download_token', 'process_download_token');
-add_action('wp_ajax_nopriv_process_download_token', 'process_download_token');
+add_action('init', function() {
+    add_action('wp_ajax_fetch_shortcuts', 'fetch_shortcuts');
+    add_action('wp_ajax_fetch_shortcut', 'fetch_shortcut');
+    add_action('wp_ajax_create_shortcut', 'create_shortcut');
+    add_action('wp_ajax_update_shortcut', 'update_shortcut');
+    add_action('wp_ajax_toggle_draft', 'toggle_draft');
+    add_action('wp_ajax_toggle_delete', 'toggle_delete');
+    add_action('wp_ajax_delete_shortcut', 'delete_shortcut');
+    add_action('wp_ajax_process_download_token', 'process_download_token');
+    add_action('wp_ajax_nopriv_process_download_token', 'process_download_token');
+});

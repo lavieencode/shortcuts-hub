@@ -1,35 +1,12 @@
 jQuery(document).ready(function($) {
     'use strict';
     
-    // Helper function to log to both console and PHP
-    function logFormFlow(message, data = null, isRegistration = false) {
-        const prefix = isRegistration ? '[REGISTRATION FORM FLOW]' : '[LOGIN FORM FLOW]';
-        const fullMessage = prefix + ' ' + message;
-        
-        // Only log to console in development
-        if (typeof shortcutsHubAjax !== 'undefined' && shortcutsHubAjax.debug) {
-            if (data) {
-                console.log(fullMessage, data);
-            } else {
-                console.log(fullMessage);
-            }
-        }
-        
-        // Log to PHP
-        if (typeof shortcutsHubAjax !== 'undefined') {
-            $.ajax({
-                url: shortcutsHubAjax.ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'shortcuts_hub_handle_log',
-                    message: fullMessage,
-                    data: data ? JSON.stringify(data) : '',
-                    nonce: shortcutsHubAjax.nonce
-                }
-            });
-        }
+    // Helper function to check if form is registration form
+    function isRegistrationForm($form) {
+        const formName = $form.find('input[name="form_name"]').val();
+        return formName === 'Shortcuts Gallery Registration';
     }
-
+    
     // Function to get URL parameter
     function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -52,197 +29,101 @@ jQuery(document).ready(function($) {
     const downloadToken = getUrlParameter('download_token');
     const redirectUrl = getUrlParameter('redirect_url');
     
-    // Function to determine if form is registration
-    function isRegistrationForm($form) {
-        const formId = $form.attr('id') || '';
-        const formName = $form.data('form-name') || '';
-        return formId === 'shortcuts_gallery_reg_form' || formName === 'Shortcuts Gallery Registration';
-    }
-    
-    // Function to handle form submission and show popup
-    function handleFormSubmission($form, $tokenField, $redirectField, isRegistration) {
-        console.log('handleFormSubmission called', {
-            token: $tokenField.val(),
-            redirect: $redirectField.val(),
-            isRegistration
+    // Function to show popup with iframe
+    function showPopup(url) {
+        // Create popup container
+        const $popup = $('<div>', {
+            class: 'shortcuts-popup',
+            css: {
+                position: 'fixed',
+                top: '0',
+                left: '0',
+                width: '100%',
+                height: '100%',
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                zIndex: '9999',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+            }
         });
 
-        const redirectTo = $redirectField.val();
-        if (redirectTo) {
-            console.log('Making AJAX request to log download');
-            // Log the download
-            $.ajax({
-                url: shortcutsHubAjax.ajaxurl,
-                type: 'POST',
-                data: {
-                    action: 'shortcuts_hub_log_download',
-                    nonce: shortcutsHubAjax.nonce,
-                    token: $tokenField.val(),
-                    redirect_url: redirectTo,
-                    download_url: redirectTo
-                },
-                success: function(response) {
-                    console.log('AJAX response:', response);
-                    if (response.success) {
-                        console.log('Showing popup for:', redirectTo);
-                        showPopup(redirectTo);
-                    } else {
-                        console.error('Failed to log download:', response);
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('AJAX request failed:', {
-                        status: textStatus,
-                        error: errorThrown,
-                        response: jqXHR.responseText
-                    });
-                }
-            });
-        } else {
-            console.error('No redirect URL found');
-        }
-    }
-    
-    // Function to show popup
-    function showPopup(redirectTo) {
-        const popupHtml = `
-            <div class="shortcuts-popup-overlay">
-                <div class="shortcuts-popup-content">
-                    <div class="shortcuts-popup-header">
-                        <h3>Loading Shortcut...</h3>
-                        <button class="shortcuts-popup-close">&times;</button>
-                    </div>
-                    <iframe src="${redirectTo}" frameborder="0" style="width:100%;height:80vh;"></iframe>
-                </div>
-            </div>
-        `;
-
-        // Add popup styles if not already added
-        if (!document.getElementById('shortcuts-popup-styles')) {
-            const styles = `
-                <style id="shortcuts-popup-styles">
-                    .shortcuts-popup-overlay {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(0,0,0,0.7);
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        z-index: 9999;
-                    }
-                    .shortcuts-popup-content {
-                        background: white;
-                        padding: 20px;
-                        border-radius: 8px;
-                        width: 90%;
-                        max-width: 1200px;
-                        max-height: 90vh;
-                        position: relative;
-                    }
-                    .shortcuts-popup-header {
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        margin-bottom: 15px;
-                    }
-                    .shortcuts-popup-close {
-                        background: none;
-                        border: none;
-                        font-size: 24px;
-                        cursor: pointer;
-                        padding: 5px;
-                    }
-                    .shortcuts-popup-close:hover {
-                        color: #666;
-                    }
-                </style>
-            `;
-            $('head').append(styles);
-        }
-
-        // Add popup to page
-        const $popup = $(popupHtml);
-        $('body').append($popup);
-
-        // Handle close button
-        $popup.find('.shortcuts-popup-close').on('click', function() {
-            $popup.remove();
+        // Create popup content
+        const $content = $('<div>', {
+            class: 'shortcuts-popup-content',
+            css: {
+                width: '80%',
+                height: '80%',
+                backgroundColor: '#fff',
+                borderRadius: '8px',
+                position: 'relative',
+                padding: '20px'
+            }
         });
 
-        // Close on overlay click
-        $popup.on('click', function(e) {
-            if ($(e.target).hasClass('shortcuts-popup-overlay')) {
+        // Create close button
+        const $close = $('<button>', {
+            text: '×',
+            css: {
+                position: 'absolute',
+                right: '10px',
+                top: '10px',
+                fontSize: '24px',
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer',
+                color: '#333',
+                zIndex: '10000'
+            },
+            click: function(e) {
+                e.preventDefault();
+                e.stopPropagation();
                 $popup.remove();
             }
         });
-    }
-    
-    // Function to set form fields
-    function setFormFields($form) {
-        if (!$form?.length) {
-            console.error('Form not found');
-            return;
-        }
-        
-        const isRegistration = isRegistrationForm($form);
-        console.log('Setting up form fields for:', isRegistration ? 'registration' : 'login');
-        
-        const fields = {
-            token: {
-                name: isRegistration ? 'reg_download_token' : 'login_download_token',
-                value: downloadToken
-            },
-            redirect: {
-                name: isRegistration ? 'reg_redirect_url' : 'login_redirect_url',
-                value: redirectUrl
-            }
-        };
-        
-        // Find form fields
-        const elements = {};
-        for (const [key, field] of Object.entries(fields)) {
-            const selector = `[name="form_fields[${field.name}]"], [name="${field.name}"]`;
-            const $element = $form.find(selector);
-            
-            if (!$element.length) {
-                console.error(`${key} field not found with selector:`, selector);
-                return;
-            }
-            elements[key] = $element;
-            
-            // Set field value if available
-            if (field.value) {
-                $element.val(field.value);
-                console.log(`Set ${key} value:`, field.value);
-            }
-        }
-        
-        // Listen for successful form submission using Elementor's event
-        const formId = $form.attr('data-form-id');
-        console.log('Setting up form submission listener for form ID:', formId);
-        
-        jQuery(document).on('submit_success', function(e, response) {
-            console.log('Form submit_success event fired:', {
-                targetFormId: jQuery(e.target).attr('data-form-id'),
-                expectedFormId: formId,
-                response
-            });
-            
-            const $targetForm = jQuery(e.target);
-            if ($targetForm.attr('data-form-id') === formId) {
-                console.log('Form ID matched, handling submission');
-                handleFormSubmission($form, elements.token, elements.redirect, isRegistration);
+
+        // Create iframe
+        const $iframe = $('<iframe>', {
+            src: url,
+            css: {
+                width: '100%',
+                height: '100%',
+                border: 'none',
+                borderRadius: '8px'
             }
         });
+
+        // Assemble popup
+        $content.append($close, $iframe);
+        $popup.append($content);
+        $('body').append($popup);
     }
+    
+    // Store the form data when the form is submitted
+    $(document).on('submit_success', '.elementor-form', function(event, response) {
+        const $form = $(this);
+        
+        // Get download token and redirect URL from hidden fields
+        const downloadToken = $form.find('input[name="form_fields[login_download_token]"], input[name="form_fields[reg_download_token]"]').val();
+        const redirectUrl = $form.find('input[name="form_fields[login_redirect_url]"], input[name="form_fields[reg_redirect_url]"]').val();
+        
+        if (downloadToken && redirectUrl) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Store URL in session storage
+            sessionStorage.setItem('shortcuts_redirect_url', redirectUrl);
+            
+            // Show popup immediately
+            showPopup(redirectUrl);
+            
+            return false;
+        }
+    });
     
     // Process forms when they appear
     function processForm($form) {
         if (!$form || $form.length === 0) return;
-        setFormFields($form);
     }
     
     // Find and process initial forms

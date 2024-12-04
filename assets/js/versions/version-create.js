@@ -1,15 +1,18 @@
 jQuery(document).ready(function() {
     jQuery('.add-version-button').on('click', function() {
-        const id = getShortcutIdFromUrl();
+        const sb_id = getShortcutIdFromUrl();
         const shortcutName = sessionStorage.getItem('shortcutName') || 'Unknown Shortcut';
         jQuery('#add-version-modal #shortcut-name-display').text(shortcutName);
+        
+        // Fetch the Switchblade shortcut data using sb_id
         jQuery.ajax({
             url: shortcutsHubData.ajax_url,
             method: 'POST',
             data: {
                 action: 'fetch_shortcut',
                 security: shortcutsHubData.security,
-                id: id
+                id: sb_id,
+                source: 'SB'
             },
             success: function(response) {
                 if (response.success && response.data) {
@@ -49,13 +52,13 @@ function getShortcutIdFromUrl() {
 }
 
 function createVersion(action) {
-    const id = getShortcutIdFromUrl();
+    const sb_id = getShortcutIdFromUrl();
     const versionName = jQuery('#add-version-form #version-name').val();
     const notes = jQuery('#add-version-form #version-notes').val();
     const url = jQuery('#add-version-form #version-url').val();
-    const minimumiOS = jQuery('#add-version-form #version-ios').val();
-    const minimumMac = jQuery('#add-version-form #version-mac').val();
-    const required = jQuery('#add-version-form #version-required').val() === 'true';
+    const minimumiOS = jQuery('#add-version-form #minimum-ios').val();
+    const minimumMac = jQuery('#add-version-form #minimum-mac').val();
+    const required = jQuery('#add-version-form #required').is(':checked');
 
     const isDraft = action === 'create_version';
 
@@ -65,7 +68,7 @@ function createVersion(action) {
         data: {
             action: 'create_version',
             security: shortcutsHubData.security,
-            id: id,
+            id: sb_id,
             version: versionName,
             notes: notes,
             url: url,
@@ -80,7 +83,7 @@ function createVersion(action) {
                 setTimeout(function() {
                     jQuery('#add-version-modal').removeClass('active').css('transform', 'translateX(100%)');
                     jQuery('body').removeClass('modal-open');
-                    fetchVersions(id);
+                    fetchVersions(sb_id);
                 }, 2000);
             } else {
                 jQuery('#version-feedback-message').text('Error creating version: ' + response.data.message).show();
@@ -90,6 +93,4 @@ function createVersion(action) {
             jQuery('#version-feedback-message').text('AJAX error creating version: ' + xhr.responseText).show();
         }
     });
-    
-    jQuery('#add-version-modal').css('display', 'block').addClass('active').css('transform', 'translateX(0)');
 }

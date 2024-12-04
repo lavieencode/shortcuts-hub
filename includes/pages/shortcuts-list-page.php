@@ -13,13 +13,13 @@ function shortcuts_hub_render_shortcuts_list_page() {
     ?>
     <div id="shortcuts-list-page" class="wrap">
         <?php if ($view !== 'versions') : ?>
-            <h1 class="shortcuts-page-title">SHORTCUTS LIST</h1>
+            <h1 class="shortcuts-page-title">SHORTCUTS</h1>
             <div id="shortcuts-header-bar">
                 <input type="text" id="search-input" placeholder="Search shortcuts">
                 <select id="filter-status">
                     <option value="">Any</option>
-                    <option value="0">Published</option>
-                    <option value="1">Draft</option>
+                    <option value="publish">Published</option>
+                    <option value="draft">Draft</option>
                 </select>
                 <select id="filter-deleted">
                     <option value="">Any</option>
@@ -27,12 +27,13 @@ function shortcuts_hub_render_shortcuts_list_page() {
                     <option value="true">Deleted</option>
                 </select>
                 <button id="reset-filters" class="restore-button">Reset filters</button>
+                <a href="<?php echo admin_url('admin.php?page=add-shortcut'); ?>" class="add-shortcut-button">+</a>
             </div>
             <div id="shortcuts-container" class="shortcuts-container"></div>
         <?php endif; ?>
 
         <?php if ($view === 'versions') : ?>
-            <h1 class="versions-page-title">VERSIONS LIST</h1>
+            <h1 class="versions-page-title">VERSIONS</h1>
             <button id="back-to-shortcuts">Back to Shortcuts</button>
             <h2 id="shortcut-name-display"></h2>
 

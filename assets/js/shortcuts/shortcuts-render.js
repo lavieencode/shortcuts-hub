@@ -1,19 +1,35 @@
 function renderShortcuts(shortcuts) {
+    console.log('Starting renderShortcuts with', shortcuts.length, 'shortcuts');
+    
     if (!shortcuts || !Array.isArray(shortcuts)) {
         console.error('Invalid shortcuts data:', shortcuts);
         return;
     }
 
-    const container = jQuery('#shortcuts-container');
-    container.empty();
-
-    if (shortcuts.length === 0) {
-        container.append('<p>No shortcuts found.</p>');
+    const container = document.querySelector('#shortcuts-container');
+    if (!container) {
+        console.error('Shortcuts container not found!');
         return;
     }
 
-    for (let i = 0; i < shortcuts.length; i++) {
-        const shortcut = shortcuts[i];
+    // Clear existing shortcuts
+    container.innerHTML = '';
+
+    if (shortcuts.length === 0) {
+        console.log('No shortcuts to render');
+        container.innerHTML = '<div class="no-shortcuts">No shortcuts found</div>';
+        return;
+    }
+
+    shortcuts.forEach((shortcut, index) => {
+        console.log(`Rendering shortcut ${index + 1}/${shortcuts.length}:`, {
+            id: shortcut.post_id,
+            name: shortcut.name,
+            status: shortcut.post_status,
+            draft: shortcut.draft,
+            deleted: shortcut.deleted
+        });
+        
         const post_id = shortcut.post_id;
 
         const syncedText = shortcut.sb_id && shortcut.sb_id !== '' ? 
@@ -22,25 +38,40 @@ function renderShortcuts(shortcuts) {
 
         const displayName = shortcut.name || 'Unnamed Shortcut';
 
-        container.append(`
-            <div class="shortcut-item" data-post_id="${post_id}">
-                <input type="hidden" class="shortcut-name" value="${shortcut.name}">
-                <h3>${displayName}</h3>
-                <p>${shortcut.headline || 'No headline available'}</p>
-                ${syncedText}
-                <p class="created-date">${shortcut.post_date || 'Date not available'}</p>
-                <div class="badges-container">
-                    ${shortcut.deleted ? '<span class="badge deleted-badge">Deleted</span>' : ''}
-                    ${shortcut.draft ? '<span class="badge draft-badge">Draft</span>' : ''}
-                </div>
-                <div class="button-container">
-                    <button class="edit-button" data-post_id="${post_id}">Edit</button>
-                    <button class="version-button" data-id="${shortcut.sb_id}">Versions</button>
-                    <button class="delete-button" data-id="${shortcut.sb_id}">Delete</button>
+        const shortcutElement = document.createElement('div');
+        shortcutElement.className = 'shortcut-item';
+        shortcutElement.dataset.post_id = post_id;
+
+        shortcutElement.innerHTML = `
+            <div class="badge-container">
+                ${shortcut.post_status === 'draft' ? '<span class="badge draft">Draft</span>' : ''}
+                ${shortcut.post_status === 'trash' ? '<span class="badge deleted">Deleted</span>' : ''}
+            </div>
+            <input type="hidden" class="shortcut-name" value="${shortcut.name}">
+            <h3>${displayName}</h3>
+            ${shortcut.headline ? `<p class="headline">${shortcut.headline}</p>` : ''}
+            ${shortcut.description ? `<p class="description">${shortcut.description}</p>` : ''}
+            ${syncedText}
+            <div class="button-container">
+                <button class="edit-button" data-post_id="${post_id}">Edit</button>
+                <button class="version-button" data-id="${shortcut.sb_id}">Versions</button>
+                <div class="btn-group">
+                    ${shortcut.post_status === 'trash' ? 
+                        `<button class="restore-button" data-post_id="${post_id}" data-sb_id="${shortcut.sb_id}">Restore</button>` :
+                        `<button class="delete-button" data-post_id="${post_id}" data-sb_id="${shortcut.sb_id}">Delete</button>`
+                    }
+                    <button class="delete-dropdown-toggle" data-post_id="${post_id}" data-sb_id="${shortcut.sb_id}">
+                        <span class="dropdown-caret">▼</span>
+                    </button>
+                    <div class="delete-dropdown-content">
+                        <button class="delete-permanently" data-post_id="${post_id}" data-sb_id="${shortcut.sb_id}">Delete Permanently</button>
+                    </div>
                 </div>
             </div>
-        `);
-    }
+        `;
 
-    initializeShortcutButtons();
+        container.appendChild(shortcutElement);
+    });
+
+    console.log('Finished rendering shortcuts');
 }

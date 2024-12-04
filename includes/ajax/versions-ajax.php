@@ -16,26 +16,41 @@ add_action('wp_ajax_version_toggle_draft', 'version_toggle_draft');
 
 // Fetch all versions with filtering options
 function fetch_versions() {
-    if (!isset($_POST['nonce'])) {
-        wp_send_json_error(['message' => 'No nonce provided']);
+    if (!isset($_POST['security'])) {
+        wp_send_json_error(['message' => 'No security token provided']);
         return;
     }
 
-    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
-        wp_send_json_error(['message' => 'Invalid nonce']);
+    if (!wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce')) {
+        wp_send_json_error(['message' => 'Invalid security token']);
         return;
     }
 
     $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
-    $search_term = isset($_POST['search_term']) ? sanitize_text_field($_POST['search_term']) : '';
-    $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
-    $deleted = isset($_POST['deleted']) ? filter_var($_POST['deleted'], FILTER_VALIDATE_BOOLEAN) : null;
-    $required_update = isset($_POST['required_update']) ? filter_var($_POST['required_update'], FILTER_VALIDATE_BOOLEAN) : null;
-
     if (empty($id)) {
         wp_send_json_error(['message' => 'Shortcut ID is missing']);
         return;
     }
+
+    // Get the post title for the shortcut
+    $args = array(
+        'post_type' => 'shortcut',
+        'meta_key' => 'sb_id',
+        'meta_value' => $id,
+        'posts_per_page' => 1
+    );
+    $query = new WP_Query($args);
+    $shortcut_name = '';
+    
+    if ($query->have_posts()) {
+        $post = $query->posts[0];
+        $shortcut_name = $post->post_title;
+    }
+
+    $search_term = isset($_POST['search_term']) ? sanitize_text_field($_POST['search_term']) : '';
+    $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
+    $deleted = isset($_POST['deleted']) && $_POST['deleted'] !== '' ? filter_var($_POST['deleted'], FILTER_VALIDATE_BOOLEAN) : null;
+    $required_update = isset($_POST['required_update']) && $_POST['required_update'] !== '' ? filter_var($_POST['required_update'], FILTER_VALIDATE_BOOLEAN) : null;
 
     $query_params = array();
     if (!empty($search_term)) {
@@ -51,13 +66,23 @@ function fetch_versions() {
         $query_params['required_update'] = $required_update;
     }
 
+    // Make the API call directly with the shortcut ID
     $response = sb_api_call('/shortcuts/' . $id . '/history', 'GET', $query_params);
     if (is_wp_error($response)) {
         wp_send_json_error(['message' => 'Error fetching versions: ' . $response->get_error_message()]);
         return;
     }
 
-    wp_send_json_success($response);
+    // Structure the response to match what the frontend expects
+    $formatted_response = [
+        'shortcut' => array_merge(
+            isset($response['shortcut']) ? $response['shortcut'] : [],
+            ['name' => $shortcut_name] // Add the shortcut name from WordPress
+        ),
+        'versions' => isset($response['versions']) ? $response['versions'] : []
+    ];
+
+    wp_send_json_success($formatted_response);
 }
 
 function fetch_latest_version() {
@@ -138,13 +163,13 @@ function fetch_version() {
 
 // Create a new version
 function create_version() {
-    if (!isset($_POST['nonce'])) {
-        wp_send_json_error(['message' => 'No nonce provided']);
+    if (!isset($_POST['security'])) {
+        wp_send_json_error(['message' => 'No security token provided']);
         return;
     }
 
-    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
-        wp_send_json_error(['message' => 'Invalid nonce']);
+    if (!wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce')) {
+        wp_send_json_error(['message' => 'Invalid security token']);
         return;
     }
 

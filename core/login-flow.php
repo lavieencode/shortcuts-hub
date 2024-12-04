@@ -56,14 +56,8 @@ function validate_login_form($record, $ajax_handler) {
     $fields = $record->get('fields');
     $form_name = $record->get_form_settings('form_name');
     
-    error_log("[LOGIN FORM FLOW] Starting form validation");
-    
     // Check if required fields exist
     if (!isset($fields['login_download_token']) || !isset($fields['login_redirect_url'])) {
-        error_log("[LOGIN FORM FLOW] Missing required fields", [
-            'has_token' => isset($fields['login_download_token']),
-            'has_redirect' => isset($fields['login_redirect_url'])
-        ]);
         $ajax_handler->add_error_message("Required fields are missing");
         return;
     }
@@ -71,15 +65,9 @@ function validate_login_form($record, $ajax_handler) {
     $download_token = $fields['login_download_token']['value'];
     $redirect_url = $fields['login_redirect_url']['value'];
     
-    error_log("[LOGIN FORM FLOW] Form submission values: " . json_encode([
-        'download_token' => $download_token,
-        'redirect_url' => $redirect_url
-    ]));
-    
     // Store the redirect URL in the session for after login
     if (!empty($redirect_url)) {
         $_SESSION['shortcuts_redirect_after_login'] = $redirect_url;
-        error_log("[LOGIN FORM FLOW] Stored redirect URL in session: " . $redirect_url);
     }
     
     $fields = $record->get_formatted_data();
@@ -121,14 +109,8 @@ function validate_registration_form($record, $ajax_handler) {
     $fields = $record->get('fields');
     $form_name = $record->get_form_settings('form_name');
     
-    error_log("[REGISTRATION FORM FLOW] Starting form validation");
-    
     // Check if required fields exist
     if (!isset($fields['reg_download_token']) || !isset($fields['reg_redirect_url'])) {
-        error_log("[REGISTRATION FORM FLOW] Missing required fields", [
-            'has_token' => isset($fields['reg_download_token']),
-            'has_redirect' => isset($fields['reg_redirect_url'])
-        ]);
         $ajax_handler->add_error_message("Required fields are missing");
         return;
     }
@@ -136,15 +118,15 @@ function validate_registration_form($record, $ajax_handler) {
     $download_token = $fields['reg_download_token']['value'];
     $redirect_url = $fields['reg_redirect_url']['value'];
     
-    error_log("[REGISTRATION FORM FLOW] Form submission values: " . json_encode([
-        'download_token' => $download_token,
-        'redirect_url' => $redirect_url
-    ]));
-    
     // Store the redirect URL in the session for after registration
     if (!empty($redirect_url)) {
         $_SESSION['shortcuts_redirect_after_reg'] = $redirect_url;
-        error_log("[REGISTRATION FORM FLOW] Stored redirect URL in session: " . $redirect_url);
+        
+        // Log the download
+        if (function_exists('log_download')) {
+            $shortcut_name = basename($redirect_url);
+            log_download($shortcut_name, [], $redirect_url);
+        }
     }
     
     $fields = $record->get_formatted_data();

@@ -34,17 +34,32 @@
 
 .badge-container {
     display: flex;
-    align-items: center;
+    justify-content: flex-end;
+    gap: 5px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 
 .badge.draft {
-    background-color: #787878;
+    background-color: #b8b8b8;
     color: #252525;
+    order: 1;
 }
 
 .badge.deleted {
     background-color: #e46e6e;
     color: #252525;
+    order: 2;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    font-weight: 800;
+    font-size: 13px;
+    border-radius: 0;
 }
 
 /* Button Styles */
@@ -56,42 +71,62 @@
 }
 
 .button-container button {
-    background-color: #909CFE;
     color: #252525;
     border: none;
     padding: 10px;
     cursor: pointer;
     font-size: 14px;
-    border-radius: 0 !important;
+    border-radius: 0;
 }
 
 .button-container .restore-button {
-    border: 2px solid #e46e6e !important;
-    color: #e46e6e !important;
-    background-color: transparent !important;
-    padding: 5px 10px;
-    cursor: pointer;
-    border-radius: 0;
+    color: #252525;
+    background-color: #909cfe !important;
 }
 
 .button-container .delete-button {
-    background-color: #e46e6e;
+    background-color: #e46e6e !important;
+    color: #252525;
+}
+
+.button-container .delete-dropdown-toggle {
+    background-color: #d74d4d !important;
     color: #252525;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
     border-radius: 0;
+    margin: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .button-container .delete-permanently-button {
-    background-color: #e46e6e;
+    background-color: #d74d4d !important;
     color: #252525;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-left: 10px;
-    border-radius: 0;
+}
+
+.button-container .delete-permanently {
+    background-color: #d74d4d !important;
+}
+
+.button-container .btn-group {
+    display: inline-flex;
+    position: relative;
+}
+
+.button-container .delete-dropdown-content {
+    background-color: #d74d4d !important;
     display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    min-width: 160px;
+    z-index: 1;
+    margin-top: 2px;
+}
+
+.button-container .delete-dropdown-content.show {
+    display: block;
 }
 
 .created-text,
