@@ -892,3 +892,87 @@ This partial success suggests we're on the right track with the widget extension
    - Check error handling
 
 This implementation plan addresses the popup blocking issues while ensuring reliable download tracking and a smooth user experience.
+
+## Deletion Architecture
+
+#### Overview
+The deletion system supports both soft deletion (trash) and permanent deletion, with a consistent state management across WordPress and Switchblade.
+
+#### Components
+
+1. **Frontend Interface** (`shortcuts-delete.js`):
+   - Delete button with dropdown for permanent deletion
+   - Restore button for trashed items
+   - Badge system showing current state (draft/deleted)
+   - Confirmation dialog for permanent deletion
+
+2. **Badge Management**:
+   - Container class: `badge-container`
+   - Badge classes:
+     - Draft: `<span class="badge draft">Draft</span>`
+     - Deleted: `<span class="badge deleted">Deleted</span>`
+   - Dynamic badge switching on state changes
+
+3. **State Flow**:
+   ```
+   Normal -> Trash (Soft Delete)
+            |
+            v
+   [Can be restored or permanently deleted]
+            |
+            v
+   Permanent Delete (Cannot be restored)
+   ```
+
+4. **AJAX Handler** (`shortcuts-ajax.php`):
+   - Endpoint: `delete_shortcut`
+   - Parameters:
+     - `post_id`: WordPress post ID
+     - `sb_id`: Switchblade ID
+     - `permanent`: Boolean for permanent deletion
+     - `restore`: Boolean for restoration
+   - Handles both WordPress and Switchblade state updates
+
+5. **Switchblade Integration** (`sb-api.php`):
+   - Synchronizes deletion state with Switchblade server
+   - Handles API errors gracefully
+   - Maintains consistency between systems
+
+#### Implementation Details
+
+1. **Delete Operation**:
+   ```javascript
+   // Frontend
+   deleteShortcut(postId, sbId, buttonElement, permanent = false, restore = false)
+   
+   // Backend
+   wp_ajax_delete_shortcut()
+   sb_api_call('DELETE', "/shortcuts/{$sb_id}")
+   ```
+
+2. **State Management**:
+   - WordPress post_status: 'publish' -> 'trash' -> deleted
+   - Switchblade status synchronized via API calls
+   - UI updates through badge system and button state
+
+3. **Error Handling**:
+   - Frontend: Reverts UI if operation fails
+   - Backend: Rolls back changes if either system fails
+   - User feedback through alerts and console logs
+
+#### Best Practices
+
+1. **UI Updates**:
+   - Always update badges before buttons
+   - Use consistent class names across render and update code
+   - Provide immediate feedback while waiting for server response
+
+2. **Error Recovery**:
+   - Store original button text for error recovery
+   - Keep track of previous state for rollback
+   - Log all API interactions for debugging
+
+3. **State Consistency**:
+   - Validate state changes server-side
+   - Ensure WordPress and Switchblade stay in sync
+   - Handle edge cases (e.g., network failures) gracefully

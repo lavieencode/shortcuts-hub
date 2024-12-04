@@ -38,7 +38,7 @@ label {
     color: #252525;
     background-color: #909CFE;
     border-radius: 0 !important;
-    padding: 5px 20px;
+    padding: 3px 20px;
     width: auto;
     border: none;
 }
@@ -130,24 +130,24 @@ button {
 }
 
 .revert-button {
-    border: 2px solid #909CFE;
-    background-color: transparent;
-    color: #909CFE;
+    border: 2px solid #909CFE !important;
+    background-color: transparent !important;
+    color: #909CFE !important;
 }
 
-.save-draft {
-    border: 2px solid #909CFE;
-    background-color: transparent;
-    color: #909CFE;
+.save-draft-button {
+    border: 2px solid #909CFE !important;
+    background-color: transparent !important;
+    color: #909cfe !important;
 }
 
 .publish-button {
-    background-color: #909CFE;
-    color: #252525;
+    background-color: #909CFE !important;
+    color: #252525 !important;
 }
 
 .cancel-button {
-    background-color: #909cfe;
+    background-color: #b8b8b8;
     color: #252525;
 }
 

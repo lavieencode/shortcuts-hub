@@ -8,6 +8,13 @@ function createShortcut(shortcutData, status = 'publish') {
             headline: shortcutData.headline,
             description: shortcutData.description,
             state: status === 'draft' ? 1 : 0
+        },
+        wp_data: {
+            input: shortcutData.input,
+            result: shortcutData.result,
+            color: shortcutData.color,
+            icon: shortcutData.icon,
+            post_status: status
         }
     };
 

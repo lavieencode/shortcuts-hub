@@ -364,24 +364,16 @@ class Download_Button_Widget extends Widget_Button {
             $login_url = 'https://debotchery.ai/shortcuts-gallery/login';
             $params = [];
             
-            error_log('[Download Button] Building URL with parameters:');
-            error_log('[Download Button] - Base URL: ' . $login_url);
-            error_log('[Download Button] - Redirect URL: ' . $redirect_url);
-            error_log('[Download Button] - Download Token: ' . $download_token);
-            
             if (!empty($redirect_url)) {
                 $params['redirect_url'] = $redirect_url;
-                error_log('[Download Button] Added redirect URL: ' . $params['redirect_url']);
             }
             
             if (!empty($download_token)) {
                 $params['download_token'] = $download_token;
-                error_log('[Download Button] Added download token: ' . $download_token);
             }
             
             if (!empty($params)) {
                 $login_url .= '?' . http_build_query($params);
-                error_log('[Download Button] Final URL: ' . $login_url);
             }
             
             return $login_url;
@@ -405,7 +397,6 @@ class Download_Button_Widget extends Widget_Button {
         
         $shortcut_id = get_post_meta(get_the_ID(), 'sb_id', true);
         if (empty($shortcut_id)) {
-            error_log('[Button Widget] No shortcut ID found');
             return '';
         }
 
@@ -419,19 +410,16 @@ class Download_Button_Widget extends Widget_Button {
         ]);
 
         if (is_wp_error($response)) {
-            error_log('[Button Widget] AJAX error: ' . $response->get_error_message());
             return '';
         }
 
         $body = json_decode(wp_remote_retrieve_body($response), true);
         
         if (!$body || !isset($body['success']) || !$body['success']) {
-            error_log('[Button Widget] Invalid AJAX response');
             return '';
         }
 
         if (!isset($body['data']['version']) || !isset($body['data']['version']['url'])) {
-            error_log('[Button Widget] Missing version URL in response');
             return '';
         }
 

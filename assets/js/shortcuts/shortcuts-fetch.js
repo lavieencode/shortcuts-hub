@@ -3,7 +3,8 @@ jQuery(document).ready(function() {
     const view = urlParams.get('view');
 
     if (view !== 'versions') {
-        fetchShortcuts();
+        // Initialize filters first, which will trigger the initial fetch
+        initializeFilters();
     }
 });
 
@@ -11,14 +12,6 @@ function fetchShortcuts() {
     const filterStatus = jQuery('#filter-status').val();
     const filterDeleted = jQuery('#filter-deleted').val();
     const searchTerm = jQuery('#search-input').val();
-
-    console.log('Fetching shortcuts with filters:', {
-        status: filterStatus,
-        deleted: filterDeleted,
-        search: searchTerm,
-        statusElement: document.getElementById('filter-status'),
-        deletedElement: document.getElementById('filter-deleted')
-    });
 
     const data = {
         action: 'fetch_shortcuts',
@@ -28,17 +21,12 @@ function fetchShortcuts() {
         deleted: filterDeleted === 'true' ? true : (filterDeleted === 'false' ? false : null)
     };
 
-    console.log('Sending AJAX request with data:', data);
-
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
         data: data,
         success: function(response) {
-            console.log('Received response:', response);
             if (response.success) {
-                console.log('Rendering shortcuts:', response.data);
-                console.log('Number of shortcuts:', response.data.length);
                 renderShortcuts(response.data);
             } else {
                 console.error('Error fetching shortcuts:', response.data.message);

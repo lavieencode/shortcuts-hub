@@ -9,7 +9,8 @@ function shortcuts_hub_include_files() {
         return;
     }
 
-    // Core functionality files (database.php is now loaded directly in main plugin file)
+    // Core functionality files
+    require_once SHORTCUTS_HUB_PATH . 'sh-debug.php';
     require_once SHORTCUTS_HUB_PATH . 'core/registration-flow.php';
     require_once SHORTCUTS_HUB_PATH . 'core/login-flow.php';
     require_once SHORTCUTS_HUB_PATH . 'core/user-role.php';

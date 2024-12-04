@@ -26,7 +26,7 @@ function shortcuts_hub_render_shortcuts_list_page() {
                     <option value="false">Not Deleted</option>
                     <option value="true">Deleted</option>
                 </select>
-                <button id="reset-filters" class="restore-button">Reset filters</button>
+                <button id="reset-filters">Reset filters</button>
                 <a href="<?php echo admin_url('admin.php?page=add-shortcut'); ?>" class="add-shortcut-button">+</a>
             </div>
             <div id="shortcuts-container" class="shortcuts-container"></div>

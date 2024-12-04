@@ -21,10 +21,14 @@ jQuery(document).ready(function($) {
         console.error('IconSelector not loaded');
     }
 
-    // Handle form submission
+    // Prevent default form submission
     $('#add-shortcut-form').on('submit', function(event) {
         event.preventDefault();
-        const shortcutData = {
+    });
+
+    // Function to gather form data
+    function getShortcutData() {
+        return {
             name: $('#name').val(),
             description: $('#description').val(),
             headline: $('#headline').val(),
@@ -36,24 +40,27 @@ jQuery(document).ready(function($) {
             sb_id: $('#sb_id').val(),
             post_id: $('#post_id').val()
         };
-        createShortcut(shortcutData, 'publish');
+    }
+
+    // Handle publish button
+    $('#add-shortcut').on('click', function(event) {
+        event.preventDefault();
+        const $button = $(this);
+        $button.prop('disabled', true).text('Publishing...');
+        createShortcut(getShortcutData(), 'publish')
+            .always(function() {
+                $button.prop('disabled', false).text('Add Shortcut');
+            });
     });
 
     // Handle draft saving
     $('#save-draft').on('click', function(event) {
         event.preventDefault();
-        const shortcutData = {
-            name: $('#name').val(),
-            description: $('#description').val(),
-            headline: $('#headline').val(),
-            input: $('#input').val(),
-            result: $('#result').val(),
-            color: $('#color').val(),
-            icon: $('#shortcut-icon').val(),
-            actions: $('#actions').val(),
-            sb_id: $('#sb_id').val(),
-            post_id: $('#post_id').val()
-        };
-        createShortcut(shortcutData, 'draft');
+        const $button = $(this);
+        $button.prop('disabled', true).text('Saving...');
+        createShortcut(getShortcutData(), 'draft')
+            .always(function() {
+                $button.prop('disabled', false).text('Save Draft');
+            });
     });
 });

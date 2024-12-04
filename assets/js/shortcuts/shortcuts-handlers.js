@@ -1,5 +1,5 @@
 jQuery(document).ready(function() {
-    // Single event delegation for all shortcut buttons
+    // Version and edit handlers
     jQuery(document).on('click', '.version-button', function() {
         const sb_id = jQuery(this).data('id');
         const urlParams = new URLSearchParams(window.location.search);
@@ -8,7 +8,6 @@ jQuery(document).ready(function() {
         window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
         
         toggleVersionsView(true);
-        fetchVersions(sb_id);
     });
 
     jQuery(document).on('click', '.edit-button', function() {
@@ -21,13 +20,39 @@ jQuery(document).ready(function() {
         }
     });
 
-    jQuery(document).on('click', '.delete-button', function() {
-        const post_id = jQuery(this).data('post_id');
-        const sb_id = jQuery(this).data('sb_id');
-        toggleTrash(post_id, sb_id, false, this);
+    // Delete/Restore handlers for all states
+    jQuery(document).on('click', '.delete-button', function(e) {
+        e.preventDefault();
+        const $button = jQuery(this);
+        const post_id = $button.data('post_id');
+        const sb_id = $button.data('sb_id');
+        const $item = $button.closest('.shortcut-item');
+        const isDraft = $item.find('.draft-badge').length > 0;
+        
+        handleShortcutStateChange(post_id, sb_id, this, true);
     });
 
-    // Handle dropdown toggle click
+    jQuery(document).on('click', '.restore-button', function(e) {
+        e.preventDefault();
+        const $button = jQuery(this);
+        const postId = $button.data('post_id');
+        const sbId = $button.data('sb_id');
+        
+        // Call deleteShortcut directly with restore=true
+        deleteShortcut(postId, sbId, this, false, true);
+    });
+
+    jQuery(document).on('click', '.delete-permanently', function(e) {
+        e.preventDefault();
+        const post_id = jQuery(this).data('post_id');
+        const sb_id = jQuery(this).data('sb_id');
+        
+        if (confirm('Are you sure you want to PERMANENTLY delete this shortcut? This action cannot be undone.')) {
+            handleShortcutStateChange(post_id, sb_id, this, true, true);
+        }
+    });
+
+    // Dropdown handlers
     jQuery(document).on('click', '.delete-dropdown-toggle', function(e) {
         e.preventDefault();
         e.stopPropagation();
@@ -36,25 +61,10 @@ jQuery(document).ready(function() {
         dropdown.toggleClass('show');
     });
 
-    // Close dropdown when clicking outside
     jQuery(document).on('click', function(e) {
         if (!jQuery(e.target).closest('.btn-group').length) {
             jQuery('.delete-dropdown-content').removeClass('show');
         }
-    });
-
-    // Handle permanent delete click
-    jQuery(document).on('click', '.delete-permanently', function(e) {
-        e.preventDefault();
-        const post_id = jQuery(this).data('post_id');
-        const sb_id = jQuery(this).data('sb_id');
-        deleteShortcut(post_id, sb_id, this);
-    });
-
-    jQuery(document).on('click', '.restore-button', function() {
-        const post_id = jQuery(this).data('post_id');
-        const sb_id = jQuery(this).data('sb_id');
-        toggleTrash(post_id, sb_id, true, this);
     });
 
     jQuery(document).on('click', '.synced-text', function() {
@@ -65,57 +75,18 @@ jQuery(document).ready(function() {
     checkUrlParameters();
 });
 
+function handleShortcutStateChange(post_id, sb_id, buttonElement, isDeleted) {
+    deleteShortcut(post_id, sb_id, buttonElement, false, !isDeleted);
+}
+
 function checkUrlParameters() {
     const urlParams = new URLSearchParams(window.location.search);
-    const showVersions = urlParams.get('showVersions');
+    const view = urlParams.get('view');
+    const shortcutId = urlParams.get('id');
 
-    if (showVersions) {
+    if (view === 'versions' && shortcutId) {
         toggleVersionsView(true);
     } else {
         toggleVersionsView(false);
     }
-}
-
-function fetchVersions(sb_id) {
-    console.log('Fetching versions with params:', {
-        sb_id
-    });
-
-    const data = new FormData();
-    data.append('action', 'fetch_versions');
-    data.append('security', shortcuts_hub.security);
-    data.append('sb_id', sb_id);
-
-    console.log('Sending AJAX request with FormData:', {
-        action: 'fetch_versions',
-        security: shortcuts_hub.security,
-        sb_id
-    });
-
-    jQuery.ajax({
-        url: shortcuts_hub.ajax_url,
-        type: 'POST',
-        data: data,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            console.log('Received response:', response);
-            
-            if (response.success) {
-                console.log('Versions data:', response.data);
-                console.log('Number of versions:', response.data.length);
-                
-                renderVersions(response.data);
-            } else {
-                console.error('Error in response:', response);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX error:', {
-                status,
-                error,
-                xhr
-            });
-        }
-    });
 }

@@ -78,7 +78,7 @@ function shortcuts_hub_render_add_shortcut_page() {
             
             <div class="button-container">
                 <button type="button" class="draft-button" id="save-draft">Save as Draft</button>
-                <button type="submit" id="add-shortcut">Add Shortcut</button>
+                <button type="button" class="publish-button" id="add-shortcut">Add Shortcut</button>
             </div>
         </form>
         <div id="feedback-message"></div>

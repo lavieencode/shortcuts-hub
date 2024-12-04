@@ -188,13 +188,11 @@ function ajax_log_download() {
     // Only verify nonce for logged-in users
     if (is_user_logged_in()) {
         if (!isset($_POST['nonce'])) {
-            error_log('[Download Log] No nonce provided for logged-in user');
             wp_send_json_error(['message' => 'No nonce provided for logged-in user']);
             return;
         }
 
         if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
-            error_log('[Download Log] Invalid nonce');
             wp_send_json_error(['message' => 'Invalid nonce']);
             return;
         }
@@ -205,11 +203,6 @@ function ajax_log_download() {
     $download_url = isset($_POST['download_url']) ? esc_url_raw($_POST['download_url']) : '';
     $redirect_url = isset($_POST['redirect_url']) ? esc_url_raw($_POST['redirect_url']) : '';
 
-    error_log('[Download Log] Processing request:');
-    error_log('[Download Log] - Download URL: ' . $download_url);
-    error_log('[Download Log] - Redirect URL: ' . $redirect_url);
-    error_log('[Download Log] - Token: ' . $token);
-
     // Generate a new token for the download
     $new_token = wp_generate_password(12, false);
     set_transient('sh_download_' . $new_token, [
@@ -217,7 +210,6 @@ function ajax_log_download() {
         'redirect_url' => $redirect_url
     ], HOUR_IN_SECONDS);
 
-    error_log('[Download Log] Generated token: ' . $new_token);
     wp_send_json_success(['token' => $new_token]);
 }
 add_action('wp_ajax_ajax_log_download', 'ajax_log_download');

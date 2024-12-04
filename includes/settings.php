@@ -10,6 +10,7 @@ function get_shortcuts_hub_settings() {
     
     // Return cached settings if already loaded
     if ($settings !== null) {
+        error_log('Returning cached settings: ' . print_r($settings, true));
         return $settings;
     }
     
@@ -23,8 +24,10 @@ function get_shortcuts_hub_settings() {
             'sb_username' => 'nicole',
             'sb_password' => 'QCW*nN@q8RfN&bFI2^qKuYZpG'
         );
+        error_log('Using default settings: ' . print_r($settings, true));
         // Save the default settings
         update_option('shortcuts_hub_settings', $settings);
+        error_log('Saved default settings to database');
     }
 
     return $settings;

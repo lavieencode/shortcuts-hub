@@ -7,6 +7,9 @@ function initializeFilters() {
     jQuery('#filter-status').val('publish');
     jQuery('#filter-deleted').val('false');
     
+    // Initial fetch with default values
+    fetchShortcuts();
+    
     // Handle filter changes
     jQuery('#filter-status, #filter-deleted').on('change', function() {
         console.log('Filter changed:', {

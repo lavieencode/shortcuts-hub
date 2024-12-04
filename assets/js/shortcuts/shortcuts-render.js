@@ -1,6 +1,4 @@
 function renderShortcuts(shortcuts) {
-    console.log('Starting renderShortcuts with', shortcuts.length, 'shortcuts');
-    
     if (!shortcuts || !Array.isArray(shortcuts)) {
         console.error('Invalid shortcuts data:', shortcuts);
         return;
@@ -16,20 +14,11 @@ function renderShortcuts(shortcuts) {
     container.innerHTML = '';
 
     if (shortcuts.length === 0) {
-        console.log('No shortcuts to render');
         container.innerHTML = '<div class="no-shortcuts">No shortcuts found</div>';
         return;
     }
 
     shortcuts.forEach((shortcut, index) => {
-        console.log(`Rendering shortcut ${index + 1}/${shortcuts.length}:`, {
-            id: shortcut.post_id,
-            name: shortcut.name,
-            status: shortcut.post_status,
-            draft: shortcut.draft,
-            deleted: shortcut.deleted
-        });
-        
         const post_id = shortcut.post_id;
 
         const syncedText = shortcut.sb_id && shortcut.sb_id !== '' ? 
@@ -72,6 +61,4 @@ function renderShortcuts(shortcuts) {
 
         container.appendChild(shortcutElement);
     });
-
-    console.log('Finished rendering shortcuts');
 }
