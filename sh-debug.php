@@ -21,26 +21,36 @@ function sh_debug_log($message, $data = null, $source = null) {
         $datetime_line = str_pad("[START DEBUG LOG: " . $datetime . " EST]", 116, " ", STR_PAD_BOTH);
         $message_line = "\n\n" . $asterisks . "\n" . $datetime_line . "\n" . $asterisks . "\n\n";
     } else {
-        $message_line = sprintf("[DEBUG] %s\n%s\n", $message, $source ?: '');
+        $message_line = "[DEBUG] $message\n";
+        if ($source) {
+            $message_line .= "[SOURCE] $source\n";
+        }
     }
 
     // Format the data if present
     $data_section = '';
     if ($data !== null) {
+        $json_flags = JSON_PRETTY_PRINT;
         if (is_string($data)) {
-            $data_section = $data . "\n";
-        } else {
-            // Format JSON with indentation but keep arrays compact
-            $json_flags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES;
+            // If data is a string, try to decode it first
+            $decoded = json_decode($data);
+            if ($decoded !== null) {
+                $data = $decoded;
+            }
+        }
+        
+        if (is_array($data) || is_object($data)) {
             $formatted_data = json_encode($data, $json_flags);
             // Make arrays single line but keep overall structure pretty
             $formatted_data = preg_replace('/\[\s+(.+?)\s+\]/', '[$1]', $formatted_data);
-            $data_section = $formatted_data . "\n";
+            $data_section = "\n" . $formatted_data;
+        } else {
+            $data_section = "\n" . $data;
         }
     }
 
     // Combine message and data
-    $log_entry = $message_line . $data_section . "\n";
+    $log_entry = $message_line . $data_section . "\n\n";
 
     // Write to debug-log.php
     $log_file = dirname(__FILE__) . '/debug-log.php';
@@ -53,7 +63,7 @@ function sh_debug_log($message, $data = null, $source = null) {
     // Append the log entry
     file_put_contents(
         $log_file, 
-        $log_entry . "\n",
+        $log_entry,
         FILE_APPEND
     );
 
