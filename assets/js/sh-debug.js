@@ -46,7 +46,13 @@ function sendLog(message, data = null, source = null) {
         
         if (sourceLine) {
             const match = sourceLine.match(/\((.*?)\)/);
-            source = match ? match[1] : sourceLine.trim();
+            let sourcePath = match ? match[1] : sourceLine.trim();
+            
+            // Clean up the source path
+            sourcePath = sourcePath.replace(/https?:\/\/[^\/]+\//, '/');  // Remove domain
+            sourcePath = sourcePath.replace(/\?.*?:/, ':');  // Remove query params
+            const fileMatch = sourcePath.match(/[^\/]+\.[^\/]+:\d+:\d+$/);
+            source = fileMatch ? fileMatch[0] : sourcePath;
         } else {
             source = null;
         }
@@ -61,15 +67,15 @@ function sendLog(message, data = null, source = null) {
             security: shortcutsHubData.security,
             message: message,
             data: JSON.stringify(data, null, 4),
-            source: source ? `[SOURCE] ${source}` : ''
+            source: source || ''  // Let PHP handle the [SOURCE] prefix
         }
     });
 
     // Style console output
     const debugStyle = 'background: #909cfe; color: #252525; font-weight: bold;';
     const sourceTagStyle = 'color: #909cfe; font-weight: bold;';
-    const fileNameStyle = 'font-weight: bold;';
-    const jsonKeyStyle = 'color: #909cfe; font-weight: bold;';
+    const dataTagStyle = 'color: #909cfe; font-weight: bold;';
+    const fileNameStyle = 'text-decoration: underline;';
 
     if (source === 'session-start') {
         const headerStyle = 'background: #909cfe; color: #252525; font-weight: bold;';
@@ -98,58 +104,28 @@ function sendLog(message, data = null, source = null) {
                 (data.data && data.data.success === false)
             ));
         
-        // Keep all logs at info level and same style for consistency
-        const logMethod = console.log;
-        const groupMethod = console.groupCollapsed;
+        // Start a collapsible group for this log entry
+        console.groupCollapsed('%c[DEBUG] ' + message, debugStyle);
         
-        // Log debug message with styling
-        groupMethod.call(console, '%c[DEBUG] ' + message, debugStyle);
-        
-        // Split source info into parts and style separately
+        // Log source if present
         if (source) {
-            const [fullMatch, fileName] = source.split(' ');
-            const questionMarkIndex = fileName.indexOf('?');
-            if (questionMarkIndex !== -1) {
-                const beforeQuestion = fileName.substring(0, questionMarkIndex);
-                const afterQuestion = fileName.substring(questionMarkIndex);
-                logMethod.call(
-                    console,
-                    '%c[SOURCE] %c%s%c%s',
-                    sourceTagStyle,
-                    fileNameStyle,
-                    beforeQuestion,
-                    '',
-                    afterQuestion
-                );
-            } else {
-                logMethod.call(console, '%c[SOURCE] %c%s', sourceTagStyle, fileNameStyle, fileName);
-            }
-        } else {
-            logMethod.call(console, '%c[SOURCE] %c%s', sourceTagStyle, '', callerLine);
+            console.log('%c[SOURCE] %c' + source, sourceTagStyle, fileNameStyle);
         }
         
         if (data) {
-            // Split the JSON string into lines
-            const lines = JSON.stringify(data, null, 2).split('\n');
-            
-            // Process each line
-            lines.forEach(line => {
-                // Check if line contains a key (matches "key": pattern)
-                const keyMatch = line.match(/^(\s*)"([^"]+)":/);
-                if (keyMatch) {
-                    // Preserve indentation, style the key, and add the rest of the line
-                    const [, indent, key] = keyMatch;
-                    const restOfLine = line.slice(keyMatch[0].length);
-                    logMethod.call(
-                        console,
-                        indent + '%c"' + key + '"%c:' + restOfLine,
-                        jsonKeyStyle,
-                        'color: inherit; font-weight: normal;'
-                    );
+            console.groupCollapsed('%c[DATA]', dataTagStyle);
+            const cleanData = JSON.parse(JSON.stringify(data));
+            Object.entries(cleanData).forEach(([key, value]) => {
+                if (value && typeof value === 'object') {
+                    // For nested objects, iterate through their properties
+                    Object.entries(value).forEach(([k, v]) => {
+                        console.log('%c' + k + ':%c ' + JSON.stringify(v), 'color: #909cfe; font-weight: bold;', 'color: inherit; font-weight: normal;');
+                    });
                 } else {
-                    logMethod.call(console, line);
+                    console.log('%c' + key + ':%c ' + value, 'color: #909cfe; font-weight: bold;', 'color: inherit; font-weight: normal;');
                 }
             });
+            console.groupEnd();
         }
         console.groupEnd();
     }
