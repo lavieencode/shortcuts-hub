@@ -9,72 +9,111 @@ if (!defined('ABSPATH')) {
  * 
  * @param string $message The debug message describing what's happening
  * @param mixed $data Optional data to log with the message
- * @param string $source Optional source information for the log entry
  * @return void
  */
-function sh_debug_log($message, $data = null, $source = null) {
-    $log_file = dirname(__FILE__) . '/debug-log.php';
-    
-    // Format the message line
-    if ($source === 'session-start') {
-        date_default_timezone_set('America/New_York');
-        $datetime = date('Y-m-d h:i:s A');
-        $asterisks = str_repeat('*', 116);
-        $datetime_line = str_pad("[START DEBUG LOG: " . $datetime . " EST]", 116, " ", STR_PAD_BOTH);
-        $log_entry = "\n\n" . $asterisks . "\n" . $datetime_line . "\n" . $asterisks . "\n\n";
-    } else {
-        $log_entry = "[DEBUG] $message\n";
-        if ($source) {
-            $log_entry .= "[SOURCE] $source\n";
-        }
+function sh_debug_log($message, $data = null) {
+    if (!should_enable_debug()) {
+        return;
     }
 
-    if ($data !== null) {
-        $json_flags = JSON_PRETTY_PRINT;
-        if (is_string($data)) {
-            // If data is a string, try to decode it first
-            $decoded = json_decode($data);
-            if ($decoded !== null) {
-                $data = $decoded;
-            }
+    try {
+        $session_started = get_transient('sh_debug_session_started');
+        $debug_file = dirname(__FILE__) . '/sh-debug.log';
+        
+        // Check if file exists and is writable, if not create it
+        if (!file_exists($debug_file)) {
+            touch($debug_file);
+            chmod($debug_file, 0666);
+            delete_transient('sh_debug_session_started');
+            $session_started = false;
         }
         
-        if (is_array($data) || is_object($data)) {
-            $formatted_data = json_encode($data, $json_flags);
-            // Make arrays single line but keep overall structure pretty
-            $formatted_data = preg_replace('/\[\s+(.+?)\s+\]/', '[$1]', $formatted_data);
-            $log_entry .= $formatted_data . "\n";
-        } else {
-            $log_entry .= $data . "\n";
+        if (!is_writable($debug_file)) {
+            error_log("Debug file not writable: " . $debug_file);
+            return;
         }
+
+        if (!$session_started) {
+            // Log the start block first
+            $start_message = str_repeat('*', 116) . "\n";
+            $start_message .= str_pad("[START DEBUG LOG: " . date('Y-m-d h:i:s A T') . "]", 116, ' ', STR_PAD_BOTH) . "\n";
+            $start_message .= str_repeat('*', 116) . "\n\n";
+            
+            file_put_contents($debug_file, $start_message, FILE_APPEND);
+            
+            set_transient('sh_debug_session_started', true, HOUR_IN_SECONDS);
+        }
+        
+        // Format source information if available
+        $source_info = '';
+        if (is_array($data) && isset($data['source'])) {
+            $source = $data['source'];
+            $source_info = sprintf(
+                "[%s:%d in %s]",
+                basename($source['file']),
+                $source['line'],
+                $source['function']
+            );
+            // Remove source from data to avoid duplication
+            unset($data['source']);
+        }
+        
+        // Now log the actual message
+        $log_message = "[DEBUG] " . $message . "\n";
+        if ($source_info) {
+            $log_message .= "SOURCE: " . $source_info . "\n\n";
+        }
+        if ($data !== null) {
+            $log_message .= json_encode($data, JSON_PRETTY_PRINT) . "\n";
+        }
+        $log_message .= "\n";
+        
+        file_put_contents($debug_file, $log_message, FILE_APPEND);
+        
+    } catch (Exception $e) {
+        error_log("Error writing to debug log: " . $e->getMessage());
+    }
+}
+
+function sh_error_log($message, $file = '', $line = '') {
+    if (!should_enable_debug()) {
+        return;
     }
 
-    $log_entry .= "\n";
-
-    // Ensure the log file exists and is writable
-    if (!file_exists($log_file)) {
-        file_put_contents($log_file, "<?php\n// This file is for debug logging only\n// Do not include any PHP code here\n?>\n");
-        chmod($log_file, 0666);
+    $debug_file = dirname(__FILE__) . '/sh-debug.log';
+    $error_message = "[ERROR] ";
+    if ($file && $line) {
+        $error_message .= "[$file:$line] ";
     }
-
-    // Append the log entry
-    file_put_contents($log_file, $log_entry, FILE_APPEND);
+    $error_message .= $message . "\n\n";
+    file_put_contents($debug_file, $error_message, FILE_APPEND);
 }
 
 function should_enable_debug() {
+    // Always enable debugging for now
+    return true;
+    
+    // Original conditions below:
+    /*
     // Always enable for AJAX debug logging
     if (defined('DOING_AJAX') && DOING_AJAX && isset($_REQUEST['action'])) {
-        if ($_REQUEST['action'] === 'sh_debug_log') {
+        if (strpos($_REQUEST['action'], 'sh_') === 0 || strpos($_REQUEST['action'], 'shortcuts_') === 0) {
             return true;
         }
     }
     
-    // Enable on shop page
-    if (function_exists('is_shop') && is_shop()) {
+    // Enable on Shortcuts Hub admin pages
+    if (is_admin() && isset($_GET['page']) && strpos($_GET['page'], 'shortcuts') === 0) {
+        return true;
+    }
+    
+    // Enable on single shortcut pages and shortcut archive
+    if (is_singular('shortcut') || is_post_type_archive('shortcut')) {
         return true;
     }
     
     return false;
+    */
 }
 
 // Always register AJAX handlers
@@ -101,6 +140,14 @@ function sh_debug_log_ajax_handler() {
     }
     $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'unknown';
 
-    sh_debug_log($message, $data, $source);
+    // If this is a session start request, ensure we start a new session
+    if ($source === 'session-start') {
+        delete_transient('sh_debug_session_started');
+    }
+
+    // Only log if there's actually a message
+    if (!empty($message)) {
+        sh_debug_log($message, $data);
+    }
     wp_send_json_success();
 }

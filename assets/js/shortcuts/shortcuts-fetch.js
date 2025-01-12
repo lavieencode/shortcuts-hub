@@ -1,14 +1,23 @@
+// Initial page load fetch
 jQuery(document).ready(function() {
     const urlParams = new URLSearchParams(window.location.search);
     const view = urlParams.get('view');
 
     if (view !== 'versions') {
-        // Initialize filters first, which will trigger the initial fetch
-        initializeFilters();
+        // Wait for debug session before fetching
+        jQuery(document).one('sh_debug_ready', function() {
+            // Only fetch WordPress shortcuts on initial load
+            fetchShortcutsFromSource('WP');
+        });
     }
 });
 
 function fetchShortcuts() {
+    // Only fetch Switchblade shortcuts when refresh is clicked
+    fetchShortcutsFromSource('SB');
+}
+
+function fetchShortcutsFromSource(source) {
     const filterStatus = jQuery('#filter-status').val();
     const filterDeleted = jQuery('#filter-deleted').val();
     const searchTerm = jQuery('#search-input').val();
@@ -18,7 +27,8 @@ function fetchShortcuts() {
         security: shortcutsHubData.security,
         filter: searchTerm || '',
         status: filterStatus || '',
-        deleted: filterDeleted === 'true' ? true : (filterDeleted === 'false' ? false : null)
+        deleted: filterDeleted === 'true' ? true : (filterDeleted === 'false' ? false : null),
+        source: source
     };
 
     jQuery.ajax({
@@ -27,14 +37,23 @@ function fetchShortcuts() {
         data: data,
         success: function(response) {
             if (response.success) {
-                renderShortcuts(response.data);
+                if (source === 'WP') {
+                    renderShortcuts(response.data);
+                }
+                // For Switchblade, we just want to log the data
+                console.log('Switchblade shortcuts:', response.data);
             } else {
                 console.error('Error fetching shortcuts:', response.data.message);
-                jQuery('#shortcuts-container').html('<div class="no-shortcuts">No shortcuts found</div>');
+                if (source === 'WP') {
+                    jQuery('#shortcuts-container').html('<div class="no-shortcuts">No shortcuts found</div>');
+                }
             }
         },
         error: function() {
-            jQuery('#shortcuts-container').html('<div class="no-shortcuts">No shortcuts found</div>');
+            if (source === 'WP') {
+                jQuery('#shortcuts-container').html('<div class="no-shortcuts">No shortcuts found</div>');
+            }
+            console.error('Ajax error fetching shortcuts from ' + source);
         }
     });
 }

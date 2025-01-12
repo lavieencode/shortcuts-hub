@@ -12,14 +12,6 @@ require_once dirname(__FILE__) . '/settings.php';
 require_once dirname(__FILE__) . '/auth.php';
 
 function sb_api_call($endpoint, $method = 'GET', $query_params = [], $body_data = null) {
-    // Debug: Starting API call
-    sh_debug_log('13. Switchblade API - Starting Call', [
-        'endpoint' => $endpoint,
-        'method' => $method,
-        'query_params' => $query_params,
-        'body_data' => $body_data
-    ]);
-
     $settings = get_shortcuts_hub_settings();
     $api_url = rtrim($settings['sb_url'], '/') . '/' . ltrim($endpoint, '/');
     
@@ -42,22 +34,7 @@ function sb_api_call($endpoint, $method = 'GET', $query_params = [], $body_data 
             $args['body'] = json_encode($body_data);
         }
 
-        // Debug: Sending API request
-        sh_debug_log('14. Switchblade API - Sending Request', [
-            'url' => $api_url,
-            'args' => $args
-        ]);
-
-        $response = wp_remote_request($api_url, $args);
-
-        // Debug: API response received
-        sh_debug_log('15. Switchblade API - Response Received', [
-            'response_code' => wp_remote_retrieve_response_code($response),
-            'response_message' => wp_remote_retrieve_response_message($response),
-            'body' => json_decode(wp_remote_retrieve_body($response), true)
-        ]);
-
-        return $response;
+        return wp_remote_request($api_url, $args);
     };
 
     // Get initial token
@@ -98,12 +75,5 @@ function sb_api_call($endpoint, $method = 'GET', $query_params = [], $body_data 
     }
 
     $body = wp_remote_retrieve_body($response);
-    $decoded_body = json_decode($body, true);
-    
-    if (!$decoded_body) {
-        return new WP_Error('decode_error', 'Failed to decode API response');
-    }
-
-    // Return the actual API response data, not any debug messages
-    return $decoded_body;
+    return json_decode($body, true);
 }

@@ -35,7 +35,7 @@ function shortcuts_hub_enqueue_assets($hook) {
         
         // Create nonce for debug script
         $nonce = wp_create_nonce('shortcuts_hub_nonce');
-        wp_localize_script('sh-debug', 'shDebugData', array(
+        wp_localize_script('sh-debug', 'shortcuts_hub_params', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'security' => $nonce,
             'isElementorActive' => defined('ELEMENTOR_VERSION'),
@@ -57,7 +57,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             wp_enqueue_script('shortcuts-fetch-script', plugins_url('../assets/js/shortcuts/shortcuts-fetch.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/shortcuts/shortcuts-fetch.js'));
             
             // Localize script with required data
-            wp_localize_script('shortcuts-fetch-script', 'shortcutsHubData', array(
+            wp_localize_script('shortcuts-fetch-script', 'shortcuts_hub_params', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'security' => wp_create_nonce('shortcuts_hub_nonce')
             ));
@@ -76,7 +76,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             );
 
             // Localize script with required data
-            wp_localize_script('shortcut-delete-script', 'shortcutsHubData', array(
+            wp_localize_script('shortcut-delete-script', 'shortcuts_hub_params', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'security' => $nonce
             ));
@@ -96,14 +96,14 @@ function shortcuts_hub_enqueue_assets($hook) {
             wp_enqueue_script('version-update-script', plugins_url('../assets/js/versions/version-update.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/versions/version-update.js'));
             wp_enqueue_script('version-create-script', plugins_url('../assets/js/versions/version-create.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/versions/version-create.js'));
 
-            wp_localize_script('shortcuts-handlers-script', 'shortcutsHubData', array(
+            wp_localize_script('shortcuts-handlers-script', 'shortcuts_hub_params', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'security' => $nonce,
                 'site_url' => get_site_url(),
                 'post_id' => get_the_ID()
             ));
 
-            wp_localize_script('shortcuts-render-script', 'shortcutsHubData', array(
+            wp_localize_script('shortcuts-render-script', 'shortcuts_hub_params', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'security' => $nonce,
                 'site_url' => get_site_url(),
@@ -146,7 +146,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             );
 
             // Localize scripts with their required data
-            wp_localize_script('shortcut-update', 'shortcutsHubData', array(
+            wp_localize_script('shortcut-update', 'shortcuts_hub_params', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'security' => $nonce,
                 'sb_api_url' => get_shortcuts_hub_settings()['sb_url']
@@ -155,7 +155,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             // Get WordPress uploads directory info
             $upload_dir = wp_upload_dir();
             
-            wp_localize_script('edit-shortcut', 'shortcutsHubData', array(
+            wp_localize_script('edit-shortcut', 'shortcuts_hub_params', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'security' => $nonce,
                 'sb_api_url' => get_shortcuts_hub_settings()['sb_url'],
@@ -176,15 +176,19 @@ function shortcuts_hub_enqueue_assets($hook) {
             wp_enqueue_script('icon-selector', plugins_url('../assets/js/core/icon-selector.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/core/icon-selector.js'));
             wp_enqueue_script('shortcut-create', 
                 plugins_url('../assets/js/shortcuts/shortcut-create.js', __FILE__), 
-                array('jquery'), 
+                array('jquery', 'sh-debug'), 
                 filemtime(plugin_dir_path(__FILE__) . '../assets/js/shortcuts/shortcut-create.js')
             );
 
+            // Create nonce once for this page
+            $nonce = wp_create_nonce('shortcuts_hub_nonce');
+
             // Localize script with required data
-            wp_localize_script('shortcut-create', 'shortcutsHubData', array(
+            wp_localize_script('shortcut-create', 'shortcuts_hub_params', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
-                'security' => wp_create_nonce('shortcuts_hub_nonce'),
-                'site_url' => get_site_url()
+                'security' => $nonce,
+                'site_url' => get_site_url(),
+                'sb_api_url' => get_shortcuts_hub_settings()['sb_url']
             ));
 
             wp_enqueue_script('add-shortcut', plugins_url('../assets/js/pages/add-shortcut.js', __FILE__), array('jquery', 'wp-color-picker', 'icon-selector', 'shortcut-create'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/pages/add-shortcut.js'));
@@ -192,7 +196,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             // Get WordPress uploads directory info
             $upload_dir = wp_upload_dir();
             
-            wp_localize_script('add-shortcut', 'shortcutsHubData', array(
+            wp_localize_script('add-shortcut', 'shortcuts_hub_params', array(
                 'uploads_url' => $upload_dir['baseurl'],
                 'uploads_dir' => $upload_dir['basedir'],
                 'site_url' => get_site_url()
@@ -215,7 +219,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             ));
             wp_enqueue_script('versions-render-script', plugins_url('../assets/js/versions/versions-render.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/versions/versions-render.js'), true);
             
-            wp_localize_script('add-version-script', 'shortcutsHubData', array(
+            wp_localize_script('add-version-script', 'shortcuts_hub_params', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'security' => wp_create_nonce('shortcuts_hub_nonce'),
                 'site_url' => get_site_url()
@@ -233,7 +237,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             ));
             wp_enqueue_script('version-update-script', plugins_url('../assets/js/versions/version-update.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/versions/version-update.js'), true);
 
-            wp_localize_script('edit-version-script', 'shortcutsHubData', array(
+            wp_localize_script('edit-version-script', 'shortcuts_hub_params', array(
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'security' => wp_create_nonce('shortcuts_hub_nonce'),
                 'site_url' => get_site_url()

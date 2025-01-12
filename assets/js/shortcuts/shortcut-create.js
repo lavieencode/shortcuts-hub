@@ -1,14 +1,8 @@
 function createShortcut(shortcutData, status = 'publish') {
-    // Debug: Initial shortcut creation request with data
-    sh_debug_log('1. Create Shortcut - Initial Request', {
-        shortcutData: shortcutData,
-        status: status
-    });
-
     // First create in Switchblade
     const data = {
         action: 'create_shortcut',
-        security: shortcutsHubData.security,
+        security: shortcuts_hub_params.security,
         shortcut_data: {
             name: shortcutData.name,
             headline: shortcutData.headline,
@@ -24,32 +18,36 @@ function createShortcut(shortcutData, status = 'publish') {
         }
     };
 
-    // Debug: AJAX request being sent to WordPress
-    sh_debug_log('2. Create Shortcut - AJAX Request', {
-        endpoint: shortcutsHubData.ajax_url,
-        requestData: data
-    });
+    // Track request/response for debug logging
+    let debugData = {
+        request: {
+            shortcut: shortcutData,
+            ajax: data
+        }
+    };
 
     return jQuery.ajax({
-        url: shortcutsHubData.ajax_url,
+        url: shortcuts_hub_params.ajax_url,
         method: 'POST',
         data: data,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
         success: function(response) {
-            // Debug: AJAX response received
-            sh_debug_log('3. Create Shortcut - AJAX Response', {
-                success: response.success,
-                responseData: response.data
-            });
-
+            debugData.response = response;
+            
             if (response.success) {
-                const websiteUrl = shortcutsHubData.site_url + '/wp-admin/admin.php?page=edit-shortcut&id=' + response.data.post_id;
+                const websiteUrl = shortcuts_hub_params.site_url + '/wp-admin/admin.php?page=edit-shortcut&id=' + response.data.post_id;
                 
                 jQuery('#message')
                     .removeClass('error-message')
                     .addClass('success-message')
                     .text('Shortcut created successfully: ' + response.data.message)
                     .show();
-                
+
+                // Log successful creation
+                sh_debug_log('Create Shortcut', debugData);
+
                 // Debug: Redirecting to edit page
                 sh_debug_log('4. Create Shortcut - Redirecting', {
                     redirectUrl: websiteUrl,
@@ -60,16 +58,17 @@ function createShortcut(shortcutData, status = 'publish') {
                     window.location.href = websiteUrl;
                 }, 2000);
             } else {
-                // Debug: Error in response
-                sh_debug_log('Error - Create Shortcut Failed', {
-                    error: response.data ? response.data.message : 'Unknown error'
-                });
-
                 jQuery('#message')
                     .removeClass('success-message')
                     .addClass('error-message')
-                    .text('Error creating shortcut: ' + (response.data ? response.data.message : 'Unknown error occurred.'))
+                    .text('Error creating shortcut: ' + (response.data?.message || 'Unknown error'))
                     .show();
+
+                // Log failed creation
+                sh_debug_log('Error - Create Shortcut Failed', {
+                    error: response.data?.message || 'Unknown error',
+                    debug: debugData
+                });
             }
         },
         error: function(xhr, status, error) {

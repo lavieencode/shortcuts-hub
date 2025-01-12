@@ -6,6 +6,8 @@ if (!defined('ABSPATH')) {
     exit; 
 }
 
+require_once dirname(dirname(__FILE__)) . '/sh-debug.php';
+
 // Add AJAX handler for logging
 function shortcuts_hub_handle_log() {
     try {
@@ -23,7 +25,7 @@ function shortcuts_hub_handle_log() {
             return;
         }
         
-        error_log($message . ($data ? ' ' . $data : ''));
+        sh_debug_log($message, $data ? $data : null);
         wp_send_json_success(array('logged' => true));
         
     } catch (Exception $e) {

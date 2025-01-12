@@ -8,6 +8,12 @@ use ShortcutsHub\Elementor\Widgets\My_Account_Widget;
 use ShortcutsHub\Elementor\Widgets\Shortcuts_Icon_Widget;
 use ShortcutsHub\Elementor\Dynamic_Tags;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/sh-debug.php';
+
 class Elementor_Manager {
     private static $instance = null;
 
@@ -85,7 +91,7 @@ class Elementor_Manager {
                 }
             } catch (\Exception $e) {
                 // Log the error for debugging
-                error_log('Failed to register widget ' . $name . ': ' . $e->getMessage());
+                sh_error_log('Failed to register widget ' . $name . ': ' . $e->getMessage(), __FILE__, __LINE__);
             }
         }
     }

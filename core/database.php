@@ -4,6 +4,8 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
+require_once SHORTCUTS_HUB_PATH . 'sh-debug.php';
+
 function install_db() {
     global $wpdb;
 
@@ -44,7 +46,7 @@ function install_db() {
         dbDelta($sql);
 
         if ($wpdb->last_error) {
-            error_log('Shortcuts Hub DB Installation Error: ' . $wpdb->last_error);
+            sh_error_log('Shortcuts Hub DB Installation Error: ' . $wpdb->last_error, __FILE__, __LINE__);
         }
 
         update_option('shortcuts_hub_db_version', '1.2');
@@ -100,13 +102,13 @@ function log_download($shortcut_name, $version_data, $download_url) {
         );
 
         if ($result === false) {
-            error_log('Failed to log shortcut download: ' . $wpdb->last_error);
+            sh_error_log('Failed to log shortcut download: ' . $wpdb->last_error, __FILE__, __LINE__);
             return false;
         }
 
         return true;
     } catch (Exception $e) {
-        error_log('Error logging shortcut download: ' . $e->getMessage());
+        sh_error_log('Error logging shortcut download: ' . $e->getMessage(), __FILE__, __LINE__);
         return false;
     }
 }
@@ -143,7 +145,7 @@ function get_downloads($user_id = null) {
 
         return $downloads;
     } catch (Exception $e) {
-        error_log('Error retrieving download history: ' . $e->getMessage());
+        sh_error_log('Error retrieving download history: ' . $e->getMessage(), __FILE__, __LINE__);
         return array();
     }
 }

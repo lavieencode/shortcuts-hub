@@ -1,0 +1,300 @@
+[DEBUG] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ],
+    "source": {
+        "file": "\/home\/user\/htdocs\/srv608334.hstgr.cloud\/wp-content\/plugins\/shortcuts-hub\/includes\/ajax\/shortcuts-ajax.php",
+        "line": 763,
+        "function": "ShortcutsHub\\register_shortcuts_ajax_handlers"
+    }
+}
+
+[DEBUG] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ],
+    "source": {
+        "file": "\/home\/user\/htdocs\/srv608334.hstgr.cloud\/wp-content\/plugins\/shortcuts-hub\/includes\/ajax\/shortcuts-ajax.php",
+        "line": 763,
+        "function": "ShortcutsHub\\register_shortcuts_ajax_handlers"
+    }
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] Registering AJAX Handlers
+SOURCE: [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers]
+
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+
+[DEBUG] Registering AJAX Handlers
+SOURCE: [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers]
+
+{
+    "handlers": [
+        "fetch_shortcuts",
+        "fetch_shortcut",
+        "create_shortcut",
+        "update_shortcut",
+        "toggle_draft",
+        "delete_shortcut",
+        "process_download_token"
+    ]
+}
+

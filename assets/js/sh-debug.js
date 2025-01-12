@@ -20,26 +20,6 @@ window.sh_debug_log = function(message, data = null, source = null) {
     }
 };
 
-// Log session start when page loads
-jQuery(document).ready(function() {
-    console.log('Debug data:', window.shDebugData);
-    // Create a promise for session start logging
-    window.sessionLogPromise = jQuery.ajax({
-        url: shDebugData.ajaxurl,
-        type: 'POST',
-        data: {
-            action: 'sh_debug_log',
-            security: shDebugData.security,
-            message: 'Session Started',
-            data: {
-                isElementorActive: shDebugData.isElementorActive,
-                isWooCommerceActive: shDebugData.isWooCommerceActive
-            },
-            source: 'session-start'
-        }
-    });
-});
-
 function sendLog(message, data = null, source = null) {
     if (source instanceof Error) {
         const stackTrace = source.stack;
@@ -135,3 +115,23 @@ function sendLog(message, data = null, source = null) {
         console.groupEnd();
     }
 }
+
+// Log session start when page loads
+jQuery(document).ready(function() {
+    console.log('Debug data:', window.shDebugData);
+    // Create a promise for session start logging
+    window.sessionLogPromise = jQuery.ajax({
+        url: shDebugData.ajaxurl,
+        type: 'POST',
+        data: {
+            action: 'sh_debug_log',
+            security: shDebugData.security,
+            message: '',
+            data: null,
+            source: 'session-start'
+        }
+    }).then(function() {
+        // Only after session is started, trigger page load
+        jQuery(document).trigger('sh_debug_ready');
+    });
+});
