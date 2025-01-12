@@ -17,14 +17,13 @@ function get_refresh_sb_token() {
     // Check for rate limiting
     $rate_limit = get_transient('SB_RATE_LIMIT');
     if ($rate_limit) {
-        error_log('Rate limited. Cannot get new token.');
-        return false;
+        return new WP_Error('rate_limit', 'Rate limited. Cannot get new token.');
     }
 
     // Get settings
     $settings = get_shortcuts_hub_settings();
     if (empty($settings['sb_username']) || empty($settings['sb_password'])) {
-        return false;
+        return new WP_Error('missing_credentials', 'Missing Switchblade credentials');
     }
 
     $api_url = $settings['sb_url'] . '/login';
@@ -44,38 +43,34 @@ function get_refresh_sb_token() {
     ]);
 
     if (is_wp_error($response)) {
-        error_log('Error getting SB token: ' . $response->get_error_message());
-        return false;
+        return new WP_Error('token_request_failed', 'Failed to get token: ' . $response->get_error_message());
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
     $body = wp_remote_retrieve_body($response);
-    error_log('Login response code: ' . $response_code);
-    error_log('Login response body: ' . $body);
-
+    
     if ($response_code !== 200) {
         // Handle specific error cases
         if (strpos($body, 'viewAnyDraftShortcut') !== false) {
-            error_log('Permission check error during login. Clearing token cache.');
             delete_transient('SB_TOKEN');
             delete_transient('SB_TOKEN_AGE');
             delete_transient('SB_RATE_LIMIT');
+            return new WP_Error('permission_error', 'Permission check failed during login');
         }
         else if ($response_code === 429 || (strpos($body, 'Too many login attempts') !== false)) {
             set_transient('SB_RATE_LIMIT', true, HOUR_IN_SECONDS);
-            error_log('Rate limit hit. Cooling down for an hour.');
+            return new WP_Error('rate_limit', 'Too many login attempts. Please try again later.');
         }
-        return false;
+        return new WP_Error('login_failed', 'Login failed with status code: ' . $response_code);
     }
 
     $data = json_decode($body, true);
     
     if (!empty($data['token'])) {
         set_transient('SB_TOKEN', $data['token'], HOUR_IN_SECONDS);
-        set_transient('SB_TOKEN_AGE', time(), HOUR_IN_SECONDS); // Track when we got the token
+        set_transient('SB_TOKEN_AGE', time(), HOUR_IN_SECONDS);
         return $data['token'];
     }
 
-    error_log('No token found in response');
-    return false;
+    return new WP_Error('no_token', 'No token found in response');
 }

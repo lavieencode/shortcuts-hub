@@ -10,10 +10,24 @@ function shortcuts_hub_include_files() {
     }
 
     // Core functionality files
-    require_once SHORTCUTS_HUB_PATH . 'sh-debug.php';
     require_once SHORTCUTS_HUB_PATH . 'core/registration-flow.php';
     require_once SHORTCUTS_HUB_PATH . 'core/login-flow.php';
     require_once SHORTCUTS_HUB_PATH . 'core/user-role.php';
+
+    // Only include debug file on admin pages
+    if (is_admin()) {
+        $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        $admin_pages = array(
+            'shortcuts-list',
+            'add-shortcut',
+            'edit-shortcut',
+            'add-version',
+            'edit-version'
+        );
+        if (in_array($page, $admin_pages)) {
+            require_once SHORTCUTS_HUB_PATH . 'sh-debug.php';
+        }
+    }
 }
 
 add_action('init', 'shortcuts_hub_include_files');

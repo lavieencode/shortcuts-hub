@@ -139,7 +139,7 @@ class Elementor_Manager {
     }
 
     public function register_scripts() {
-        $plugin_url = trailingslashit(plugins_url('', dirname(dirname(__FILE__))));
+        $plugin_url = plugin_dir_url(SHORTCUTS_HUB_FILE);
         $version = defined('WP_DEBUG') && WP_DEBUG ? time() : SHORTCUTS_HUB_VERSION;
 
         // Register download button script
@@ -166,7 +166,7 @@ class Elementor_Manager {
         // Register download log script
         wp_register_script(
             'shortcuts-hub-download-log',
-            $plugin_url . 'assets/js/core/download-log.js',
+            $plugin_url . 'assets/js/widgets/download-log.js',
             ['jquery'],
             $version,
             true
@@ -174,19 +174,7 @@ class Elementor_Manager {
     }
 
     public function register_frontend_styles() {
-        // Prevent double registration
-        if (wp_style_is('shortcuts-hub-download-button', 'registered')) {
-            return;
-        }
-
-        $plugin_url = plugins_url('', dirname(dirname(dirname(__FILE__))));
-        $version = defined('SHORTCUTS_HUB_VERSION') ? SHORTCUTS_HUB_VERSION : '1.0.0';
-
-        wp_register_style(
-            'shortcuts-hub-download-button',
-            $plugin_url . '/assets/css/core/download-button.css',
-            [],
-            $version
-        );
+        // No styles to register as they are handled by Elementor's dynamic styling
+        return;
     }
 }

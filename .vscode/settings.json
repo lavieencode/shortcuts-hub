@@ -1,5 +1,13 @@
 {
     "github-actions.workflows.pinned.workflows": [
         ".github/workflows/deploy.yml"
-    ]
+    ],
+    "highlight.decorations": {
+
+        "rangeBehavior": 3
+    },
+    "highlight.regexes": {
+        
+
+    }
 }

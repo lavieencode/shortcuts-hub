@@ -8,19 +8,6 @@ function updateShortcut(formData, options = {}) {
         buttonElement
     } = options;
 
-    // Debug: Log button state for testing - verifying button element and its attributes
-    if (buttonElement) {
-        const $button = jQuery(buttonElement);
-        console.log('Button clicked:', {
-            id: $button.attr('id'),
-            classes: $button.attr('class'),
-            text: $button.text(),
-            currentStatus: jQuery('#shortcut-post-id').data('post-status'),
-            formData: formData
-        });
-    }
-
-    // Prepare data based on target
     let requestData = {};
     if (target === 'wp') {
         requestData = {
@@ -49,17 +36,6 @@ function updateShortcut(formData, options = {}) {
         };
     }
 
-    // Debug: Log API request for testing - verifying request URL, method, headers, and data structure
-    console.log(`${target.toUpperCase()} API Request:`, {
-        url: target === 'wp' ? baseUrl : `${baseUrl}/shortcuts/${formData.sb_id}`,
-        method: target === 'wp' ? 'POST' : 'PATCH',
-        headers: target === 'wp' ? {} : {
-            'Content-Type': 'application/json'
-        },
-        data: requestData
-    });
-
-    // Set button loading state if provided
     if (buttonElement) {
         const $button = jQuery(buttonElement);
         const currentStatus = jQuery('#shortcut-post-id').data('post-status');
@@ -67,7 +43,6 @@ function updateShortcut(formData, options = {}) {
         $button.prop('disabled', true).text(buttonText);
     }
 
-    // Make the request
     jQuery.ajax({
         url: target === 'wp' ? baseUrl : `${baseUrl}/shortcuts/${formData.sb_id}`,
         method: target === 'wp' ? 'POST' : 'PATCH',
@@ -76,35 +51,13 @@ function updateShortcut(formData, options = {}) {
         },
         data: target === 'wp' ? requestData : JSON.stringify(requestData),
         beforeSend: function(xhr, settings) {
-            // Debug: Verify API request details before sending - checking URL formation, headers, and request data structure
-            sh_debug_log(
-                `Making ${target.toUpperCase()} API request`,
-                {
-                    url: settings.url,
-                    method: settings.type,
-                    headers: settings.headers,
-                    data: settings.data
-                }
-            );
         },
         success: function(response) {
-            // Debug: Verify API response structure and success status - ensuring proper data format and error handling
-            sh_debug_log(
-                `${target.toUpperCase()} API response received`,
-                {
-                    success: true,
-                    data: response
-                }
-            );
-            
-            // For WordPress, check response.success
-            // For Switchblade, a 200 response is considered success (response might be empty for PATCH)
             const isSuccess = target === 'wp' ? response.success : true;
             
             if (isSuccess) {
                 if (onSuccess) onSuccess(response);
 
-                // Show success message if not handled by callback
                 if (!onSuccess) {
                     jQuery('#feedback-message')
                         .removeClass('error')
@@ -132,14 +85,6 @@ function updateShortcut(formData, options = {}) {
             }
         },
         error: function(xhr, status, error) {
-            // Debug: Log API error for testing - verifying error status, response text, and error message
-            console.log(`${target.toUpperCase()} API Error:`, {
-                status: xhr.status,
-                statusText: xhr.statusText,
-                responseText: xhr.responseText,
-                error: error
-            });
-            
             if (onError) onError(`Error updating shortcut in ${target.toUpperCase()}`);
             else {
                 jQuery('#feedback-message')
@@ -155,14 +100,6 @@ function updateShortcut(formData, options = {}) {
                 const currentStatus = jQuery('#shortcut-post-id').data('post-status');
                 $button.prop('disabled', false)
                     .text(currentStatus === 'publish' ? 'Update' : 'Save');
-                
-                // Debug: Log final button state for testing - verifying button state after request completion
-                console.log('Button state after request:', {
-                    id: $button.attr('id'),
-                    classes: $button.attr('class'),
-                    text: $button.text(),
-                    currentStatus: currentStatus
-                });
             }
             if (onComplete) onComplete();
         }

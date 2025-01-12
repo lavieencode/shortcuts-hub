@@ -25,13 +25,13 @@ function shortcuts_hub_render_edit_shortcut_page() {
             $sb_id = get_post_meta($shortcut->ID, 'sb_id', true);
             
             $name = get_the_title($shortcut);
-            $headline = get_post_meta($shortcut->ID, 'headline', true);
-            $description = get_post_meta($shortcut->ID, 'description', true);
+            $headline = get_post_meta($shortcut->ID, '_shortcut_headline', true);
+            $description = get_post_meta($shortcut->ID, '_shortcut_description', true);
             $website = get_permalink($shortcut);
-            $color = get_post_meta($shortcut->ID, 'color', true);
-            $icon = get_post_meta($shortcut->ID, 'icon', true);
-            $input = get_post_meta($shortcut->ID, 'input', true);
-            $result = get_post_meta($shortcut->ID, 'result', true);
+            $color = get_post_meta($shortcut->ID, '_shortcut_color', true);
+            $icon = get_post_meta($shortcut->ID, '_shortcut_icon', true);
+            $input = get_post_meta($shortcut->ID, '_shortcut_input', true);
+            $result = get_post_meta($shortcut->ID, '_shortcut_result', true);
             $id = $sb_id;
             $is_published = $shortcut->post_status === 'publish';
         }
@@ -42,7 +42,7 @@ function shortcuts_hub_render_edit_shortcut_page() {
         <h2 id="shortcut-title"><?php echo esc_html($name); ?></h2>
         <form id="edit-shortcut-form" class="form-container" onsubmit="event.preventDefault(); return false;">
             <input type="hidden" id="shortcut-post-id" name="post_id" value="<?php echo esc_attr($post_id); ?>" data-post-status="<?php echo esc_attr(get_post_status($post_id)); ?>">
-            <input type="hidden" id="shortcut-id" name="id" value="<?php echo esc_attr($id); ?>">
+            <input type="hidden" id="shortcut-id" name="sb_id" value="<?php echo esc_attr($id); ?>">
             <input type="hidden" id="shortcut-website" name="website" value="<?php echo esc_url($website); ?>">
             <div class="form-columns">
                 <div class="form-column">
@@ -119,17 +119,17 @@ function shortcuts_hub_render_edit_shortcut_page() {
                     <?php echo esc_html($save_text); ?>
                 </button>
                 <div class="btn-group">
-                    <button type="button" class="delete-button" data-post_id="<?php echo esc_attr($post_id); ?>" data-sb_id="<?php echo esc_attr($id); ?>">Delete</button>
-                    <button type="button" class="delete-dropdown-toggle" data-post_id="<?php echo esc_attr($post_id); ?>" data-sb_id="<?php echo esc_attr($id); ?>">
+                    <button type="button" id="delete-shortcut" class="delete-button" data-post_id="<?php echo esc_attr($post_id); ?>" data-sb_id="<?php echo esc_attr($id); ?>">Delete</button>
+                    <button type="button" class="delete-dropdown-toggle">
                         <span class="dropdown-caret">▼</span>
                     </button>
                     <div class="delete-dropdown-content">
-                        <button class="delete-permanently" data-post_id="<?php echo esc_attr($post_id); ?>" data-sb_id="<?php echo esc_attr($id); ?>">Delete Permanently</button>
+                        <button type="button" class="delete-permanently" data-post_id="<?php echo esc_attr($post_id); ?>" data-sb_id="<?php echo esc_attr($id); ?>">Delete Permanently</button>
                     </div>
                 </div>
                 <button type="button" class="cancel-button">Cancel</button>
+                <div id="feedback-message"></div>
             </div>
-            <div id="feedback-message"></div>
         </form>
     </div>
     <?php

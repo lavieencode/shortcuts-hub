@@ -11,135 +11,99 @@ if (!defined('ABSPATH')) {
 require_once dirname(__FILE__) . '/settings.php';
 require_once dirname(__FILE__) . '/auth.php';
 
-function sb_api_call($endpoint, $method = 'GET', $query_params = array(), $body = null) {
-    // Get settings first
+function sb_api_call($endpoint, $method = 'GET', $query_params = [], $body_data = null) {
+    // Debug: Starting API call
+    sh_debug_log('13. Switchblade API - Starting Call', [
+        'endpoint' => $endpoint,
+        'method' => $method,
+        'query_params' => $query_params,
+        'body_data' => $body_data
+    ]);
+
     $settings = get_shortcuts_hub_settings();
-    
-    // If credentials aren't configured, return early
-    if (empty($settings['sb_username']) || empty($settings['sb_password'])) {
-        return new WP_Error('credentials_missing', 'API credentials not configured');
-    }
-
-    // Ensure the endpoint is a string
-    if (!is_string($endpoint)) {
-        return new WP_Error('invalid_endpoint', 'The endpoint must be a string.');
-    }
-
     $api_url = rtrim($settings['sb_url'], '/') . '/' . ltrim($endpoint, '/');
-
-    // Handle query parameters for GET requests
-    if (!empty($query_params) && $method === 'GET') {
-        if (!is_array($query_params)) {
-            return new WP_Error('invalid_query_params', 'Query parameters must be an array.');
-        }
+    
+    if (!empty($query_params)) {
         $api_url .= '?' . http_build_query($query_params);
     }
 
-    // Check if we're rate limited
-    $rate_limit = get_transient('SB_RATE_LIMIT');
-    if ($rate_limit) {
-        return new WP_Error('rate_limit', 'Rate limited. Please try again later.');
-    }
+    // Function to make the actual API request
+    $make_request = function($token) use ($api_url, $method, $body_data) {
+        $args = array(
+            'method' => $method,
+            'headers' => array(
+                'Authorization' => 'Bearer ' . $token,
+                'Content-Type' => 'application/json'
+            ),
+            'timeout' => 45
+        );
 
-    // Try to get existing token first
-    $bearer_token = get_transient('SB_TOKEN');
-    if (!$bearer_token) {
-        sh_debug_log('No existing token found, getting new one');
-        $bearer_token = get_refresh_sb_token();
-        if (!$bearer_token) {
-            return new WP_Error('token_error', 'Failed to retrieve SB token.');
+        if ($body_data !== null) {
+            $args['body'] = json_encode($body_data);
         }
+
+        // Debug: Sending API request
+        sh_debug_log('14. Switchblade API - Sending Request', [
+            'url' => $api_url,
+            'args' => $args
+        ]);
+
+        $response = wp_remote_request($api_url, $args);
+
+        // Debug: API response received
+        sh_debug_log('15. Switchblade API - Response Received', [
+            'response_code' => wp_remote_retrieve_response_code($response),
+            'response_message' => wp_remote_retrieve_response_message($response),
+            'body' => json_decode(wp_remote_retrieve_body($response), true)
+        ]);
+
+        return $response;
+    };
+
+    // Get initial token
+    $bearer_token = get_refresh_sb_token();
+    if (is_wp_error($bearer_token)) {
+        return $bearer_token;
     }
 
-    // Make the API request
-    $args = array(
-        'method'  => $method,
-        'headers' => array(
-            'Authorization' => 'Bearer ' . $bearer_token,
-            'Content-Type'  => 'application/json',
-        ),
-        'body'    => $body ? json_encode($body) : null,
-    );
-
-    // Log the request details
-    sh_debug_log('Making API request', array(
-        'url' => $api_url,
-        'method' => $method,
-        'headers' => $args['headers'],
-        'query_params' => $query_params,
-        'body' => $body
-    ));
-    
-    $response = wp_remote_request($api_url, $args);
-
+    // Make initial request
+    $response = $make_request($bearer_token);
     if (is_wp_error($response)) {
-        sh_debug_log('API request failed', array(
-            'error' => $response->get_error_message()
-        ));
         return $response;
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
-    $response_headers = wp_remote_retrieve_headers($response);
-    $raw_body = wp_remote_retrieve_body($response);
     
-    // Log the response details
-    sh_debug_log('API response received', array(
-        'status_code' => $response_code,
-        'headers' => $response_headers,
-        'body' => json_decode($raw_body, true)
-    ));
-
     // If unauthorized, try refreshing token and retry request
     if ($response_code === 401) {
-        sh_debug_log('Got 401, refreshing token and retrying request');
         delete_transient('SB_TOKEN');
-        delete_transient('SB_TOKEN_AGE');
-        
         $bearer_token = get_refresh_sb_token();
-        if ($bearer_token) {
-            $args['headers']['Authorization'] = 'Bearer ' . $bearer_token;
-            
-            sh_debug_log('Retrying request with new token', array(
-                'url' => $api_url,
-                'headers' => $args['headers']
-            ));
-            
-            $response = wp_remote_request($api_url, $args);
-            
-            if (is_wp_error($response)) {
-                sh_debug_log('Retry request failed', array(
-                    'error' => $response->get_error_message()
-                ));
-                return $response;
-            }
-            
-            $response_code = wp_remote_retrieve_response_code($response);
-            $response_headers = wp_remote_retrieve_headers($response);
-            $raw_body = wp_remote_retrieve_body($response);
-            
-            sh_debug_log('Retry response received', array(
-                'status_code' => $response_code,
-                'headers' => $response_headers,
-                'body' => json_decode($raw_body, true)
-            ));
+        if (is_wp_error($bearer_token)) {
+            return $bearer_token;
         }
-    } else if ($response_code === 429) {
-        sh_debug_log('Rate limit exceeded', array(
-            'retry_after' => wp_remote_retrieve_header($response, 'retry-after')
-        ));
-        set_transient('SB_RATE_LIMIT', true, HOUR_IN_SECONDS);
-        return new WP_Error('rate_limit', 'Rate limit exceeded. Please try again in an hour.');
+        
+        // Retry the request with new token
+        $response = $make_request($bearer_token);
+        if (is_wp_error($response)) {
+            return $response;
+        }
+        $response_code = wp_remote_retrieve_response_code($response);
     }
 
-    $decoded_body = json_decode($raw_body, true);
-
-    if (empty($decoded_body) || !is_array($decoded_body)) {
-        sh_debug_log('Invalid API response structure', array(
-            'raw_body' => $raw_body
-        ));
-        return new WP_Error('invalid_response', 'Invalid response structure from API.');
+    if ($response_code !== 200) {
+        $body = wp_remote_retrieve_body($response);
+        $error_data = json_decode($body, true);
+        $error_message = isset($error_data['message']) ? $error_data['message'] : 'API request failed with status ' . $response_code;
+        return new WP_Error('api_error', $error_message);
     }
 
+    $body = wp_remote_retrieve_body($response);
+    $decoded_body = json_decode($body, true);
+    
+    if (!$decoded_body) {
+        return new WP_Error('decode_error', 'Failed to decode API response');
+    }
+
+    // Return the actual API response data, not any debug messages
     return $decoded_body;
 }

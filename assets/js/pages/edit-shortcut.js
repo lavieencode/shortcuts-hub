@@ -1,7 +1,6 @@
 jQuery(document).ready(function(jQuery) {
     // Wait for IconSelector to be available
     if (typeof IconSelector === 'undefined') {
-        console.error('IconSelector not loaded yet. Make sure icon-selector.js is loaded before edit-shortcut.js');
         return;
     }
 
@@ -37,13 +36,6 @@ jQuery(document).ready(function(jQuery) {
         const $button = jQuery(this);
         const currentStatus = jQuery('#shortcut-post-id').data('post-status');
         
-        // Debug: Log button state for testing to verify current status and button text
-        console.log('Current button state:', {
-            currentStatus: currentStatus,
-            buttonText: $button.text(),
-            hasPublishClass: $button.hasClass('publish-button'),
-            hasRevertClass: $button.hasClass('revert-button')
-        });
 
         // Validate current status
         if (!currentStatus || (currentStatus !== 'draft' && currentStatus !== 'publish')) {
@@ -53,12 +45,12 @@ jQuery(document).ready(function(jQuery) {
         const newState = currentStatus === 'draft' ? 'publish' : 'draft';
         
         const formData = {
-            post_id: jQuery('#shortcut-post-id').val(),
-            sb_id: jQuery('#shortcut-id').val(),
+            post_id: jQuery('#shortcut-post-id').data('post-id') || jQuery('#shortcut-post-id').val(),
+            sb_id: jQuery('#shortcut-id').data('sb-id') || jQuery('#shortcut-id').val(),
             name: jQuery('#shortcut-name').val(),
             headline: jQuery('#shortcut-headline').val(),
             description: jQuery('#shortcut-description').val(),
-            website: jQuery('#shortcut-website').val(),
+            website: jQuery('#shortcut-permalink').val(),
             color: jQuery('#shortcut-color').val(),
             icon: jQuery('#shortcut-icon').val(),
             input: jQuery('#shortcut-input').val(),
@@ -66,12 +58,9 @@ jQuery(document).ready(function(jQuery) {
             state: newState
         };
 
-        // Update both WordPress and Switchblade
-        updateShortcut(formData, { target: 'wp', buttonElement: $button[0] })
-            .then(() => {
-                return updateShortcut(formData, { target: 'sb', buttonElement: $button[0] });
-            })
-            .then(() => {
+        // Update both WordPress and Switchblade in a single call
+        updateShortcut(formData, { buttonElement: $button[0] })
+            .then((response) => {
                 // Update UI elements
                 const newButtonText = newState === 'draft' ? 'Publish' : 'Revert to Draft';
                 
@@ -100,18 +89,13 @@ jQuery(document).ready(function(jQuery) {
         e.preventDefault();
         const currentStatus = jQuery('#shortcut-post-id').data('post-status');
         
-        console.log('Save button clicked:', {
-            currentStatus: currentStatus,
-            buttonText: jQuery(this).text()
-        });
-
         const formData = {
-            post_id: jQuery('#shortcut-post-id').val(),
-            sb_id: jQuery('#shortcut-id').val(),
+            post_id: jQuery('#shortcut-post-id').data('post-id') || jQuery('#shortcut-post-id').val(),
+            sb_id: jQuery('#shortcut-id').data('sb-id') || jQuery('#shortcut-id').val(),
             name: jQuery('#shortcut-name').val(),
             headline: jQuery('#shortcut-headline').val(),
             description: jQuery('#shortcut-description').val(),
-            website: jQuery('#shortcut-website').val(),
+            website: jQuery('#shortcut-permalink').val(),
             color: jQuery('#shortcut-color').val(),
             icon: jQuery('#shortcut-icon').val(),
             input: jQuery('#shortcut-input').val(),
@@ -119,11 +103,8 @@ jQuery(document).ready(function(jQuery) {
             state: jQuery('#shortcut-post-id').data('post-status')
         };
 
-        // Update both WordPress and Switchblade
-        updateShortcut(formData, { target: 'wp', buttonElement: this })
-            .then(() => {
-                return updateShortcut(formData, { target: 'sb', buttonElement: this });
-            })
+        // Update both WordPress and Switchblade in a single call
+        updateShortcut(formData, { buttonElement: this })
             .then(() => {
                 // Show success message
                 jQuery('#feedback-message')
@@ -154,64 +135,49 @@ jQuery(document).ready(function(jQuery) {
 
     // Function to load shortcut fields from API
     function loadShortcutFields(id) {
+        const data = {
+            action: 'fetch_shortcut',
+            security: shortcutsHubData.security,
+            post_id: id,
+            source: 'WP'
+        };
+
         jQuery.ajax({
             url: shortcutsHubData.ajax_url,
-            method: 'POST',
-            data: {
-                action: 'fetch_shortcut',
-                security: shortcutsHubData.security,
-                post_id: id,
-                source: 'WP'
-            },
-            beforeSend: function(xhr, settings) {
-                // Debug: Log the API request to verify proper URL formation, method, and data structure
-                sh_debug_log(
-                    'Making WordPress API request to fetch shortcut',
-                    {
-                        url: settings.url,
-                        method: settings.type,
-                        data: settings.data
-                    }
-                );
-            },
+            type: 'POST',
+            data: data,
             success: function(response) {
-                // Debug: Verify API response structure and data format for proper field population
-                sh_debug_log(
-                    'Received WordPress API response',
-                    {
-                        success: response.success,
-                        data: response
-                    }
-                );
+                if (response.success && response.data) {
+                    const data = response.data;
+                    const sb = data.switchblade;
+                    const wp = data.wordpress;
+                    
+                    // Store these IDs in data attributes so they persist
+                    const $postId = jQuery('#shortcut-post-id');
+                    $postId.val(data.ID).data('post-id', data.ID);
+                    jQuery('#shortcut-id').val(sb.sb_id).data('sb-id', sb.sb_id);
+                    
+                    // WordPress fields
+                    jQuery('#shortcut-name').val(wp.name);
+                    jQuery('#shortcut-description').val(wp.description);
+                    jQuery('#shortcut-color').val(wp.color);
+                    jQuery('#shortcut-icon').val(wp.icon);
+                    jQuery('#shortcut-input').val(wp.input);
+                    jQuery('#shortcut-result').val(wp.result);
 
-                if (!response.success) {
-                    jQuery('#feedback-message')
-                        .removeClass('success')
-                        .addClass('error')
-                        .text(response.data ? response.data.message : 'Unknown error occurred')
-                        .show();
-                    return;
+                    // Switchblade fields
+                    jQuery('#shortcut-headline').val(sb.headline);
+                    jQuery('#shortcut-website').val(sb.website);
+                    
+                    jQuery('#publish-shortcut').text(sb.state === 0 ? 'Revert to Draft' : 'Publish');
                 }
-
-                const data = response.data;
-                const isPublished = data.state === 0;
-
-                // Fill in form fields
-                jQuery('#shortcut-id').val(data.id);
-                jQuery('#shortcut-name').val(data.name);
-                jQuery('#shortcut-headline').val(data.headline);
-                jQuery('#shortcut-description').val(data.description);
-                jQuery('#shortcut-website').val(data.website);
-                jQuery('#shortcut-color').val(data.color);
-                jQuery('#shortcut-icon').val(data.icon);
-                jQuery('#shortcut-input').val(data.input);
-                jQuery('#shortcut-result').val(data.result);
-
-                // Update button text
-                jQuery('#publish-shortcut').text(isPublished ? 'Revert to Draft' : 'Publish');
-                
-                // Update status data attribute to match WordPress format
-                jQuery('#shortcut-post-id').data('post-status', isPublished ? 'publish' : 'draft');
+            },
+            error: function(xhr, status, error) {
+                jQuery('#feedback-message')
+                    .removeClass('success')
+                    .addClass('error')
+                    .text('Error fetching shortcut data')
+                    .show();
             }
         });
     }
@@ -230,82 +196,113 @@ jQuery(document).ready(function(jQuery) {
         }
     });
 
-    // Handle delete confirmation
-    jQuery('.delete-confirm').on('click', function(e) {
+    // Handle delete shortcut
+    jQuery('#delete-shortcut').on('click', function(e) {
         e.preventDefault();
-        const postId = jQuery(this).data('post_id');
-        const sbId = jQuery(this).data('sb_id');
         
-        if (confirm('Are you sure you want to permanently delete this shortcut? This action cannot be undone.')) {
-            jQuery.ajax({
-                url: shortcutsHubData.ajax_url,
-                method: 'POST',
-                data: {
-                    action: 'delete_shortcut',
-                    post_id: postId,
-                    sb_id: sbId,
-                    permanent: true,
-                    security: shortcutsHubData.security
-                },
-                success: function(response) {
-                    if (response.success) {
-                        window.location.href = response.data.redirect_url;
-                    } else {
-                        jQuery('#feedback-message')
-                            .removeClass('success')
-                            .addClass('error')
-                            .text(response.data.message)
-                            .show();
-                    }
-                }
-            });
+        if (!confirm('Are you sure you want to delete this shortcut? This action cannot be undone.')) {
+            return;
         }
+
+        const postId = jQuery('#shortcut-post-id').val();
+        
+        jQuery.ajax({
+            url: ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'delete_shortcut',
+                security: jQuery('#shortcuts_hub_nonce').val(),
+                post_id: postId
+            },
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = response.data.redirect;
+                } else {
+                    jQuery('#feedback-message')
+                        .removeClass('success')
+                        .addClass('error')
+                        .text(response.data.message || 'Error deleting shortcut')
+                        .show();
+                }
+            },
+            error: function() {
+                jQuery('#feedback-message')
+                    .removeClass('success')
+                    .addClass('error')
+                    .text('Network error while deleting shortcut')
+                    .show();
+            }
+        });
     });
 
     // Load shortcut data if we have an ID
-    const shortcutId = jQuery('#shortcut-id').val();
-    if (shortcutId) {
-        loadShortcutFields(shortcutId);
+    const postId = jQuery('#shortcut-post-id').val();
+    if (postId) {
+        loadShortcutFields(postId);
 
         // Also fetch from Switchblade API for comparison
+        const shortcutId = jQuery('#shortcut-id').val();
         jQuery.ajax({
-            url: `${shortcutsHubData.sb_api_url}/shortcuts/${shortcutId}`,
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            beforeSend: function(xhr, settings) {
-                // Debug: Log the API request to verify proper URL formation, method, and headers
-                sh_debug_log(
-                    'Fetching shortcut data from Switchblade API',
-                    {
-                        url: settings.url,
-                        method: settings.type,
-                        headers: settings.headers
-                    }
-                );
+            url: shortcutsHubData.ajax_url,
+            method: 'POST',
+            data: {
+                action: 'fetch_shortcuts',
+                security: shortcutsHubData.security,
+                filter: '',
+                source: 'SB',
+                id: shortcutId
             },
             success: function(response) {
-                // Debug: Verify API response structure and data format for comparison
-                sh_debug_log(
-                    'Received shortcut data from Switchblade API',
-                    {
-                        success: true,
-                        data: response
+                if (response && response.data && response.data.shortcuts) {
+                    const shortcut = response.data.shortcuts[0];
+                    if (shortcut) {
+                        // Update Switchblade-specific fields
+                        jQuery('#shortcut-id').val(shortcut.id);
+                        
+                        // Store the Switchblade state and deleted status
+                        jQuery('#shortcut-post-id').data('sb-state', shortcut.state);
+                        jQuery('#shortcut-post-id').data('sb-deleted', shortcut.deleted);
                     }
-                );
+                }
             },
             error: function(xhr, status, error) {
-                // Debug: Log error details for troubleshooting
-                sh_debug_log(
-                    'Error fetching shortcut data from Switchblade API',
-                    {
-                        status: xhr.status,
-                        statusText: xhr.statusText,
-                        error: error
-                    }
-                );
+                jQuery('#feedback-message')
+                    .removeClass('success')
+                    .addClass('error')
+                    .text('Error fetching shortcut data')
+                    .show();
             }
+        });
+    }
+
+    function updateShortcut(formData, options = {}) {
+        const { buttonElement = null } = options;
+
+        if (buttonElement) {
+            jQuery(buttonElement).prop('disabled', true).text('Saving...');
+        }
+
+        return new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: shortcutsHubData.ajax_url,
+                type: 'POST',
+                data: {
+                    action: 'update_shortcut',
+                    security: shortcutsHubData.security,
+                    shortcut_data: formData,
+                    update_type: 'wordpress_and_switchblade'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        resolve(response);
+                    } else {
+                        reject(new Error(response.data.message || 'Unknown error occurred'));
+                    }
+                },
+                error: function(xhr, status, error) {
+                    reject(new Error(error));
+                }
+            });
         });
     }
 });

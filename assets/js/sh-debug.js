@@ -5,23 +5,8 @@
  * @param {string} source - Optional source info
  */
 
-// Log session start when page loads
-jQuery(document).ready(function() {
-    // Create a promise for session start logging
-    window.sessionLogPromise = jQuery.ajax({
-        url: shortcutsHubData.ajax_url,
-        type: 'POST',
-        data: {
-            action: 'sh_debug_log',
-            security: shortcutsHubData.security,
-            message: 'Session Started',
-            data: null,
-            source: 'session-start'
-        }
-    });
-});
-
-function sh_debug_log(message, data = null, source = null) {
+// Make debug function globally available
+window.sh_debug_log = function(message, data = null, source = null) {
     if (!source) {
         source = new Error();
     }
@@ -33,7 +18,27 @@ function sh_debug_log(message, data = null, source = null) {
     } else {
         sendLog(message, data, source);
     }
-}
+};
+
+// Log session start when page loads
+jQuery(document).ready(function() {
+    console.log('Debug data:', window.shDebugData);
+    // Create a promise for session start logging
+    window.sessionLogPromise = jQuery.ajax({
+        url: shDebugData.ajaxurl,
+        type: 'POST',
+        data: {
+            action: 'sh_debug_log',
+            security: shDebugData.security,
+            message: 'Session Started',
+            data: {
+                isElementorActive: shDebugData.isElementorActive,
+                isWooCommerceActive: shDebugData.isWooCommerceActive
+            },
+            source: 'session-start'
+        }
+    });
+});
 
 function sendLog(message, data = null, source = null) {
     if (source instanceof Error) {
@@ -60,11 +65,11 @@ function sendLog(message, data = null, source = null) {
 
     // Send to PHP for logging
     jQuery.ajax({
-        url: shortcutsHubData.ajax_url,
+        url: shDebugData.ajaxurl,
         type: 'POST',
         data: {
             action: 'sh_debug_log',
-            security: shortcutsHubData.security,
+            security: shDebugData.security,
             message: message,
             data: JSON.stringify(data, null, 4),
             source: source || ''  // Let PHP handle the [SOURCE] prefix

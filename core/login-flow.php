@@ -43,6 +43,11 @@ function is_registration_form($form_name) {
 function shortcuts_hub_validate_login($record, $ajax_handler) {
     $form_name = $record->get_form_settings('form_name');
     
+    // Exit early if it's not one of our forms
+    if (!in_array($form_name, ['Shortcuts Gallery Registration', 'Shortcuts Gallery Login'])) {
+        return;
+    }
+    
     // Handle different form types
     if (is_registration_form($form_name)) {
         validate_registration_form($record, $ajax_handler);

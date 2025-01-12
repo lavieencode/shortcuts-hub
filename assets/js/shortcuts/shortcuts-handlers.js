@@ -48,7 +48,7 @@ jQuery(document).ready(function() {
         const sb_id = jQuery(this).data('sb_id');
         
         if (confirm('Are you sure you want to PERMANENTLY delete this shortcut? This action cannot be undone.')) {
-            handleShortcutStateChange(post_id, sb_id, this, true, true);
+            deleteShortcut(post_id, sb_id, this, true, false);
         }
     });
 

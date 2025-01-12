@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+define('SHORTCUTS_HUB_FILE', __FILE__);
 define('SHORTCUTS_HUB_PATH', plugin_dir_path(__FILE__));
 
 // Load the main plugin class
@@ -19,6 +20,7 @@ require_once SHORTCUTS_HUB_PATH . 'includes/class-shortcuts-hub.php';
 require_once plugin_dir_path(__FILE__) . 'includes/settings.php';
 require_once plugin_dir_path(__FILE__) . 'includes/auth.php';
 require_once plugin_dir_path(__FILE__) . 'includes/sb-api.php';
+require_once plugin_dir_path(__FILE__) . 'sh-debug.php';
 
 // Initialize the plugin
 function shortcuts_hub_init() {
