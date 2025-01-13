@@ -6,7 +6,6 @@ if (!defined('ABSPATH')) {
 
 function shortcuts_hub_render_shortcuts_list_page() {
     // Get URL parameters
-    $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
     $view = isset($_GET['view']) ? sanitize_text_field($_GET['view']) : '';
     $id = isset($_GET['id']) ? sanitize_text_field($_GET['id']) : '';
     $add_version_url = admin_url("admin.php?page=add-version&id={$id}");
@@ -14,14 +13,7 @@ function shortcuts_hub_render_shortcuts_list_page() {
     // Determine initial visibility based on URL parameters
     $show_shortcuts = $view !== 'versions';
     $show_versions = $view === 'versions';
-    
-    // Add these to wp_localize_script data
-    wp_localize_script('shortcuts-hub-versions-handlers', 'shortcutsHubData', array(
-        'view' => $view,
-        'shortcutId' => $id,
-        'initialView' => $show_versions ? 'versions' : 'shortcuts',
-        'nonce' => wp_create_nonce('fetch_versions_nonce')
-    ));
+
     ?>
     <div id="shortcuts-list-page" class="wrap">
         <div id="shortcuts-view" style="display: <?php echo $show_shortcuts ? 'block' : 'none'; ?>">
@@ -53,28 +45,28 @@ function shortcuts_hub_render_shortcuts_list_page() {
                 <div id="versions-filters">
                     <input type="text" id="search-versions-input" class="versions-filters" placeholder="Search versions">
                     <select id="filter-version-status" class="version-filters">
-                        <option value="">Any</option>
+                        <option value="any">Any</option>
                         <option value="0">Published</option>
                         <option value="1">Draft</option>
                     </select>
                     <select id="filter-version-deleted" class="version-filters">
-                        <option value="">Any</option>
+                        <option value="any">Any</option>
                         <option value="true">Deleted</option>
                         <option value="false">Not Deleted</option>
                     </select>
                     <select id="filter-required-update" class="version-filters">
-                        <option value="">Any</option>
+                        <option value="any">Any</option>
                         <option value="true">Required</option>
                         <option value="false">Not Required</option>
                     </select>
                     <button id="reset-version-filters">Reset filters</button>
-                    <a href="<?php echo $add_version_url; ?>" class="add-version-button">+</a>
+                    <a href="#" class="add-version-button">+</a>
                 </div>
             </div>
             <div id="versions-container" class="versions-container"></div>
         </div>
     </div>
-    <div id="edit-version-modal" class="modal" style="display: none;">
+    <div id="edit-version-modal" class="modal">
         <h1>Edit Version</h1>
         <h2 id="version-display"></h2>
         <form id="edit-version-form">
@@ -138,7 +130,7 @@ function shortcuts_hub_render_shortcuts_list_page() {
             </div>
         </form>
     </div>
-    <div id="add-version-modal" class="modal" style="display: none;">
+    <div id="add-version-modal" class="modal">
         <h1>ADD VERSION</h1>
         <h2 id="shortcut-name-display"></h2>
         <form id="add-version-form">

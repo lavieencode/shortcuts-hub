@@ -1,10 +1,12 @@
 /* Modal for Editing or Adding Version */
 #edit-version-modal, #add-version-modal {
+    display: block;
+    visibility: hidden;
     filter: none;
     z-index: 1000;
     pointer-events: auto;
     position: fixed;
-    right: -100%;
+    right: 0;
     top: 0;
     width: 403px;
     height: 100%;
@@ -12,11 +14,13 @@
     padding-top: 60px !important;
     background-color: #373737;
     color: #CACACA;
-    transition: right 0.3s ease-in-out;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 #edit-version-modal.active, #add-version-modal.active {
-    right: 0;
+    visibility: visible;
+    transform: translateX(0);
 }
 
 #edit-version-modal h1, #add-version-modal h1 {

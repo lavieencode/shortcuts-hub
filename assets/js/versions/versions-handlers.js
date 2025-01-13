@@ -1,159 +1,115 @@
 jQuery(document).ready(function() {
-    // Check for URL parameters and fetch versions if needed
-    const urlParams = new URLSearchParams(window.location.search);
-    const view = urlParams.get('view');
-    const id = urlParams.get('id');
-    
-    if (view === 'versions' && id) {
-        // Show versions view
+    // Only proceed if we have the localized data
+    if (typeof shortcutsHubData === 'undefined') {
+        sh_debug_log('Missing shortcutsHubData', {
+            message: 'shortcutsHubData is not defined',
+            source: {
+                file: 'versions-handlers.js',
+                line: 25,
+                function: 'document.ready'
+            },
+            debug: true
+        });
+        console.error('shortcutsHubData is not defined');
+        return;
+    }
+
+    // DEBUG: Log initialization
+    sh_debug_log('Initializing versions handlers', {
+        message: 'Starting versions handlers initialization',
+        source: {
+            file: 'versions-handlers.js',
+            line: 7,
+            function: 'document.ready'
+        },
+        data: {
+            shortcutsHubData: {
+                view: shortcutsHubData.view,
+                shortcutId: shortcutsHubData.shortcutId,
+                initialView: shortcutsHubData.initialView,
+                security: shortcutsHubData.security,
+                versions_security: shortcutsHubData.versions_security
+            }
+        },
+        debug: false
+    });
+
+    // DEBUG: Log view state check
+    sh_debug_log('View state check', {
+        message: 'Checking view state before fetching versions',
+        source: {
+            file: 'versions-handlers.js',
+            line: 40,
+            function: 'document.ready'
+        },
+        data: {
+            initialView: shortcutsHubData.initialView,
+            shortcutId: shortcutsHubData.shortcutId,
+            shouldFetchVersions: shortcutsHubData.initialView === 'versions' && shortcutsHubData.shortcutId
+        },
+        debug: false
+    });
+
+    // Show versions view if needed
+    if (shortcutsHubData.initialView === 'versions' && shortcutsHubData.shortcutId) {
         jQuery('#shortcuts-view').hide();
         jQuery('#versions-view').show();
         
-        // Fetch versions
+        // Fetch versions with debug logging
         sh_debug_log('Fetching versions', {
             message: 'Fetching versions for shortcut',
             source: {
                 file: 'versions-handlers.js',
-                line: 40,
+                line: 65,
                 function: 'document.ready'
             },
             data: {
-                shortcutId: id
+                shortcutId: shortcutsHubData.shortcutId,
+                security: shortcutsHubData.versions_security
             },
-            debug: true
+            debug: false
         });
         
-        fetchVersions(id);
-    }
-    
-    // Use the localized data instead of checking URL again
-    if (typeof shortcutsHubData !== 'undefined') {
-        // DEBUG: Track shortcutsHubData
-        sh_debug_log('Localized data check', {
-            message: 'Checking shortcutsHubData availability',
-            source: {
-                file: 'versions-handlers.js',
-                line: 15,
-                function: 'document.ready'
-            },
-            data: shortcutsHubData,
-            debug: true
-        });
-
-        if (shortcutsHubData.initialView === 'versions' && shortcutsHubData.shortcutId) {
-            // DEBUG: Track versions view detection
-            sh_debug_log('Versions view detection', {
-                message: 'Versions view detected from localized data',
-                source: {
-                    file: 'versions-handlers.js',
-                    line: 25,
-                    function: 'document.ready'
-                },
-                data: shortcutsHubData,
-                debug: true
-            });
-            
-            // Show versions view immediately
-            jQuery('#shortcuts-view').hide();
-            jQuery('#versions-view').show();
-            
-            // Fetch versions with debug logging
-            sh_debug_log('Fetching versions', {
-                message: 'Initiating versions fetch',
-                source: {
-                    file: 'versions-handlers.js',
-                    line: 40,
-                    function: 'document.ready'
-                },
-                data: {
-                    shortcutId: shortcutsHubData.shortcutId
-                },
-                debug: true
-            });
-            
-            fetchVersions(shortcutsHubData.shortcutId);
-        }
-    } else {
-        // DEBUG: Track missing shortcutsHubData
-        sh_debug_log('Missing localized data', {
-            message: 'shortcutsHubData is not defined',
-            source: {
-                file: 'versions-handlers.js',
-                line: 55,
-                function: 'document.ready'
-            },
-            debug: true
-        });
+        // Using fetchVersions from versions-fetch.js
+        fetchVersions(shortcutsHubData.shortcutId);
     }
     
     attachVersionHandlers();
 });
 
-function fetchVersions(shortcutId) {
-    // DEBUG: Track fetch versions call
-    sh_debug_log('Fetch versions', {
-        message: 'fetchVersions function called',
-        source: {
-            file: 'versions-handlers.js',
-            line: 70,
-            function: 'fetchVersions'
-        },
-        data: {
-            shortcutId: shortcutId
-        },
-        debug: true
-    });
+function displayVersions(data) {
+    const versionsContainer = jQuery('#versions-container');
+    versionsContainer.empty();
 
-    jQuery.ajax({
-        url: ajaxurl,
-        type: 'POST',
-        data: {
-            action: 'fetch_versions',
-            shortcut_id: shortcutId,
-            nonce: shortcutsHubData.nonce
-        },
-        success: function(response) {
-            // DEBUG: Track successful versions fetch
-            sh_debug_log('Versions fetch success', {
-                message: 'Successfully fetched versions',
-                source: {
-                    file: 'versions-handlers.js',
-                    line: 90,
-                    function: 'fetchVersions.success'
-                },
-                data: {
-                    response: response,
-                    shortcutId: shortcutId
-                },
-                debug: true
-            });
+    if (!data.versions || data.versions.length === 0) {
+        versionsContainer.append('<div class="no-versions">No versions found</div>');
+        return;
+    }
 
-            if (response.success) {
-                displayVersions(response.data);
-            } else {
-                console.error('Error fetching versions:', response.data.message);
-            }
-        },
-        error: function(xhr, status, error) {
-            // DEBUG: Track failed versions fetch
-            sh_debug_log('Versions fetch error', {
-                message: 'Failed to fetch versions',
-                source: {
-                    file: 'versions-handlers.js',
-                    line: 110,
-                    function: 'fetchVersions.error'
-                },
-                data: {
-                    xhr: xhr,
-                    status: status,
-                    error: error,
-                    shortcutId: shortcutId
-                },
-                debug: true
-            });
-            
-            console.error('AJAX error:', status, error);
-        }
+    data.versions.forEach(function(version) {
+        const versionHtml = `
+            <div class="version-item" data-shortcut-id="${version.shortcut_id}" data-version-id="${version.id}">
+                <div class="version-header">
+                    <span class="caret">&#9654;</span>
+                    <span class="version-title">${version.title}</span>
+                    <span class="version-date">${version.created_at}</span>
+                    <span class="version-status">${version.state.label}</span>
+                </div>
+                <div class="version-body" style="display: none;">
+                    <div class="version-content">
+                        <p>${version.description}</p>
+                        <div class="version-actions">
+                            <button class="edit-version" data-version='${JSON.stringify(version)}'>Edit</button>
+                            ${version.deleted ? 
+                                `<button class="restore-version">Restore</button>` : 
+                                `<button class="delete-version">Delete</button>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        versionsContainer.append(versionHtml);
     });
 }
 
@@ -189,55 +145,10 @@ function attachVersionHandlers() {
         }
     });
 
-    jQuery('#edit-version-modal .save-button').on('click', function(event) {
-        event.preventDefault();
-        updateVersion('save');
-    });
-
-    jQuery('#edit-version-modal .publish-button').on('click', function(event) {
-        event.preventDefault();
-        updateVersion('publish');
-    });
-
-    jQuery('#edit-version-modal .delete-button').on('click', function(event) {
-        event.preventDefault();
-        toggleVersionDelete(jQuery('#edit-version-form #shortcut-id').val(), jQuery('#edit-version-form #version-id').val(), false);
-    });
-
-    jQuery('#edit-version-modal .cancel-button').on('click', function() {
-        jQuery('#edit-version-modal').removeClass('active').hide();
-        jQuery('body').removeClass('modal-open');
-    });
-
     jQuery(document).on('click', '.delete-version, .restore-version', function() {
         const shortcutId = jQuery(this).closest('.version-item').data('shortcut-id');
         const versionId = jQuery(this).closest('.version-item').data('version-id');
         const isRestore = jQuery(this).hasClass('restore-version');
         toggleVersionDelete(shortcutId, versionId, isRestore);
     });
-
-    jQuery('#back-to-shortcuts').on('click', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        urlParams.delete('view');
-        urlParams.delete('id');
-        window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
-        toggleVersionsView(false);
-    });
-
-    jQuery('#edit-version-modal .save-as-draft-button').on('click', function(event) {
-        event.preventDefault();
-        updateVersion('save');
-    });
-
-    function handleVersionEditModal(event) {
-        const button = jQuery(event.currentTarget);
-        const versionData = button.data('version');
-
-        if (versionData) {
-            populateVersionEditModal({ version: versionData });
-            jQuery('#edit-version-modal').addClass('active').show();
-        } else {
-            console.error('Version data not found on button');
-        }
-    }
 }

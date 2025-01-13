@@ -1,25 +1,16 @@
-jQuery(document).on('click', '.delete-version, .restore-version', function() {
-    const shortcutId = jQuery(this).data('shortcut-id');
-    const versionId = jQuery(this).data('version-id');
-    const isRestore = jQuery(this).hasClass('restore-version');
-
-    toggleVersionDelete(shortcutId, versionId, isRestore);
+jQuery(document).on('click', '.delete-version', function() {
+    const $button = jQuery(this);
+    const shortcutId = $button.data('shortcut-id');
+    const versionId = $button.data('version-id');
+    deleteVersion(shortcutId, versionId);
 });
 
-function toggleVersionDelete(id, versionId, isRestore) {
-    if (!id || !versionId) {
-        console.error('Shortcut ID or version ID is missing');
-        return;
-    }
-
-    const action = 'version_toggle_delete';
+function deleteVersion(shortcutId, versionId) {
     const requestData = {
-        action: action,
-        id: id,
+        action: 'version_delete',
+        shortcut_id: shortcutId,
         version_id: versionId,
-        is_restore: isRestore,
-        security: shortcutsHubData.security,
-        _method: 'PATCH'
+        security: shortcutsHubData.versions_security
     };
 
     jQuery.ajax({
@@ -28,28 +19,26 @@ function toggleVersionDelete(id, versionId, isRestore) {
         data: requestData,
         success: function(response) {
             if (response.success) {
-                const versionElement = jQuery(`.version-item[data-version-id="${versionId}"]`);
-                const button = versionElement.find('.delete-version, .restore-version');
-                const badge = versionElement.find('.badge');
-
-                if (!isRestore) {
-                    button.text('Restore Version').removeClass('delete-version').addClass('restore-version');
-                    if (badge.length === 0 || !badge.hasClass('deleted-badge')) {
-                        versionElement.find('.version-header').append('<span class="badge deleted-badge">Deleted</span>');
-                    }
-                } else {
-                    button.text('Delete Version').removeClass('restore-version').addClass('delete-version');
-                    badge.remove();
-                }
-
+                // Refresh the versions list after successful deletion
                 fetchVersions(shortcutId);
-            } else {
-                console.error('Error updating version:', response.data ? response.data.message : 'No data');
             }
         },
         error: function(xhr, status, error) {
-            console.error('AJAX error:', status, error);
-            console.error('Response Text:', xhr.responseText);
+            // DEBUG: Log error response
+            sh_debug_log('Version delete error', {
+                message: 'Error during delete request',
+                source: {
+                    file: 'versions-delete.js',
+                    line: 113,
+                    function: 'deleteVersion.error'
+                },
+                data: {
+                    xhr_status: status,
+                    error: error,
+                    response_text: xhr.responseText
+                },
+                debug: true
+            });
         }
     });
 }

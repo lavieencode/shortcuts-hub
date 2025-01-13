@@ -1,96 +1,166 @@
 jQuery(document).ready(function() {
-    jQuery('.add-version-button').on('click', function() {
-        const sb_id = getShortcutIdFromUrl();
-        const shortcutName = sessionStorage.getItem('shortcutName') || 'Unknown Shortcut';
-        jQuery('#add-version-modal #shortcut-name-display').text(shortcutName);
-        
-        // Fetch the Switchblade shortcut data using sb_id
-        jQuery.ajax({
-            url: shortcutsHubData.ajax_url,
-            method: 'POST',
-            data: {
-                action: 'fetch_shortcut',
-                security: shortcutsHubData.security,
-                id: sb_id,
-                source: 'SB'
-            },
-            success: function(response) {
-                if (response.success && response.data) {
-                    console.log('Shortcut data:', response.data);
-                } else {
-                    console.error('Error fetching shortcut data:', response.data ? response.data.message : 'No data');
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX error:', status, error);
-            }
-        }).done(function() {
-            jQuery('#add-version-modal').css('display', 'block').addClass('active').css('transform', 'translateX(0)');
-            jQuery('body').addClass('modal-open');
-        });
-    });
-
-    jQuery('#add-version-modal .cancel-button').on('click', function() {
-        jQuery('#add-version-modal').removeClass('active').css('transform', 'translateX(100%)');
-        jQuery('body').removeClass('modal-open');
-    });
-
+    // Add version modal handlers
     jQuery('#add-version-modal .save-draft-button').on('click', function(event) {
         event.preventDefault();
-        createVersion('create_version');
+        createVersion('draft');
     });
 
     jQuery('#add-version-modal .publish-button').on('click', function(event) {
         event.preventDefault();
-        createVersion('publish');
+        createVersion('published');
+    });
+
+    jQuery('#add-version-modal .cancel-button').on('click', function(event) {
+        event.preventDefault();
+        closeVersionModal();
     });
 });
 
-function getShortcutIdFromUrl() {
+/**
+ * Gets the shortcut ID from either shortcutsHubData or URL parameters
+ * @returns {string|null} The shortcut ID or null if not found
+ */
+function getShortcutId() {
+    // First try to get from shortcutsHubData
+    if (typeof shortcutsHubData !== 'undefined' && shortcutsHubData.shortcutId) {
+        return shortcutsHubData.shortcutId;
+    }
+    
+    // If not in shortcutsHubData, try URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('id');
+    const urlId = urlParams.get('id');
+    
+    // Return whichever ID we found, or null if none found
+    return urlId || null;
 }
 
-function createVersion(action) {
-    const sb_id = getShortcutIdFromUrl();
-    const versionName = jQuery('#add-version-form #version-name').val();
+function createVersion(state) {
+    const sb_id = getShortcutId();
+    if (!sb_id) {
+        console.error('No shortcut ID available for creating version');
+        return;
+    }
+
+    // Get form data
+    const version = jQuery('#add-version-form #version-name').val().trim();
     const notes = jQuery('#add-version-form #version-notes').val();
     const url = jQuery('#add-version-form #version-url').val();
-    const minimumiOS = jQuery('#add-version-form #minimum-ios').val();
-    const minimumMac = jQuery('#add-version-form #minimum-mac').val();
-    const required = jQuery('#add-version-form #required').is(':checked');
+    const minimumiOS = jQuery('#add-version-form #version-ios').val();
+    const minimumMac = jQuery('#add-version-form #version-mac').val();
+    const required = jQuery('#add-version-form #version-required').val() === 'true';
 
-    const isDraft = action === 'create_version';
+    // Validate version number format (e.g., "1.0", "2.1.3")
+    const versionRegex = /^\d+(\.\d+)*$/;
+    if (!versionRegex.test(version)) {
+        jQuery('#version-feedback-message').text('Invalid version number format. Please use numbers and single dots (e.g., 1.0, 2.1.3)').show();
+        return;
+    }
+
+    // Debug log the form data and nonce
+    sh_debug_log('Creating version', {
+        message: 'Attempting to create version',
+        source: {
+            file: 'version-create.js',
+            line: '57',
+            function: 'createVersion'
+        },
+        data: {
+            shortcutId: sb_id,
+            formData: {
+                version: version,
+                notes: notes,
+                url: url,
+                minimumIos: minimumiOS,
+                minimumMac: minimumMac,
+                required: required,
+                state: state
+            },
+            nonce: shortcutsHubData.nonces ? shortcutsHubData.nonces.create_version : 'nonce not found'
+        },
+        debug: true
+    });
+
+    // Validate nonce
+    if (!shortcutsHubData.nonces || !shortcutsHubData.nonces.create_version) {
+        console.error('Security nonce not found');
+        jQuery('#version-feedback-message').text('Error: Security token not found').show();
+        return;
+    }
+
+    // Validate required fields
+    if (!version || !url) {
+        jQuery('#version-feedback-message').text('Version number and URL are required').show();
+        return;
+    }
 
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
         data: {
             action: 'create_version',
-            security: shortcutsHubData.security,
+            security: shortcutsHubData.nonces.create_version,
             id: sb_id,
-            version: versionName,
+            version: version,
             notes: notes,
             url: url,
             minimum_ios: minimumiOS,
             minimum_mac: minimumMac,
             required: required,
-            version_state: isDraft ? 'draft' : 'published'
+            version_state: state
         },
         success: function(response) {
+            // Debug log the API response
+            sh_debug_log('Version creation response', {
+                message: 'Received response from create version AJAX call',
+                source: {
+                    file: 'version-create.js',
+                    line: '104',
+                    function: 'createVersion.success'
+                },
+                data: {
+                    response: response,
+                    shortcutId: sb_id
+                },
+                debug: true
+            });
+
             if (response.success) {
                 jQuery('#version-feedback-message').text('Version created successfully.').show();
                 setTimeout(function() {
-                    jQuery('#add-version-modal').removeClass('active').css('transform', 'translateX(100%)');
-                    jQuery('body').removeClass('modal-open');
-                    fetchVersions(sb_id);
+                    closeVersionModal();
+                    if (typeof window.fetchVersions === 'function') {
+                        fetchVersions(sb_id);
+                    }
                 }, 2000);
             } else {
-                jQuery('#version-feedback-message').text('Error creating version: ' + response.data.message).show();
+                jQuery('#version-feedback-message').text('Error creating version: ' + (response.data ? response.data.message : 'Unknown error')).show();
             }
         },
         error: function(xhr, status, error) {
-            jQuery('#version-feedback-message').text('AJAX error creating version: ' + xhr.responseText).show();
+            // Debug log the error
+            sh_debug_log('Version creation error', {
+                message: 'Error in create version AJAX call',
+                source: {
+                    file: 'version-create.js',
+                    line: '128',
+                    function: 'createVersion.error'
+                },
+                data: {
+                    xhr: xhr.responseText,
+                    status: status,
+                    error: error
+                },
+                debug: true
+            });
+
+            console.error('AJAX error:', status, error);
+            console.error('Response Text:', xhr.responseText);
+            jQuery('#version-feedback-message').text('Error creating version. Please try again.').show();
         }
     });
+}
+
+function closeVersionModal() {
+    jQuery('#add-version-modal').removeClass('active');
+    jQuery('body').removeClass('modal-open');
 }

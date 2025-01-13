@@ -119,24 +119,20 @@ class Shortcuts_Hub {
      * Load required dependencies
      */
     private function load_dependencies() {
-        // Core files first
+        // Core files
         require_once SHORTCUTS_HUB_PATH . 'core/database.php';
         require_once SHORTCUTS_HUB_PATH . 'core/enqueue-core.php';
-
-        // Debug and API
         require_once SHORTCUTS_HUB_PATH . 'sh-debug.php';
         require_once SHORTCUTS_HUB_PATH . 'includes/sb-api.php';
-
-        // Security and auth
         require_once SHORTCUTS_HUB_PATH . 'includes/security.php';
         require_once SHORTCUTS_HUB_PATH . 'includes/auth.php';
-
-        // Settings
         require_once SHORTCUTS_HUB_PATH . 'includes/settings.php';
-
-        // Assets
         require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php';
-
+        
+        // AJAX handlers
+        require_once SHORTCUTS_HUB_PATH . 'includes/ajax/shortcuts-ajax.php';
+        require_once SHORTCUTS_HUB_PATH . 'includes/ajax/versions-ajax.php';
+        
         // Pages - load these after core files
         require_once SHORTCUTS_HUB_PATH . 'includes/pages/shortcuts-list-page.php';
         require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-shortcut-page.php';
@@ -144,10 +140,6 @@ class Shortcuts_Hub {
         require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-version-page.php';
         require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-version-page.php';
         require_once SHORTCUTS_HUB_PATH . 'includes/pages/settings.php';
-
-        // AJAX handlers - load these last
-        require_once SHORTCUTS_HUB_PATH . 'includes/ajax/shortcuts-ajax.php';
-        require_once SHORTCUTS_HUB_PATH . 'includes/ajax/versions-ajax.php';
     }
 
     /**
@@ -252,26 +244,6 @@ class Shortcuts_Hub {
             'manage_options',
             'shortcuts-list',
             function() {
-                // Only log if we're on the shortcuts-list page and it's not an AJAX call
-                if (isset($_GET['page']) && $_GET['page'] === 'shortcuts-list' && !wp_doing_ajax()) {
-                    // DEBUG: Track page load parameters
-                    sh_debug_log('Page load parameters', array(
-                        'message' => 'Loading shortcuts list page with parameters',
-                        'source' => array(
-                            'file' => __FILE__,
-                            'line' => __LINE__,
-                            'function' => __FUNCTION__
-                        ),
-                        'data' => array(
-                            'get' => $_GET,
-                            'page' => isset($_GET['page']) ? $_GET['page'] : null,
-                            'view' => isset($_GET['view']) ? $_GET['view'] : null,
-                            'id' => isset($_GET['id']) ? $_GET['id'] : null
-                        ),
-                        'debug' => true
-                    ));
-                }
-                
                 shortcuts_hub_render_shortcuts_list_page();
             }
         );

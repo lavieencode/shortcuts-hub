@@ -26,10 +26,9 @@ function updateVersion(action) {
                 id: shortcutId,
                 version_id: versionId,
                 state: { value: newState },
-                security: shortcutsHubData.security
+                security: shortcutsHubData.versions_security
             },
             success: function(response) {
-                console.log('Response:', response);
                 if (response.success) {
                     jQuery('#version-feedback-message').text('Version state toggled successfully.').show();
                     setTimeout(function() {
@@ -39,13 +38,17 @@ function updateVersion(action) {
                         fetchVersions(shortcutId);
                     }, 1000);
                 } else {
-                    console.error('Unexpected response format:', response);
-                    jQuery('#version-feedback-message').text('Unexpected response format.').show();
+                    const errorMessage = response.data && response.data.message 
+                        ? response.data.message 
+                        : 'Error toggling version state';
+                    jQuery('#version-feedback-message').text(errorMessage).show();
                 }
             },
             error: function(xhr, status, error) {
-                console.error('AJAX error:', status, error);
-                jQuery('#version-feedback-message').text('Error toggling version state.').show();
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message
+                    ? xhr.responseJSON.data.message
+                    : 'Error toggling version state';
+                jQuery('#version-feedback-message').text(errorMessage).show();
             }
         });
     } else if (action === 'save') {
@@ -69,11 +72,10 @@ function updateVersion(action) {
                 id: shortcutId,
                 version_id: versionId,
                 version_data: versionData,
-                security: shortcutsHubData.security,
+                security: shortcutsHubData.versions_security,
                 _method: 'PATCH'
             },
             success: function(response) {
-                console.log('Response:', response);
                 if (response.success && response.data && response.data.version) {
                     jQuery('#version-feedback-message').text('Version updated successfully.').show();
                     setTimeout(function() {
@@ -83,13 +85,17 @@ function updateVersion(action) {
                         fetchVersions(shortcutId);
                     }, 1000);
                 } else {
-                    console.error('Unexpected response format:', response);
-                    jQuery('#version-feedback-message').text('Unexpected response format.').show();
+                    const errorMessage = response.data && response.data.message 
+                        ? response.data.message 
+                        : 'Error updating version';
+                    jQuery('#version-feedback-message').text(errorMessage).show();
                 }
             },
             error: function(xhr, status, error) {
-                console.error('AJAX error:', status, error);
-                jQuery('#version-feedback-message').text('Error updating version.').show();
+                const errorMessage = xhr.responseJSON && xhr.responseJSON.data && xhr.responseJSON.data.message
+                    ? xhr.responseJSON.data.message
+                    : 'Error updating version';
+                jQuery('#version-feedback-message').text(errorMessage).show();
             }
         });
     }

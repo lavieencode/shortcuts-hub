@@ -17,6 +17,9 @@ define('SHORTCUTS_HUB_VERSION', '1.0.0');
 // Only include the main class file - it will handle all other dependencies
 require_once SHORTCUTS_HUB_PATH . 'includes/class-shortcuts-hub.php';
 
+// Include core files
+require_once plugin_dir_path(__FILE__) . 'core/class-sb-db-manager.php';
+
 /**
  * Main plugin instance
  */
@@ -144,3 +147,9 @@ function shortcuts_hub_settings_page() {
 // Register settings and admin pages
 add_action('admin_init', 'shortcuts_hub_register_settings');
 add_action('admin_menu', 'shortcuts_hub_add_settings_page');
+
+// Register shutdown hook to cleanup database connections
+register_shutdown_function(function() {
+    $db = SB_DB_Manager::get_instance();
+    $db->close_connection();
+});

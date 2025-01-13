@@ -1,9 +1,36 @@
 jQuery(document).ready(function() {
+    // Add version button click handler
+    jQuery('.add-version-button').on('click', function(event) {
+        event.preventDefault();
+        openAddVersionModal();
+    });
+
+    // Close button click handler
+    jQuery('#edit-version-modal .close-button, #add-version-modal .close-button').on('click', function(event) {
+        event.preventDefault();
+        closeVersionModal();
+    });
+
+    // Close on background click
+    jQuery('#edit-version-modal, #add-version-modal').on('click', function(event) {
+        if (event.target === this) {
+            closeVersionModal();
+        }
+    });
+
+    // Cancel button click handler
+    jQuery('#edit-version-modal .cancel-button').on('click', function(event) {
+        event.preventDefault();
+        closeVersionModal();
+    });
+
+    // Update Version Button
     jQuery('#edit-version-modal .update-button').on('click', function(event) {
         event.preventDefault();
         updateVersion('save');
     });
 
+    // State Button
     jQuery('#edit-version-modal .state-button').on('click', function(event) {
         event.preventDefault();
         const button = jQuery(this);
@@ -19,6 +46,42 @@ jQuery(document).ready(function() {
         });
     });
 });
+
+function openAddVersionModal() {
+    const sb_id = getShortcutId();
+    if (!sb_id) {
+        console.error('No shortcut ID available for adding version');
+        return;
+    }
+
+    // Clear the form
+    jQuery('#add-version-form')[0].reset();
+
+    // Set the shortcut ID
+    jQuery('#add-version-form #id').val(sb_id);
+
+    // Show the modal
+    jQuery('#add-version-modal').addClass('active');
+    jQuery('body').addClass('modal-open');
+}
+
+function closeVersionModal() {
+    jQuery('#add-version-modal, #edit-version-modal').removeClass('active');
+    jQuery('body').removeClass('modal-open');
+}
+
+function getShortcutId() {
+    // First try to get from shortcutsHubData
+    if (typeof shortcutsHubData !== 'undefined' && shortcutsHubData.shortcutId) {
+        return shortcutsHubData.shortcutId;
+    }
+    
+    // If not in shortcutsHubData, try URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlId = urlParams.get('id');
+    
+    return urlId || null;
+}
 
 function handleVersionEditModal(id, versionId, latest = false) {
     jQuery.ajax({

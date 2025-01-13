@@ -2,6 +2,11 @@
 let isFetching = false;
 
 jQuery(document).ready(function($) {
+    // Load shortcut name from sessionStorage if available
+    const storedName = sessionStorage.getItem('shortcutName');
+    if (storedName) {
+        jQuery('#shortcut-name-display').text(storedName).show();
+    }
 });
 
 function fetchVersions(shortcutId, retries = 0) {   
@@ -9,6 +14,22 @@ function fetchVersions(shortcutId, retries = 0) {
         console.error('No shortcut ID provided');
         return;
     }
+
+    // DEBUG: Log fetch attempt
+    sh_debug_log('Fetching versions', {
+        message: 'Attempting to fetch versions',
+        source: {
+            file: 'versions-fetch.js',
+            line: 15,
+            function: 'fetchVersions'
+        },
+        data: {
+            shortcutId: shortcutId,
+            security: shortcutsHubData.versions_security,
+            retries: retries
+        },
+        debug: false
+    });
 
     // Prevent parallel requests
     if (isFetching) {
@@ -27,7 +48,6 @@ function fetchVersions(shortcutId, retries = 0) {
     isFetching = true;
 
     jQuery('#versions-container').hide();
-    jQuery('#shortcut-name-display').hide();
     
     // Show loading state
     jQuery('#versions-container').html('<p>Loading versions...</p>').show();
@@ -39,13 +59,25 @@ function fetchVersions(shortcutId, retries = 0) {
 
     const data = {
         action: 'fetch_versions',  
-        security: shortcutsHubData.security,
+        security: shortcutsHubData.versions_security,
         id: shortcutId,  
         search_term: searchTerm || '',
         status: filterStatus || '',
         deleted: filterDeleted === 'any' ? '' : filterDeleted,
         required_update: filterRequiredUpdate === 'any' ? '' : filterRequiredUpdate
     };
+
+    // DEBUG: Log request data
+    sh_debug_log('Making AJAX request', {
+        message: 'Sending AJAX request to fetch versions',
+        source: {
+            file: 'versions-fetch.js',
+            line: 70,
+            function: 'fetchVersions'
+        },
+        data: data,
+        debug: false
+    });
 
     jQuery.post(shortcutsHubData.ajax_url, data)
         .done(function(response) {
@@ -65,9 +97,10 @@ function fetchVersions(shortcutId, retries = 0) {
                 const versions = response.data.versions || [];
                 const shortcutName = shortcutData.name || '';
                 
-                // Update shortcut name
+                // Always show the name if we have it from the API
                 if (shortcutName) {
                     jQuery('#shortcut-name-display').text(shortcutName).show();
+                    // Store it for future page loads/refreshes
                     sessionStorage.setItem('shortcutName', shortcutName);
                 }
 
