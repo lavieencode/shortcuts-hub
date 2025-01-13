@@ -34,6 +34,33 @@ function shortcuts_hub_render_edit_shortcut_page() {
             $result = get_post_meta($shortcut->ID, '_shortcut_result', true);
             $id = $sb_id;
             $is_published = $shortcut->post_status === 'publish';
+
+            // Log all shortcut data
+            sh_debug_log('Edit Shortcut Page - Loaded Shortcut Data', [
+                'source' => [
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ],
+                'post' => [
+                    'ID' => $shortcut->ID,
+                    'post_title' => $name,
+                    'post_status' => $shortcut->post_status,
+                    'post_type' => $shortcut->post_type,
+                    'post_content' => $shortcut->post_content
+                ],
+                'meta' => [
+                    'sb_id' => $sb_id,
+                    'headline' => $headline,
+                    'description' => $description,
+                    'website' => $website,
+                    'color' => $color,
+                    'icon' => $icon,
+                    'input' => $input,
+                    'result' => $result
+                ],
+                'all_meta' => get_post_meta($shortcut->ID)
+            ]);
         }
     }
     ?>

@@ -16,6 +16,11 @@ function sh_debug_log($message, $data = null) {
         return;
     }
 
+    // Skip if debug is explicitly set to false in data
+    if (is_array($data) && isset($data['debug']) && $data['debug'] === false) {
+        return;
+    }
+
     try {
         $session_started = get_transient('sh_debug_session_started');
         $debug_file = dirname(__FILE__) . '/sh-debug.log';
@@ -46,23 +51,27 @@ function sh_debug_log($message, $data = null) {
         
         // Format source information if available
         $source_info = '';
-        if (is_array($data) && isset($data['source'])) {
+        if (is_array($data) && isset($data['source']) && is_array($data['source'])) {
             $source = $data['source'];
-            $source_info = sprintf(
-                "[%s:%d in %s]",
-                basename($source['file']),
-                $source['line'],
-                $source['function']
-            );
-            // Remove source from data to avoid duplication
-            unset($data['source']);
+            if (isset($source['file'], $source['line'], $source['function'])) {
+                $source_info = sprintf(
+                    "[%s:%d in %s]",
+                    basename($source['file']),
+                    $source['line'],
+                    $source['function']
+                );
+                // Remove source from data to avoid duplication
+                unset($data['source']);
+            }
         }
         
         // Now log the actual message
-        $log_message = "[DEBUG] " . $message . "\n";
+        $log_message = "[DEBUG] " . $message;
         if ($source_info) {
-            $log_message .= "SOURCE: " . $source_info . "\n\n";
+            $log_message .= "\nSOURCE: " . $source_info;
         }
+        $log_message .= "\n";
+        
         if ($data !== null) {
             $log_message .= json_encode($data, JSON_PRETTY_PRINT) . "\n";
         }
@@ -90,21 +99,30 @@ function sh_error_log($message, $file = '', $line = '') {
 }
 
 function should_enable_debug() {
-    // Always enable debugging for now
-    return true;
-    
-    // Original conditions below:
-    /*
-    // Always enable for AJAX debug logging
+    // Always enable for plugin initialization
+    if (did_action('plugins_loaded') <= 1) {
+        return true;
+    }
+
+    // Check if we're in an AJAX request
     if (defined('DOING_AJAX') && DOING_AJAX && isset($_REQUEST['action'])) {
         if (strpos($_REQUEST['action'], 'sh_') === 0 || strpos($_REQUEST['action'], 'shortcuts_') === 0) {
             return true;
         }
     }
     
-    // Enable on Shortcuts Hub admin pages
-    if (is_admin() && isset($_GET['page']) && strpos($_GET['page'], 'shortcuts') === 0) {
-        return true;
+    // For non-AJAX requests, check if we're in the admin area and it's our plugin
+    if (is_admin()) {
+        // Enable on plugins page
+        global $pagenow;
+        if ($pagenow === 'plugins.php') {
+            return true;
+        }
+
+        // Enable on our plugin pages
+        if (isset($_GET['page']) && strpos($_GET['page'], 'shortcuts-hub') === 0) {
+            return true;
+        }
     }
     
     // Enable on single shortcut pages and shortcut archive
@@ -113,8 +131,29 @@ function should_enable_debug() {
     }
     
     return false;
-    */
 }
+
+// Enqueue debug script
+function sh_enqueue_debug_script() {
+    if (!should_enable_debug()) {
+        return;
+    }
+
+    wp_enqueue_script(
+        'sh-debug',
+        plugins_url('assets/js/sh-debug.js', __FILE__),
+        array('jquery'),
+        filemtime(plugin_dir_path(__FILE__) . 'assets/js/sh-debug.js'),
+        true
+    );
+
+    wp_localize_script('sh-debug', 'shDebugData', array(
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'security' => wp_create_nonce('shortcuts_hub_nonce')
+    ));
+}
+add_action('wp_enqueue_scripts', 'sh_enqueue_debug_script');
+add_action('admin_enqueue_scripts', 'sh_enqueue_debug_script');
 
 // Always register AJAX handlers
 add_action('wp_ajax_sh_debug_log', 'sh_debug_log_ajax_handler');

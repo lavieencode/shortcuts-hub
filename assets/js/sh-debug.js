@@ -7,6 +7,11 @@
 
 // Make debug function globally available
 window.sh_debug_log = function(message, data = null, source = null) {
+    // Skip logging if debug is explicitly set to false
+    if (window.shDebugData.debug === false || (data && data.debug === false)) {
+        return;
+    }
+
     if (!source) {
         source = new Error();
     }

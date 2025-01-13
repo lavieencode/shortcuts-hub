@@ -67,11 +67,47 @@ function fetch_versions() {
     }
 
     // Make the API call directly with the shortcut ID
+    // DEBUG: Making API call to fetch versions
+    sh_debug_log('Making versions API call', [
+        'endpoint' => '/shortcuts/' . $id . '/history',
+        'query_params' => $query_params,
+        'shortcut_id' => $id,
+        'source' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ],
+        'debug' => true
+    ]);
+
     $response = sb_api_call('/shortcuts/' . $id . '/history', 'GET', $query_params);
     if (is_wp_error($response)) {
+        // DEBUG: Error from versions API call
+        sh_debug_log('Error from versions API call', [
+            'error' => $response->get_error_message(),
+            'shortcut_id' => $id,
+            'source' => [
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ],
+            'debug' => true
+        ]);
         wp_send_json_error(['message' => 'Error fetching versions: ' . $response->get_error_message()]);
         return;
     }
+
+    // DEBUG: Successful versions API response
+    sh_debug_log('Successful versions API response', [
+        'shortcut_id' => $id,
+        'response' => $response,
+        'source' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ],
+        'debug' => true
+    ]);
 
     // Structure the response to match what the frontend expects
     $formatted_response = [

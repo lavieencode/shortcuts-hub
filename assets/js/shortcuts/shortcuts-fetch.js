@@ -31,6 +31,15 @@ function fetchShortcutsFromSource(source) {
         source: source
     };
 
+    // DEBUG: Log the current filter parameters before making the AJAX request to track what filters are being applied
+    sh_debug_log('Filter Parameters', {
+        filter_status: filterStatus,
+        filter_deleted: filterDeleted,
+        search_term: searchTerm,
+        source: source,
+        debug: false
+    });
+
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
@@ -38,21 +47,41 @@ function fetchShortcutsFromSource(source) {
         success: function(response) {
             if (response.success) {
                 if (source === 'WP') {
+                    // DEBUG: Log the results of the filter operation, including total count and full shortcut data for verification
+                    sh_debug_log('Filter Results', {
+                        total_shortcuts: response.data.length,
+                        filter_params: data,
+                        shortcuts: response.data,
+                        debug: false
+                    });
                     renderShortcuts(response.data);
                 }
                 // For Switchblade, we just want to log the data
                 console.log('Switchblade shortcuts:', response.data);
             } else {
+                // DEBUG: Log any errors that occur during the filter operation to help diagnose filter failures
+                sh_debug_log('Filter Error', {
+                    error: response.data.message,
+                    filter_params: data,
+                    debug: false
+                });
                 console.error('Error fetching shortcuts:', response.data.message);
                 if (source === 'WP') {
                     jQuery('#shortcuts-container').html('<div class="no-shortcuts">No shortcuts found</div>');
                 }
             }
         },
-        error: function() {
+        error: function(xhr, status, error) {
             if (source === 'WP') {
                 jQuery('#shortcuts-container').html('<div class="no-shortcuts">No shortcuts found</div>');
             }
+            // DEBUG: Log AJAX-specific errors that occur during the filter request for network-related issues
+            sh_debug_log('Ajax Error', {
+                error: error,
+                status: status,
+                filter_params: data,
+                debug: false
+            });
             console.error('Ajax error fetching shortcuts from ' + source);
         }
     });

@@ -1,1 +1,32 @@
 1. Always use the sh-debug.php code to log instead of error_log. When logging an error, always include the source file and line number of the originating error in the log. When logging information, such as an API call, always include as much detail as possible in a single log. The immediate benefit of this special logging functionality is that we can load it with as much info as we want in a single log, including full API requests AND responses.
+
+2. Whenever you use the debug logging mentioned in #1, always include a comment above it describing the purpose of the log, and what we're looking for. It should always start with "// DEBUG:", followed by the logging description.
+
+3. Set the "debug" key in new log data objects to "true" to enable them for logging. When I ask you to disable these logs, set it to "false".
+
+4. When using sh_debug_log(), always structure the data in the following format:
+    
+   - First parameter: A brief, descriptive title for the log entry
+   - Second parameter: An array/object containing:
+     a. 'message': Detailed description of what's being logged
+     b. 'source': Array containing:
+        - 'file': Current file name
+        - 'line': Current line number
+        - 'function': Current function name
+     c. 'data': Array containing the actual debug data
+     d. 'debug': Set to true to enable logging
+   
+   Example:
+   sh_debug_log('URL parameters check', array(
+       'message' => 'Checking URL parameters',
+       'source' => array(
+           'file' => __FILE__,
+           'line' => __LINE__,
+           'function' => __FUNCTION__
+       ),
+       'data' => array(
+           'view' => $view,
+           'id' => $id
+       ),
+       'debug' => true
+   ));

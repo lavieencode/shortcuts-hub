@@ -37,25 +37,25 @@ function fetch_shortcuts() {
 
         $sb_response = sb_api_call('shortcuts', 'GET', $params);
         
-        // Single comprehensive log for Switchblade request/response
-        // DEBUG: Logging Switchblade API request and response for fetching shortcuts
-        sh_debug_log('Switchblade API - Fetch Shortcuts', [
-            'request' => [
-                'endpoint' => 'shortcuts',
-                'method' => 'GET',
-                'params' => $params,
-                'filter' => $filter,
-                'status' => $status,
-                'deleted' => $deleted
-            ],
-            'response' => is_wp_error($sb_response) ? [
-                'error' => true,
-                'code' => $sb_response->get_error_code(),
-                'message' => $sb_response->get_error_message()
-            ] : $sb_response
-        ]);
-
+        // DEBUG: Log Switchblade API request and response for fetching shortcuts
         if (is_wp_error($sb_response)) {
+            sh_debug_log('Switchblade API Error - Fetch Shortcuts', [
+                'error' => [
+                    'code' => $sb_response->get_error_code(),
+                    'message' => $sb_response->get_error_message()
+                ],
+                'request' => [
+                    'endpoint' => 'shortcuts',
+                    'method' => 'GET',
+                    'params' => $params
+                ],
+                'source' => [
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ],
+                'debug' => false
+            ]);
             wp_send_json_error(['message' => "Failed to fetch shortcuts from Switchblade: " . $sb_response->get_error_message()]);
             return;
         }
@@ -89,6 +89,94 @@ function fetch_shortcuts() {
     $shortcuts = get_posts($args);
     $data = array();
 
+    // DEBUG: Log all WordPress shortcuts (both draft and published) to verify post data and metadata
+    $wp_all_shortcuts = array();
+    $args_all = array(
+        'post_type' => 'shortcut',
+        'posts_per_page' => -1,
+        'post_status' => array('publish', 'draft')
+    );
+    $all_shortcuts = get_posts($args_all);
+    foreach ($all_shortcuts as $shortcut) {
+        $wp_all_shortcuts[] = array(
+            'post_id' => $shortcut->ID,
+            'title' => $shortcut->post_title,
+            'status' => $shortcut->post_status,
+            'content' => $shortcut->post_content,
+            'meta' => array(
+                'sb_id' => get_post_meta($shortcut->ID, 'sb_id', true),
+                'headline' => get_post_meta($shortcut->ID, '_shortcut_headline', true),
+                'color' => get_post_meta($shortcut->ID, '_shortcut_color', true),
+                'icon' => get_post_meta($shortcut->ID, '_shortcut_icon', true),
+                'input' => get_post_meta($shortcut->ID, '_shortcut_input', true),
+                'result' => get_post_meta($shortcut->ID, '_shortcut_result', true),
+                'website' => get_post_meta($shortcut->ID, '_shortcut_website', true)
+            )
+        );
+    }
+    // DEBUG: Log all WordPress shortcuts (both draft and published) to verify post data and metadata
+    sh_debug_log('All WordPress Shortcuts (Draft and Published)', array(
+        'shortcuts' => $wp_all_shortcuts,
+        'total_count' => count($wp_all_shortcuts),
+        'source' => array(
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ),
+        'debug' => false
+    ));
+
+    $wp_deleted_shortcuts = array();
+    $args_deleted = array(
+        'post_type' => 'shortcut',
+        'posts_per_page' => -1,
+        'post_status' => array('trash')
+    );
+    $deleted_shortcuts = get_posts($args_deleted);
+    foreach ($deleted_shortcuts as $shortcut) {
+        $wp_deleted_shortcuts[] = array(
+            'post_id' => $shortcut->ID,
+            'title' => $shortcut->post_title,
+            'status' => $shortcut->post_status,
+            'content' => $shortcut->post_content,
+            'meta' => array(
+                'sb_id' => get_post_meta($shortcut->ID, 'sb_id', true),
+                'headline' => get_post_meta($shortcut->ID, '_shortcut_headline', true),
+                'color' => get_post_meta($shortcut->ID, '_shortcut_color', true),
+                'icon' => get_post_meta($shortcut->ID, '_shortcut_icon', true),
+                'input' => get_post_meta($shortcut->ID, '_shortcut_input', true),
+                'result' => get_post_meta($shortcut->ID, '_shortcut_result', true),
+                'website' => get_post_meta($shortcut->ID, '_shortcut_website', true)
+            )
+        );
+    }
+    // DEBUG: Log all deleted WordPress shortcuts separately
+    sh_debug_log('All Deleted WordPress Shortcuts', array(
+        'shortcuts' => $wp_deleted_shortcuts,
+        'total_count' => count($wp_deleted_shortcuts),
+        'source' => array(
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ),
+        'debug' => false
+    ));
+
+    // Get and log all Switchblade shortcuts
+    $sb_response = sb_api_call('shortcuts', 'GET', array());
+    if (!is_wp_error($sb_response)) {
+        // DEBUG: Log all Switchblade shortcuts to compare with WordPress data and verify sync status
+        sh_debug_log('All Switchblade Shortcuts', array(
+            'shortcuts' => $sb_response,
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'debug' => false
+        ));
+    }
+
     foreach ($shortcuts as $shortcut) {
         $is_trashed = $shortcut->post_status === 'trash';
         $sb_id = get_post_meta($shortcut->ID, 'sb_id', true);
@@ -110,8 +198,7 @@ function fetch_shortcuts() {
         $data[] = $shortcut_data;
     }
 
-    // Single comprehensive log for WordPress request/response
-    // DEBUG: Logging WordPress request and response for fetching shortcuts
+    // DEBUG: Log WordPress request and response for fetching shortcuts
     sh_debug_log('WordPress - Fetch Shortcuts', [
         'request' => [
             'filter' => $filter,
@@ -122,7 +209,13 @@ function fetch_shortcuts() {
         'response' => [
             'total_shortcuts' => count($shortcuts),
             'shortcuts' => $data
-        ]
+        ],
+        'source' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ],
+        'debug' => false
     ]);
 
     wp_send_json_success($data);
@@ -161,35 +254,41 @@ function fetch_shortcut() {
             'deleted' => $shortcut->post_status === 'trash'
         );
 
-        // Single comprehensive log for WordPress request/response
-        // DEBUG: Logging WordPress request and response for fetching shortcut
+        // DEBUG: Log WordPress request and response for fetching shortcut
         sh_debug_log('WordPress - Fetch Shortcut', [
             'request' => [
                 'post_id' => $post_id,
                 'source' => $source
             ],
-            'response' => $data
+            'response' => $data,
+            'source' => [
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ]
         ]);
 
         wp_send_json_success($data);
     } else if ($source === 'SB') {
         $response = sb_api_call('shortcuts/' . $post_id);
         
-        // Single comprehensive log for Switchblade request/response
-        // DEBUG: Logging Switchblade API request and response for fetching shortcut
-        sh_debug_log('Switchblade API - Fetch Shortcut', [
-            'request' => [
-                'endpoint' => 'shortcuts/' . $post_id,
-                'method' => 'GET'
-            ],
-            'response' => is_wp_error($response) ? [
-                'error' => true,
-                'code' => $response->get_error_code(),
-                'message' => $response->get_error_message()
-            ] : $response
-        ]);
-
+        // DEBUG: Log Switchblade API request and response for fetching shortcut
         if (is_wp_error($response)) {
+            sh_debug_log('Switchblade API Error - Get Shortcut', [
+                'error' => [
+                    'code' => $response->get_error_code(),
+                    'message' => $response->get_error_message()
+                ],
+                'request' => [
+                    'endpoint' => 'shortcuts/' . $post_id,
+                    'method' => 'GET'
+                ],
+                'source' => [
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ]
+            ]);
             wp_send_json_error(array('message' => "Failed to fetch shortcut $post_id from Switchblade: " . $response->get_error_message()));
             return;
         }
@@ -201,47 +300,77 @@ function fetch_shortcut() {
 }
 
 function create_shortcut() {
-    $log_data = [
+    // DEBUG: Log create shortcut request data to verify all fields are being passed correctly
+    sh_debug_log('Create Shortcut Request', [
         'post_data' => $_POST,
-        'request_method' => $_SERVER['REQUEST_METHOD']
-    ];
+        'request_method' => $_SERVER['REQUEST_METHOD'],
+        'action' => isset($_POST['action']) ? $_POST['action'] : 'not_set',
+        'security' => isset($_POST['security']) ? substr($_POST['security'], 0, 8) . '...' : 'not_set',
+        'user_logged_in' => is_user_logged_in(),
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'wp_doing_ajax' => wp_doing_ajax(),
+        'request_uri' => $_SERVER['REQUEST_URI'],
+        'headers' => getallheaders(),
+        'source' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ]
+    ]);
     
     // Only verify nonce for logged-in users
     if (is_user_logged_in()) {
         if (!isset($_POST['security'])) {
-            $log_data['error'] = 'Security token missing';
-            $log_data['user_logged_in'] = true;
-            // DEBUG: Security check failed - Missing nonce token for logged-in user
-            sh_debug_log('Create Shortcut Failed', $log_data);
-            wp_send_json_error(['message' => 'No security token provided for logged-in user']);
+            // DEBUG: Log failed security token verification
+            sh_debug_log('Create Shortcut Failed - No Security Token', [
+                'error' => 'Security token missing',
+                'user_logged_in' => true,
+                'source' => [
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ]
+            ]);
+            send_json_response(['message' => 'No security token provided for logged-in user'], false);
             return;
         }
 
         if (!wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce')) {
-            $log_data['error'] = 'Invalid security token';
-            $log_data['provided_token'] = $_POST['security'];
-            // DEBUG: Security check failed - Invalid nonce token provided
-            sh_debug_log('Create Shortcut Failed', $log_data);
-            wp_send_json_error(['message' => 'Invalid security token']);
+            // DEBUG: Log failed security token verification
+            sh_debug_log('Create Shortcut Failed - Invalid Security Token', [
+                'error' => 'Invalid security token',
+                'provided_token' => $_POST['security'],
+                'source' => [
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ]
+            ]);
+            send_json_response(['message' => 'Invalid security token'], false);
             return;
         }
     }
 
     $shortcut_data = isset($_POST['shortcut_data']) ? $_POST['shortcut_data'] : [];
-    $log_data['shortcut_data'] = $shortcut_data;
-
+    $wp_data = isset($_POST['wp_data']) ? $_POST['wp_data'] : [];
+    
     if (empty($shortcut_data['name']) || empty($shortcut_data['headline'])) {
-        $log_data['error'] = 'Required fields missing';
-        $log_data['name_exists'] = !empty($shortcut_data['name']);
-        $log_data['headline_exists'] = !empty($shortcut_data['headline']);
-        // DEBUG: Validation failed - Required fields (name or headline) missing from submission
-        sh_debug_log('Create Shortcut Failed', $log_data);
-        wp_send_json_error(array('message' => 'Required fields are missing.'));
+        // DEBUG: Log failed validation of required fields
+        sh_debug_log('Create Shortcut Failed - Missing Required Fields', [
+            'error' => 'Required fields missing',
+            'name_exists' => !empty($shortcut_data['name']),
+            'headline_exists' => !empty($shortcut_data['headline']),
+            'source' => [
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ]
+        ]);
+        send_json_response(['message' => 'Required fields are missing.'], false);
         return;
     }
 
     $state = isset($shortcut_data['state']) && $shortcut_data['state'] === 'draft' ? 1 : 0;
-    $log_data['state'] = $state;
 
     $post_data = array(
         'post_title'   => sanitize_text_field($shortcut_data['name']),
@@ -249,30 +378,42 @@ function create_shortcut() {
         'post_status'  => $state === 1 ? 'draft' : 'publish',
         'post_type'    => 'shortcut',
     );
-    $log_data['wp_post_data'] = $post_data;
 
     $post_id = wp_insert_post($post_data);
 
     if (!is_wp_error($post_id)) {
+        // DEBUG: Log meta data being saved to verify all fields are present and formatted correctly
+        sh_debug_log('Create Shortcut - Saving Meta Data', [
+            'post_id' => $post_id,
+            'shortcut_data' => $shortcut_data,
+            'wp_data' => $wp_data,
+            'source' => [
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ]
+        ]);
+
+        // Save meta from shortcut_data
         update_post_meta($post_id, '_shortcut_headline', sanitize_text_field($shortcut_data['headline']));
-        update_post_meta($post_id, '_shortcut_color', isset($shortcut_data['color']) ? sanitize_hex_color($shortcut_data['color']) : '');
-        update_post_meta($post_id, '_shortcut_icon', isset($shortcut_data['icon']) ? sanitize_text_field($shortcut_data['icon']) : '');
-        update_post_meta($post_id, '_shortcut_input', isset($shortcut_data['input']) ? sanitize_text_field($shortcut_data['input']) : '');
-        update_post_meta($post_id, '_shortcut_result', isset($shortcut_data['result']) ? sanitize_text_field($shortcut_data['result']) : '');
+        update_post_meta($post_id, '_shortcut_description', sanitize_textarea_field($shortcut_data['description']));
+        
+        // Save meta from wp_data
+        if (!empty($wp_data)) {
+            update_post_meta($post_id, '_shortcut_input', sanitize_text_field($wp_data['input']));
+            update_post_meta($post_id, '_shortcut_result', sanitize_text_field($wp_data['result']));
+            update_post_meta($post_id, '_shortcut_color', sanitize_hex_color($wp_data['color']));
+            
+            // Handle icon data
+            if (isset($wp_data['icon'])) {
+                $icon_data = stripslashes($wp_data['icon']);
+                update_post_meta($post_id, '_shortcut_icon', wp_slash($icon_data));
+            }
+        }
         
         // Set the website URL to the WordPress edit page for this shortcut
         $website_url = get_site_url() . '/wp-admin/admin.php?page=edit-shortcut&id=' . $post_id;
         update_post_meta($post_id, '_shortcut_website', esc_url_raw($website_url));
-        
-        $log_data['post_id'] = $post_id;
-        $log_data['meta_fields'] = [
-            'headline' => get_post_meta($post_id, '_shortcut_headline', true),
-            'color' => get_post_meta($post_id, '_shortcut_color', true),
-            'icon' => get_post_meta($post_id, '_shortcut_icon', true),
-            'input' => get_post_meta($post_id, '_shortcut_input', true),
-            'result' => get_post_meta($post_id, '_shortcut_result', true),
-            'website' => get_post_meta($post_id, '_shortcut_website', true)
-        ];
         
         // Create the shortcut in Switchblade
         $sb_data = array(
@@ -280,65 +421,114 @@ function create_shortcut() {
             'headline' => sanitize_text_field($shortcut_data['headline']),
             'description' => sanitize_textarea_field($shortcut_data['description']),
             'website' => $website_url,
-            'state' => array(
-                'value' => $state,
-                'label' => $state === 1 ? 'Draft' : 'Published'
-            )
+            'state' => (int)$state
         );
-        $log_data['sb_request_data'] = $sb_data;
 
         // Get settings
         $settings = get_shortcuts_hub_settings();
         $sb_response = sb_api_call('shortcuts', 'POST', [], $sb_data);
-        $log_data['sb_response'] = $sb_response;
         
         if (is_wp_error($sb_response)) {
-            $log_data['error'] = 'Switchblade creation failed';
-            $log_data['error_message'] = $sb_response->get_error_message();
-            $log_data['error_code'] = $sb_response->get_error_code();
-            $log_data['error_data'] = $sb_response->get_error_data();
+            // DEBUG: Log failed Switchblade API call
+            sh_debug_log('Create Shortcut Failed - Switchblade API Error', [
+                'error' => $sb_response->get_error_message(),
+                'error_code' => $sb_response->get_error_code(),
+                'error_data' => $sb_response->get_error_data(),
+                'request' => [
+                    'endpoint' => 'shortcuts',
+                    'method' => 'POST',
+                    'data' => $sb_data
+                ],
+                'source' => [
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ]
+            ]);
             
             // Delete the WordPress post since Switchblade creation failed
             wp_delete_post($post_id, true);
             
-            // DEBUG: API error - Switchblade API call failed, cleaning up WordPress post
-            sh_debug_log('Create Shortcut Failed', $log_data);
-            wp_send_json_error([
+            send_json_response([
                 'message' => 'Failed to create shortcut in Switchblade: ' . $sb_response->get_error_message(),
                 'error_code' => $sb_response->get_error_code(),
                 'error_data' => $sb_response->get_error_data()
-            ]);
+            ], false);
             return;
         }
 
         if (!isset($sb_response['shortcut']) || !isset($sb_response['shortcut']['id'])) {
-            $log_data['error'] = 'Invalid Switchblade response format';
+            // DEBUG: Log invalid Switchblade response format
+            sh_debug_log('Create Shortcut Failed - Invalid Response Format', [
+                'error' => 'Invalid Switchblade response format',
+                'response' => $sb_response,
+                'source' => [
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ]
+            ]);
             
             // Delete the WordPress post since we got an invalid response
             wp_delete_post($post_id, true);
             
-            // DEBUG: API error - Switchblade returned unexpected response format, cleaning up WordPress post
-            sh_debug_log('Create Shortcut Failed', $log_data);
-            wp_send_json_error([
+            send_json_response([
                 'message' => 'Switchblade returned an invalid response format.',
                 'response' => $sb_response
-            ]);
+            ], false);
             return;
         }
 
         $id = $sb_response['shortcut']['id'];
         update_post_meta($post_id, 'sb_id', sanitize_text_field($id));
-        $log_data['sb_id'] = $id;
 
-        // DEBUG: Success - Shortcut created successfully in both WordPress and Switchblade
-        sh_debug_log('Create Shortcut Success', $log_data);
-        wp_send_json_success(array('message' => 'Shortcut created successfully.', 'post_id' => $post_id, 'sb_id' => $id));
+        // Now that we have the post ID and it's saved, get the proper permalink
+        $actual_website_url = get_permalink($post_id);
+        
+        // Update the website URL in Switchblade
+        $update_data = array(
+            'website' => $actual_website_url
+        );
+        
+        $update_response = sb_api_call('shortcuts/' . $id, 'PATCH', [], $update_data);
+        
+        // DEBUG: Log update attempt but don't fail if it doesn't work
+        sh_debug_log('Update Shortcut Website URL', [
+            'post_id' => $post_id,
+            'sb_id' => $id,
+            'website_url' => $actual_website_url,
+            'response' => $update_response,
+            'source' => [
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ]
+        ]);
+        
+        // DEBUG: Log successful shortcut creation with both WordPress and Switchblade IDs
+        sh_debug_log('Create Shortcut Success', [
+            'post_id' => $post_id,
+            'sb_id' => $id,
+            'source' => [
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ]
+        ]);
+        send_json_response(['message' => 'Shortcut created successfully.', 'post_id' => $post_id, 'sb_id' => $id]);
     } else {
-        $log_data['error'] = 'WordPress post creation failed';
-        $log_data['wp_error'] = $post_id->get_error_message();
-        // DEBUG: WordPress error - Failed to create post in WordPress
-        sh_debug_log('Create Shortcut Failed', $log_data);
-        wp_send_json_error(array('message' => 'Failed to create shortcut in WordPress.'));
+        // DEBUG: Log failed WordPress post creation
+        sh_debug_log('Create Shortcut Failed - WordPress Error', [
+            'error' => $post_id->get_error_message(),
+            'error_code' => $post_id->get_error_code(),
+            'error_data' => $post_id->get_error_data(),
+            'source' => [
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ]
+        ]);
+        send_json_response(['message' => 'Failed to create shortcut in WordPress.'], false);
     }
 }
 
@@ -396,10 +586,7 @@ function update_shortcut() {
         'name' => sanitize_text_field($shortcut_data['name']),
         'headline' => sanitize_text_field($shortcut_data['headline']),
         'description' => wp_kses_post($shortcut_data['description']),
-        'state' => array(
-            'value' => $shortcut_data['state'] === 'publish' ? 0 : 1,
-            'label' => $shortcut_data['state'] === 'publish' ? 'Published' : 'Draft'
-        )
+        'state' => (int)$shortcut_data['state'] === 'publish' ? 0 : 1
     );
 
     $response = sb_api_call('shortcuts/' . $sb_id, 'PATCH', [], $sb_data);
@@ -416,8 +603,7 @@ function update_shortcut() {
         return;
     }
 
-    // Single comprehensive log for WordPress and Switchblade update
-    // DEBUG: Logging WordPress and Switchblade update
+    // DEBUG: Log WordPress and Switchblade update
     sh_debug_log('Update Shortcut - WordPress and Switchblade', [
         'request' => [
             'post_id' => $post_id,
@@ -430,6 +616,11 @@ function update_shortcut() {
                 'post_status' => $post_data['post_status']
             ],
             'switchblade' => $response
+        ],
+        'source' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
         ]
     ]);
 
@@ -464,10 +655,7 @@ function toggle_draft() {
             'name' => sanitize_text_field($shortcut_data['name']),
             'headline' => sanitize_text_field($shortcut_data['headline']),
             'description' => sanitize_textarea_field($shortcut_data['description']),
-            'state' => array(
-                'value' => $is_draft ? 1 : 0,
-                'label' => $is_draft ? 'Draft' : 'Published'
-            )
+            'state' => (int)$is_draft
         );
         
         // First get auth token
@@ -540,10 +728,7 @@ function toggle_draft() {
                 'name' => sanitize_text_field($shortcut_data['name']),
                 'headline' => sanitize_text_field($shortcut_data['headline']),
                 'description' => sanitize_textarea_field($shortcut_data['description']),
-                'state' => array(
-                    'value' => $current_status === 'draft' ? 1 : 0,
-                    'label' => $current_status === 'draft' ? 'Draft' : 'Published'
-                )
+                'state' => (int)($current_status === 'draft')
             );
             sb_api_call('shortcuts/' . $sb_id, 'PATCH', [], $revert_data);
         }
@@ -575,8 +760,7 @@ function toggle_draft() {
         update_post_meta($updated_post_id, '_shortcut_result', sanitize_text_field($shortcut_data['result']));
     }
 
-    // Single comprehensive log for WordPress and Switchblade update
-    // DEBUG: Logging WordPress and Switchblade update
+    // DEBUG: Log WordPress and Switchblade update
     sh_debug_log('Toggle Draft - WordPress and Switchblade', [
         'request' => [
             'post_id' => $post_id,
@@ -592,6 +776,11 @@ function toggle_draft() {
                 'sb_id' => $sb_id,
                 'state' => $is_draft ? 'Draft' : 'Published'
             ] : null
+        ],
+        'source' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
         ]
     ]);
 
@@ -632,8 +821,7 @@ function delete_shortcut() {
         }
     }
 
-    // Single comprehensive log for WordPress and Switchblade delete
-    // DEBUG: Logging WordPress and Switchblade delete
+    // DEBUG: Log WordPress and Switchblade delete
     sh_debug_log('Delete Shortcut - WordPress and Switchblade', [
         'request' => [
             'post_id' => $post_id,
@@ -652,6 +840,11 @@ function delete_shortcut() {
                     'message' => $sb_response->get_error_message()
                 ] : $sb_response
             ] : null
+        ],
+        'source' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
         ]
     ]);
 
@@ -701,8 +894,7 @@ function process_download_token() {
         return;
     }
 
-    // Single comprehensive log for download token processing
-    // DEBUG: Logging download token processing
+    // DEBUG: Log download token processing
     sh_debug_log('Process Download Token', [
         'request' => [
             'download_token' => $download_token,
@@ -712,6 +904,11 @@ function process_download_token() {
         'response' => [
             'download_url' => $version_data['url'],
             'version_data' => $version_data
+        ],
+        'source' => [
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
         ]
     ]);
 
@@ -723,46 +920,71 @@ function process_download_token() {
     ]);
 }
 
-function register_shortcuts_ajax_handlers() {
-    // Get the caller information
-    $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-    $caller = $backtrace[0];
-    
-    // Debug: Registering AJAX handlers
-    sh_debug_log('Registering AJAX Handlers', [
-        'handlers' => [
-            'fetch_shortcuts',
-            'fetch_shortcut',
-            'create_shortcut',
-            'update_shortcut',
-            'toggle_draft',
-            'delete_shortcut',
-            'process_download_token'
-        ],
+class Shortcuts_Ajax_Handler {
+    private static $instance = null;
+    private static $registered = false;
+
+    public static function instance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
+    }
+
+    private function __construct() {
+        // Empty constructor
+    }
+
+    public function is_registered() {
+        return self::$registered;
+    }
+
+    public function register_handlers() {
+        if (self::$registered) {
+            return;
+        }
+
+        self::$registered = true;  
+
+        // Register AJAX handlers with namespace
+        add_action('wp_ajax_create_shortcut', __NAMESPACE__ . '\\create_shortcut');
+        add_action('wp_ajax_fetch_shortcuts', __NAMESPACE__ . '\\fetch_shortcuts');
+        add_action('wp_ajax_fetch_shortcut', __NAMESPACE__ . '\\fetch_shortcut');
+        add_action('wp_ajax_update_shortcut', __NAMESPACE__ . '\\update_shortcut');
+        add_action('wp_ajax_toggle_draft', __NAMESPACE__ . '\\toggle_draft');
+        add_action('wp_ajax_delete_shortcut', __NAMESPACE__ . '\\delete_shortcut');
+        add_action('wp_ajax_process_download_token', __NAMESPACE__ . '\\process_download_token');
+    }
+}
+
+function send_json_response($response, $success = true) {
+    // DEBUG: Log AJAX response to verify correct data structure and headers
+    sh_debug_log('Sending AJAX Response', [
+        'success' => $success,
+        'response' => $response,
+        'headers_sent' => headers_sent(),
+        'headers_list' => headers_list(),
+        'content_type' => ini_get('default_mimetype'),
+        'output_started' => ob_get_level() > 0,
+        'buffer_contents' => ob_get_contents(),
         'source' => [
-            'file' => $caller['file'],
-            'line' => $caller['line'],
+            'file' => __FILE__,
+            'line' => __LINE__,
             'function' => __FUNCTION__
         ]
     ]);
 
-    add_action('wp_ajax_fetch_shortcuts', __NAMESPACE__ . '\\fetch_shortcuts');
-    add_action('wp_ajax_fetch_shortcut', __NAMESPACE__ . '\\fetch_shortcut');
-    add_action('wp_ajax_create_shortcut', __NAMESPACE__ . '\\create_shortcut');
-    add_action('wp_ajax_update_shortcut', __NAMESPACE__ . '\\update_shortcut');
-    add_action('wp_ajax_toggle_draft', __NAMESPACE__ . '\\toggle_draft');
-    add_action('wp_ajax_delete_shortcut', __NAMESPACE__ . '\\delete_shortcut');
-    add_action('wp_ajax_process_download_token', __NAMESPACE__ . '\\process_download_token');
-    add_action('wp_ajax_nopriv_process_download_token', __NAMESPACE__ . '\\process_download_token');
-}
-
-// Global flag to track AJAX handler registration
-$GLOBALS['shortcuts_hub_ajax_registered'] = false;
-
-// Register handlers on init to ensure they're registered at the right time
-add_action('init', function() {
-    if (!$GLOBALS['shortcuts_hub_ajax_registered']) {
-        register_shortcuts_ajax_handlers();
-        $GLOBALS['shortcuts_hub_ajax_registered'] = true;
+    // Ensure clean output
+    if (ob_get_level() > 0) {
+        ob_clean();
     }
-});
+
+    // Set JSON content type
+    header('Content-Type: application/json');
+    
+    if ($success) {
+        wp_send_json_success($response);
+    } else {
+        wp_send_json_error($response);
+    }
+}

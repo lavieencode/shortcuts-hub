@@ -16,15 +16,37 @@ require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/sh-debug.php';
 
 class Elementor_Manager {
     private static $instance = null;
+    private $initialized = false;
 
     public static function get_instance() {
-        if (null === self::$instance) {
+        if (self::$instance === null) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
     private function __construct() {
+        add_action('init', [$this, 'initialize']);
+    }
+
+    public function initialize() {
+        if ($this->initialized) {
+            return;
+        }
+
+        if (did_action('elementor/loaded')) {
+            add_action('elementor/init', [$this, 'init_elementor']);
+        }
+
+        $this->initialized = true;
+    }
+
+    public function init_elementor() {
+        static $elementor_initialized = false;
+        if ($elementor_initialized) {
+            return;
+        }
+
         // Load dynamic fields first
         require_once plugin_dir_path(dirname(__FILE__)) . 'elementor-dynamic-fields.php';
 
@@ -58,6 +80,8 @@ class Elementor_Manager {
         add_action('elementor/frontend/after_register_styles', [$this, 'register_frontend_styles']);
         add_action('elementor/preview/enqueue_styles', [$this, 'register_frontend_styles']);
         add_action('elementor/editor/after_enqueue_styles', [$this, 'register_frontend_styles']);
+
+        $elementor_initialized = true;
     }
 
     public function load_widget_files_and_register($widgets_manager) {

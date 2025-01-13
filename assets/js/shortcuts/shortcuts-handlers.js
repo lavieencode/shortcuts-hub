@@ -7,7 +7,7 @@ jQuery(document).ready(function() {
         urlParams.set('id', sb_id);
         window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
         
-        toggleVersionsView(true);
+        toggleVersionsView(true, sb_id);
     });
 
     jQuery(document).on('click', '.edit-button', function() {
@@ -85,7 +85,7 @@ function checkUrlParameters() {
     const shortcutId = urlParams.get('id');
 
     if (view === 'versions' && shortcutId) {
-        toggleVersionsView(true);
+        toggleVersionsView(true, shortcutId);
     } else {
         toggleVersionsView(false);
     }

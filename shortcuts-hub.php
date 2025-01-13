@@ -12,21 +12,51 @@ if (!defined('ABSPATH')) {
 
 define('SHORTCUTS_HUB_FILE', __FILE__);
 define('SHORTCUTS_HUB_PATH', plugin_dir_path(__FILE__));
+define('SHORTCUTS_HUB_VERSION', '1.0.0');
 
-// Load the main plugin class
+// Only include the main class file - it will handle all other dependencies
 require_once SHORTCUTS_HUB_PATH . 'includes/class-shortcuts-hub.php';
 
-// Include required files
-require_once plugin_dir_path(__FILE__) . 'includes/settings.php';
-require_once plugin_dir_path(__FILE__) . 'includes/auth.php';
-require_once plugin_dir_path(__FILE__) . 'includes/sb-api.php';
-require_once plugin_dir_path(__FILE__) . 'sh-debug.php';
-require_once plugin_dir_path(__FILE__) . 'includes/ajax/shortcuts-ajax.php';
-require_once plugin_dir_path(__FILE__) . 'includes/ajax/versions-ajax.php';
+/**
+ * Main plugin instance
+ */
+function shortcuts_hub() {
+    return ShortcutsHub\Shortcuts_Hub::get_instance();
+}
 
-// Initialize the plugin
+/**
+ * Activation handler
+ */
+register_activation_hook(__FILE__, function() {
+    // Use singleton instance but don't initialize
+    $instance = shortcuts_hub();
+    $instance->activate();
+});
+
+/**
+ * Deactivation handler
+ */
+register_deactivation_hook(__FILE__, function() {
+    // Use singleton instance but don't initialize
+    $instance = shortcuts_hub();
+    $instance->deactivate();
+});
+
+// Hook into WordPress initialization - but AFTER activation is complete
+add_action('plugins_loaded', 'shortcuts_hub_init', 10);
+
+/**
+ * Initialize the plugin - this is the ONLY place where we should initialize
+ */
 function shortcuts_hub_init() {
-    return ShortcutsHub\Shortcuts_Hub::instance();
+    // Only initialize during plugins_loaded
+    if (current_filter() !== 'plugins_loaded') {
+        return;
+    }
+    
+    // Get the instance and initialize it
+    $instance = shortcuts_hub();
+    $instance->initialize();
 }
 
 // Register settings
@@ -111,29 +141,6 @@ function shortcuts_hub_settings_page() {
     <?php
 }
 
-// Start the plugin
-add_action('plugins_loaded', 'shortcuts_hub_init');
+// Register settings and admin pages
 add_action('admin_init', 'shortcuts_hub_register_settings');
 add_action('admin_menu', 'shortcuts_hub_add_settings_page');
-
-// Register activation/deactivation hooks
-register_activation_hook(__FILE__, function() {
-    $instance = ShortcutsHub\Shortcuts_Hub::instance();
-    $instance->activate();
-});
-register_deactivation_hook(__FILE__, function() {
-    $instance = ShortcutsHub\Shortcuts_Hub::instance();
-    $instance->deactivate();
-});
-
-// Load core files
-require_once SHORTCUTS_HUB_PATH . 'core/database.php';
-require_once SHORTCUTS_HUB_PATH . 'includes/security.php';
-require_once SHORTCUTS_HUB_PATH . 'core/enqueue-core.php';
-require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php';
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/shortcuts-list-page.php';
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-shortcut-page.php';
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-shortcut-page.php';
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-version-page.php';
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-version-page.php';
-require_once SHORTCUTS_HUB_PATH . 'includes/pages/settings.php';

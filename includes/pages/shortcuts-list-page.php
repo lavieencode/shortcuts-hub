@@ -4,15 +4,27 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-$id = isset($_GET['id']) ? esc_attr($_GET['id']) : '';
-$view = isset($_GET['view']) ? esc_attr($_GET['view']) : '';
-$add_version_url = admin_url("admin.php?page=add-version&id={$id}");
-
 function shortcuts_hub_render_shortcuts_list_page() {
-    global $add_version_url, $view;
+    // Get URL parameters
+    $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+    $view = isset($_GET['view']) ? sanitize_text_field($_GET['view']) : '';
+    $id = isset($_GET['id']) ? sanitize_text_field($_GET['id']) : '';
+    $add_version_url = admin_url("admin.php?page=add-version&id={$id}");
+
+    // Determine initial visibility based on URL parameters
+    $show_shortcuts = $view !== 'versions';
+    $show_versions = $view === 'versions';
+    
+    // Add these to wp_localize_script data
+    wp_localize_script('shortcuts-hub-versions-handlers', 'shortcutsHubData', array(
+        'view' => $view,
+        'shortcutId' => $id,
+        'initialView' => $show_versions ? 'versions' : 'shortcuts',
+        'nonce' => wp_create_nonce('fetch_versions_nonce')
+    ));
     ?>
     <div id="shortcuts-list-page" class="wrap">
-        <?php if ($view !== 'versions') : ?>
+        <div id="shortcuts-view" style="display: <?php echo $show_shortcuts ? 'block' : 'none'; ?>">
             <h1 class="shortcuts-page-title">SHORTCUTS</h1>
             <div id="shortcuts-header-bar">
                 <input type="text" id="search-input" placeholder="Search shortcuts">
@@ -30,9 +42,9 @@ function shortcuts_hub_render_shortcuts_list_page() {
                 <a href="<?php echo admin_url('admin.php?page=add-shortcut'); ?>" class="add-shortcut-button">+</a>
             </div>
             <div id="shortcuts-container" class="shortcuts-container"></div>
-        <?php endif; ?>
+        </div>
 
-        <?php if ($view === 'versions') : ?>
+        <div id="versions-view" style="display: <?php echo $show_versions ? 'block' : 'none'; ?>">
             <h1 class="versions-page-title">VERSIONS</h1>
             <button id="back-to-shortcuts">Back to Shortcuts</button>
             <h2 id="shortcut-name-display"></h2>
@@ -56,11 +68,11 @@ function shortcuts_hub_render_shortcuts_list_page() {
                         <option value="false">Not Required</option>
                     </select>
                     <button id="reset-version-filters">Reset filters</button>
-                    <a href="#" class="add-version-button">+</a>
+                    <a href="<?php echo $add_version_url; ?>" class="add-version-button">+</a>
                 </div>
             </div>
             <div id="versions-container" class="versions-container"></div>
-        <?php endif; ?>
+        </div>
     </div>
     <div id="edit-version-modal" class="modal" style="display: none;">
         <h1>Edit Version</h1>

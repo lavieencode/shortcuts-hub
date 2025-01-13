@@ -5,6 +5,11 @@ if (!defined('ABSPATH')) {
 }
 
 function shortcuts_hub_include_files() {
+    static $files_included = false;
+    if ($files_included) {
+        return;
+    }
+
     if (!defined('SHORTCUTS_HUB_PATH')) {
         return;
     }
@@ -28,6 +33,7 @@ function shortcuts_hub_include_files() {
             require_once SHORTCUTS_HUB_PATH . 'sh-debug.php';
         }
     }
+    $files_included = true;
 }
 
 add_action('init', 'shortcuts_hub_include_files');

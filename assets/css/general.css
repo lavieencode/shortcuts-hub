@@ -159,6 +159,11 @@ button {
 }
 
 /* Link Styles */
+.link-button {
+    color: #909CFE;
+    text-decoration: none;
+}
+
 a {
     font-weight: 600;
     color: #909CFE;

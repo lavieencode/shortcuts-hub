@@ -1,300 +1,257 @@
-[DEBUG] Registering AJAX Handlers
+[DEBUG] Plugin Deactivated
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "timestamp": 1736737699,
+    "version": "1.0.0"
 }
 
-[DEBUG] Registering AJAX Handlers
+[DEBUG] Plugin Activated
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "timestamp": 1736737701,
+    "version": "1.0.0"
 }
 
-[DEBUG] Registering AJAX Handlers
+[DEBUG] Switchblade API Error - Get Shortcut
+SOURCE: [shortcuts-ajax.php:288 in ShortcutsHub\fetch_shortcut]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
-}
-
-[DEBUG] Registering AJAX Handlers
-{
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
-}
-
-[DEBUG] Registering AJAX Handlers
-{
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
-}
-
-[DEBUG] Registering AJAX Handlers
-{
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ],
-    "source": {
-        "file": "\/home\/user\/htdocs\/srv608334.hstgr.cloud\/wp-content\/plugins\/shortcuts-hub\/includes\/ajax\/shortcuts-ajax.php",
-        "line": 763,
-        "function": "ShortcutsHub\\register_shortcuts_ajax_handlers"
+    "error": {
+        "code": "api_error",
+        "message": "Could not find the requested shortcut"
+    },
+    "request": {
+        "endpoint": "shortcuts\/0",
+        "method": "GET"
     }
 }
 
-[DEBUG] Registering AJAX Handlers
+********************************************************************************************************************
+                                   [START DEBUG LOG: 2025-01-13 03:08:30 AM UTC]                                    
+********************************************************************************************************************
+
+[DEBUG] Page load parameters
+SOURCE: [class-shortcuts-hub.php:262 in ShortcutsHub\{closure}]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ],
-    "source": {
-        "file": "\/home\/user\/htdocs\/srv608334.hstgr.cloud\/wp-content\/plugins\/shortcuts-hub\/includes\/ajax\/shortcuts-ajax.php",
-        "line": 763,
-        "function": "ShortcutsHub\\register_shortcuts_ajax_handlers"
-    }
+    "message": "Loading shortcuts list page with parameters",
+    "data": {
+        "get": {
+            "page": "shortcuts-list",
+            "view": "versions",
+            "id": "66"
+        },
+        "page": "shortcuts-list",
+        "view": "versions",
+        "id": "66"
+    },
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] URL parameters check
+SOURCE: [shortcuts-list-page.php:21 in shortcuts_hub_render_shortcuts_list_page]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Initial URL parameters in shortcuts-list-page.php",
+    "data": {
+        "page": "shortcuts-list",
+        "view": "versions",
+        "id": "66",
+        "raw_get": {
+            "page": "shortcuts-list",
+            "view": "versions",
+            "id": "66"
+        },
+        "request_uri": "\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=66"
+    },
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] URL parameters check
+SOURCE: [versions-handlers.js:20 in document.ready]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Checking URL parameters for versions view",
+    "data": {
+        "view": "versions",
+        "id": "66",
+        "url": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=66"
+    },
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] Document ready check
+SOURCE: [versions-handlers.js:2 in document.ready]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Document ready in versions-handlers.js",
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] Making versions API call
+SOURCE: [versions-ajax.php:77 in fetch_versions]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "endpoint": "\/shortcuts\/66\/history",
+    "query_params": [],
+    "shortcut_id": "66",
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] Fetching versions
+SOURCE: [versions-handlers.js:40 in document.ready]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Fetching versions for shortcut",
+    "data": {
+        "shortcutId": "66"
+    },
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] Localized data check
+SOURCE: [versions-handlers.js:15 in document.ready]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Checking shortcutsHubData availability",
+    "data": {
+        "ajax_url": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": "9149e4a6f5",
+        "isElementorActive": "1",
+        "isWooCommerceActive": "1"
+    },
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] Successful versions API response
+SOURCE: [versions-ajax.php:106 in fetch_versions]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "shortcut_id": "66",
+    "response": {
+        "shortcut": {
+            "id": 66,
+            "name": "Test Shorty 2",
+            "headline": "This is an incredible test headline!",
+            "description": "And an incredible description!",
+            "website": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=edit-shortcut&id=6993",
+            "state": {
+                "value": 0,
+                "label": "Published"
+            },
+            "deleted": false,
+            "creator": {
+                "id": 1,
+                "name": "nicole"
+            }
+        },
+        "versions": []
+    },
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+********************************************************************************************************************
+                                   [START DEBUG LOG: 2025-01-13 03:09:08 AM UTC]                                    
+********************************************************************************************************************
+
+[DEBUG] Page load parameters
+SOURCE: [class-shortcuts-hub.php:262 in ShortcutsHub\{closure}]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Loading shortcuts list page with parameters",
+    "data": {
+        "get": {
+            "page": "shortcuts-list",
+            "view": "versions",
+            "id": "66"
+        },
+        "page": "shortcuts-list",
+        "view": "versions",
+        "id": "66"
+    },
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] URL parameters check
+SOURCE: [shortcuts-list-page.php:21 in shortcuts_hub_render_shortcuts_list_page]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Initial URL parameters in shortcuts-list-page.php",
+    "data": {
+        "page": "shortcuts-list",
+        "view": "versions",
+        "id": "66",
+        "raw_get": {
+            "page": "shortcuts-list",
+            "view": "versions",
+            "id": "66"
+        },
+        "request_uri": "\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=66"
+    },
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] Fetching versions
+SOURCE: [versions-handlers.js:40 in document.ready]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Fetching versions for shortcut",
+    "data": {
+        "shortcutId": "66"
+    },
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] URL parameters check
+SOURCE: [versions-handlers.js:20 in document.ready]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Checking URL parameters for versions view",
+    "data": {
+        "view": "versions",
+        "id": "66",
+        "url": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=66"
+    },
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] Document ready check
+SOURCE: [versions-handlers.js:2 in document.ready]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Document ready in versions-handlers.js",
+    "debug": true
 }
 
-[DEBUG] [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers] Registering AJAX Handlers
+[DEBUG] Localized data check
+SOURCE: [versions-handlers.js:15 in document.ready]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "message": "Checking shortcutsHubData availability",
+    "data": {
+        "ajax_url": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": "9149e4a6f5",
+        "isElementorActive": "1",
+        "isWooCommerceActive": "1"
+    },
+    "debug": true
 }
 
-[DEBUG] Registering AJAX Handlers
-SOURCE: [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers]
-
+[DEBUG] Making versions API call
+SOURCE: [versions-ajax.php:77 in fetch_versions]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "endpoint": "\/shortcuts\/66\/history",
+    "query_params": [],
+    "shortcut_id": "66",
+    "debug": true
 }
 
-[DEBUG] Registering AJAX Handlers
-SOURCE: [shortcuts-ajax.php:763 in ShortcutsHub\register_shortcuts_ajax_handlers]
-
+[DEBUG] Successful versions API response
+SOURCE: [versions-ajax.php:106 in fetch_versions]
 {
-    "handlers": [
-        "fetch_shortcuts",
-        "fetch_shortcut",
-        "create_shortcut",
-        "update_shortcut",
-        "toggle_draft",
-        "delete_shortcut",
-        "process_download_token"
-    ]
+    "shortcut_id": "66",
+    "response": {
+        "shortcut": {
+            "id": 66,
+            "name": "Test Shorty 2",
+            "headline": "This is an incredible test headline!",
+            "description": "And an incredible description!",
+            "website": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=edit-shortcut&id=6993",
+            "state": {
+                "value": 0,
+                "label": "Published"
+            },
+            "deleted": false,
+            "creator": {
+                "id": 1,
+                "name": "nicole"
+            }
+        },
+        "versions": []
+    },
+    "debug": true
 }
 

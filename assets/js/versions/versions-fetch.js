@@ -4,8 +4,8 @@ let isFetching = false;
 jQuery(document).ready(function($) {
 });
 
-function fetchVersions(sb_id, retries = 0) {   
-    if (!sb_id) {
+function fetchVersions(shortcutId, retries = 0) {   
+    if (!shortcutId) {
         console.error('No shortcut ID provided');
         return;
     }
@@ -39,15 +39,15 @@ function fetchVersions(sb_id, retries = 0) {
 
     const data = {
         action: 'fetch_versions',  
-        security: shortcuts_hub_params.nonce,
-        id: sb_id,  
+        security: shortcutsHubData.security,
+        id: shortcutId,  
         search_term: searchTerm || '',
         status: filterStatus || '',
         deleted: filterDeleted === 'any' ? '' : filterDeleted,
         required_update: filterRequiredUpdate === 'any' ? '' : filterRequiredUpdate
     };
 
-    jQuery.post(shortcuts_hub_params.ajax_url, data)
+    jQuery.post(shortcutsHubData.ajax_url, data)
         .done(function(response) {
             console.group('Versions API Response');
             console.log('Full Response:', response);
@@ -74,7 +74,7 @@ function fetchVersions(sb_id, retries = 0) {
                 // Handle versions display
                 if (versions.length > 0) {
                     jQuery('#versions-container').empty();
-                    renderVersions(versions, sb_id);
+                    renderVersions(versions, shortcutId);
                     jQuery('#versions-container').show();
                 } else {
                     console.warn('No versions found in response');
@@ -108,7 +108,7 @@ function fetchVersions(sb_id, retries = 0) {
                 console.log('Retrying fetchVersions, attempts remaining:', retries - 1);
                 setTimeout(() => {
                     isFetching = false;
-                    fetchVersions(sb_id, retries - 1);
+                    fetchVersions(shortcutId, retries - 1);
                 }, 3000); // Fixed 3 second delay between retries
                 return;
             }
@@ -139,11 +139,11 @@ function handleApiError(error) {
     jQuery('#versions-container').html(`<p>${errorMessage}</p>`).show();
 }
 
-function fetchVersion(sb_id, version_id, latest = false) {
+function fetchVersion(shortcutId, version_id, latest = false) {
     const data = {
         action: 'fetch_version',
-        security: shortcuts_hub_params.nonce,
-        id: sb_id
+        security: shortcutsHubData.security,
+        id: shortcutId
     };
 
     if (version_id) {
@@ -155,7 +155,7 @@ function fetchVersion(sb_id, version_id, latest = false) {
     }
 
     jQuery.ajax({
-        url: shortcuts_hub_params.ajax_url,
+        url: shortcutsHubData.ajax_url,
         method: 'POST',
         data: data,
         success: function(response) {

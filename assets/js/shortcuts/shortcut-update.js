@@ -31,7 +31,7 @@ function updateShortcut(formData, options = {}) {
             name: formData.name,
             headline: formData.headline,
             description: formData.description,
-            website: formData.website,
+            website: formData.website || window.location.origin + '/shortcut/' + formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
             state: formData.state === 'publish' ? 0 : 1 // Convert WP state to SB state (0=published, 1=draft)
         };
     }
