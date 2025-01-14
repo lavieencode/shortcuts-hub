@@ -44,6 +44,7 @@ jQuery(document).ready(function() {
 
     jQuery(document).on('click', '.delete-permanently', function(e) {
         e.preventDefault();
+        e.stopPropagation(); // Stop event from bubbling up
         const post_id = jQuery(this).data('post_id');
         const sb_id = jQuery(this).data('sb_id');
         

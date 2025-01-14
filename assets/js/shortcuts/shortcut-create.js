@@ -2,7 +2,7 @@ function createShortcut(shortcutData, status = 'publish') {
     // First create in Switchblade
     const data = {
         action: 'create_shortcut',
-        security: shortcuts_hub_params.security,
+        security: shortcutsHubData.security,
         shortcut_data: {
             name: shortcutData.name,
             headline: shortcutData.headline,
@@ -27,7 +27,7 @@ function createShortcut(shortcutData, status = 'publish') {
     };
 
     return jQuery.ajax({
-        url: shortcuts_hub_params.ajax_url,
+        url: shortcutsHubData.ajax_url,
         method: 'POST',
         data: data,
         headers: {
@@ -37,7 +37,7 @@ function createShortcut(shortcutData, status = 'publish') {
             debugData.response = response;
             
             if (response.success) {
-                const websiteUrl = shortcuts_hub_params.site_url + '/wp-admin/admin.php?page=edit-shortcut&id=' + response.data.post_id;
+                const websiteUrl = shortcutsHubData.site_url + '/wp-admin/admin.php?page=edit-shortcut&id=' + response.data.post_id;
                 
                 jQuery('#message')
                     .removeClass('error-message')

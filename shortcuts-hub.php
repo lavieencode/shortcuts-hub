@@ -146,7 +146,6 @@ function shortcuts_hub_settings_page() {
 
 // Register settings and admin pages
 add_action('admin_init', 'shortcuts_hub_register_settings');
-add_action('admin_menu', 'shortcuts_hub_add_settings_page');
 
 // Register shutdown hook to cleanup database connections
 register_shutdown_function(function() {

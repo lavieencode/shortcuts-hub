@@ -21,16 +21,24 @@ function shortcuts_hub_include_files() {
 
     // Only include debug file on admin pages
     if (is_admin()) {
-        $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
-        $admin_pages = array(
+        $allowed_pages = array(
             'shortcuts-list',
             'add-shortcut',
             'edit-shortcut',
-            'add-version',
-            'edit-version'
+            'settings'
         );
-        if (in_array($page, $admin_pages)) {
-            require_once SHORTCUTS_HUB_PATH . 'sh-debug.php';
+        $page = isset($_GET['page']) ? sanitize_text_field($_GET['page']) : '';
+        
+        if (in_array($page, $allowed_pages)) {
+            // Admin pages
+            $admin_pages = array(
+                'shortcuts-list',
+                'add-shortcut',
+                'edit-shortcut'
+            );
+            if (in_array($page, $admin_pages)) {
+                require_once SHORTCUTS_HUB_PATH . 'sh-debug.php';
+            }
         }
     }
     $files_included = true;
@@ -50,11 +58,10 @@ function shortcuts_hub_enqueue_scripts() {
         
         // List of our admin pages
         $admin_pages = array(
-            'shortcuts-list',
+            'shortcuts-hub',
             'add-shortcut',
             'edit-shortcut',
-            'add-version',
-            'edit-version'
+            'settings'
         );
         
         if (in_array($page, $admin_pages)) {

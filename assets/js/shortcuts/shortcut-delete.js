@@ -11,11 +11,6 @@ function deleteShortcut(postId, sbId, buttonElement, permanent = false, restore 
     const loadingText = restore ? 'Restoring...' : (permanent ? 'Deleting Permanently...' : 'Moving to Trash...');
     $button.text(loadingText).prop('disabled', true);
 
-    if (permanent && !confirm('Are you sure you want to PERMANENTLY delete this shortcut? This action cannot be undone.')) {
-        $button.text(originalText).prop('disabled', false);
-        return;
-    }
-
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         type: 'POST',

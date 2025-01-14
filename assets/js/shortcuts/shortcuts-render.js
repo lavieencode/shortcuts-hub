@@ -18,14 +18,16 @@ function renderShortcuts(shortcuts) {
         return;
     }
 
-    shortcuts.forEach((shortcut, index) => {
-        const post_id = shortcut.post_id;
+    shortcuts.forEach((shortcut) => {
+        const wp = shortcut.wordpress || {};
+        const sb = shortcut.switchblade || {};
+        const post_id = shortcut.ID;
 
-        const syncedText = shortcut.sb_id && shortcut.sb_id !== '' ? 
-            `<span class="synced-text" style="color: #8a8a8a; font-size: 12px;">Switchblade ID: ${shortcut.sb_id}</span>` : 
+        const syncedText = sb.sb_id && sb.sb_id !== '' ? 
+            `<span class="synced-text" style="color: #8a8a8a; font-size: 12px;">Switchblade ID: ${sb.sb_id}</span>` : 
             '<span class="synced-text" style="color: #8a8a8a; font-size: 12px;">No matching Switchblade shortcut</span>';
 
-        const displayName = shortcut.name || 'Unnamed Shortcut';
+        const displayName = wp.name || 'Unnamed Shortcut';
 
         const shortcutElement = document.createElement('div');
         shortcutElement.className = 'shortcut-item';
@@ -33,27 +35,27 @@ function renderShortcuts(shortcuts) {
 
         shortcutElement.innerHTML = `
             <div class="badge-container">
-                ${shortcut.post_status === 'draft' ? '<span class="badge draft">Draft</span>' : ''}
-                ${shortcut.post_status === 'trash' ? '<span class="badge deleted">Deleted</span>' : ''}
+                ${wp.state === 'draft' ? '<span class="badge draft">Draft</span>' : ''}
+                ${wp.deleted ? '<span class="badge deleted">Deleted</span>' : ''}
             </div>
-            <input type="hidden" class="shortcut-name" value="${shortcut.name}">
+            <input type="hidden" class="shortcut-name" value="${wp.name}">
             <h3>${displayName}</h3>
-            ${shortcut.headline ? `<p class="headline">${shortcut.headline}</p>` : ''}
-            ${shortcut.description ? `<p class="description">${shortcut.description}</p>` : ''}
+            ${sb.headline ? `<p class="headline">${sb.headline}</p>` : ''}
+            ${wp.description ? `<p class="description">${wp.description}</p>` : ''}
             ${syncedText}
             <div class="button-container">
                 <button class="edit-button" data-post_id="${post_id}">Edit</button>
-                <button class="version-button" data-id="${shortcut.sb_id}">Versions</button>
+                <button class="version-button" data-id="${sb.sb_id}">Versions</button>
                 <div class="btn-group">
-                    ${shortcut.post_status === 'trash' ? 
-                        `<button class="restore-button" data-post_id="${post_id}" data-sb_id="${shortcut.sb_id}">Restore</button>` :
-                        `<button class="delete-button" data-post_id="${post_id}" data-sb_id="${shortcut.sb_id}">Delete</button>`
+                    ${wp.deleted ? 
+                        `<button class="restore-button" data-post_id="${post_id}" data-sb_id="${sb.sb_id}">Restore</button>` :
+                        `<button class="delete-button" data-post_id="${post_id}" data-sb_id="${sb.sb_id}">Delete</button>`
                     }
-                    <button class="delete-dropdown-toggle" data-post_id="${post_id}" data-sb_id="${shortcut.sb_id}">
+                    <button class="delete-dropdown-toggle" data-post_id="${post_id}" data-sb_id="${sb.sb_id}">
                         <span class="dropdown-caret">▼</span>
                     </button>
                     <div class="delete-dropdown-content">
-                        <button class="delete-permanently" data-post_id="${post_id}" data-sb_id="${shortcut.sb_id}">Delete Permanently</button>
+                        <button class="delete-permanently" data-post_id="${post_id}" data-sb_id="${sb.sb_id}">Delete Permanently</button>
                     </div>
                 </div>
             </div>

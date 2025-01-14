@@ -98,9 +98,6 @@ class Shortcuts_Hub {
         register_setting('shortcuts_hub_options', 'shortcuts_hub_api_key');
         register_setting('shortcuts_hub_options', 'shortcuts_hub_api_secret');
         
-        // Add settings page
-        add_action('admin_menu', array($this, 'add_settings_page'));
-        
         // Localize scripts for admin
         add_action('admin_enqueue_scripts', function($hook) {
             if (strpos($hook, 'shortcuts-hub') !== false) {
@@ -113,6 +110,9 @@ class Shortcuts_Hub {
                 ));
             }
         });
+        
+        // Add settings page
+        $this->register_settings_page();
     }
 
     /**
@@ -129,6 +129,18 @@ class Shortcuts_Hub {
         require_once SHORTCUTS_HUB_PATH . 'includes/settings.php';
         require_once SHORTCUTS_HUB_PATH . 'includes/enqueue-assets.php';
         
+        // Load Elementor integration
+        require_once SHORTCUTS_HUB_PATH . 'includes/elementor/classes/class-elementor-manager.php';
+        
+        // Initialize Elementor manager if Elementor is active, but wait until wp_loaded
+        if (did_action('elementor/loaded')) {
+            add_action('wp_loaded', function() {
+                if (!defined('DOING_AJAX') || !DOING_AJAX) {
+                    \ShortcutsHub\Elementor\Elementor_Manager::get_instance();
+                }
+            });
+        }
+        
         // AJAX handlers
         require_once SHORTCUTS_HUB_PATH . 'includes/ajax/shortcuts-ajax.php';
         require_once SHORTCUTS_HUB_PATH . 'includes/ajax/versions-ajax.php';
@@ -137,8 +149,6 @@ class Shortcuts_Hub {
         require_once SHORTCUTS_HUB_PATH . 'includes/pages/shortcuts-list-page.php';
         require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-shortcut-page.php';
         require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-shortcut-page.php';
-        require_once SHORTCUTS_HUB_PATH . 'includes/pages/add-version-page.php';
-        require_once SHORTCUTS_HUB_PATH . 'includes/pages/edit-version-page.php';
         require_once SHORTCUTS_HUB_PATH . 'includes/pages/settings.php';
     }
 
@@ -224,32 +234,29 @@ class Shortcuts_Hub {
      * Register menu - public because it's hooked
      */
     public function register_shortcuts_menu() {
-        remove_menu_page('shortcuts-hub');
-
+        // Main menu that links to shortcuts-list
         add_menu_page(
             'Shortcuts Hub',
             'Shortcuts Hub',
             'manage_options',
-            'shortcuts-hub', 
+            'shortcuts-list', 
             'shortcuts_hub_render_shortcuts_list_page',
             'dashicons-list-view',
             6
         );
 
-        // Main shortcuts list page that also handles versions view
+        // Add Shortcuts List as first submenu to match main menu
         add_submenu_page(
-            'shortcuts-hub',
+            'shortcuts-list',
             'Shortcuts List',
             'Shortcuts List',
             'manage_options',
             'shortcuts-list',
-            function() {
-                shortcuts_hub_render_shortcuts_list_page();
-            }
+            'shortcuts_hub_render_shortcuts_list_page'
         );
 
         add_submenu_page(
-            'shortcuts-hub',
+            'shortcuts-list',
             'Add Shortcut',
             'Add Shortcut',
             'manage_options',
@@ -258,34 +265,33 @@ class Shortcuts_Hub {
         );
 
         add_submenu_page(
-            'shortcuts-hub',
+            'shortcuts-list',
             'Edit Shortcut',
             'Edit Shortcut',
             'manage_options',
             'edit-shortcut',
             'shortcuts_hub_render_edit_shortcut_page'
         );
+    }
 
-        add_submenu_page(
-            'shortcuts-hub',
-            'Add Version',
-            'Add Version',
+    /**
+     * Register settings page
+     */
+    private function register_settings_page() {
+        add_options_page(
+            'Shortcuts Hub Settings',
+            'Shortcuts Hub',
             'manage_options',
-            'add-version',
-            'shortcuts_hub_render_add_version_page'
+            'shortcuts_hub_settings',
+            'shortcuts_hub_settings_page'
         );
+    }
 
-        add_submenu_page(
-            'shortcuts-hub',
-            'Edit Version',
-            'Edit Version',
-            'manage_options',
-            'edit-version',
-            'shortcuts_hub_render_edit_version_page'
-        );
-
-        global $submenu;
-        unset($submenu['shortcuts-hub'][0]);
+    /**
+     * Add settings page under Settings menu
+     */
+    public function add_settings_page() {
+        // Removed
     }
 
     /**
@@ -306,8 +312,6 @@ class Shortcuts_Hub {
                     $classes .= ' shortcuts-hub-edit-shortcut';
                 } elseif (strpos($page_slug, 'add-version') !== false) {
                     $classes .= ' shortcuts-hub-add-version';
-                } elseif (strpos($page_slug, 'edit-version') !== false) {
-                    $classes .= ' shortcuts-hub-edit-version';
                 }
             }
         }
@@ -406,8 +410,13 @@ class Shortcuts_Hub {
      * Register core WordPress hooks
      */
     private function register_core_hooks() {
-        add_action('init', [$this, 'init_core'], 0);
-        add_action('admin_init', [$this, 'init_admin'], 0);
-        add_filter('admin_body_class', [$this, 'admin_body_class']);
+        // Core initialization
+        add_action('init', [$this, 'init_core']);
+
+        // Admin-specific initialization
+        if (is_admin()) {
+            add_action('init', [$this, 'init_admin']);
+            add_filter('admin_body_class', [$this, 'admin_body_class']);
+        }
     }
 }

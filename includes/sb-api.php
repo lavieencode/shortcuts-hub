@@ -12,6 +12,8 @@ require_once dirname(__FILE__) . '/settings.php';
 require_once dirname(__FILE__) . '/auth.php';
 
 function sb_api_call($endpoint, $method = 'GET', $query_params = [], $body_data = null) {
+    static $curl_handle = null;
+
     $settings = get_shortcuts_hub_settings();
     $api_url = rtrim($settings['sb_url'], '/') . '/' . ltrim($endpoint, '/');
     
@@ -34,21 +36,38 @@ function sb_api_call($endpoint, $method = 'GET', $query_params = [], $body_data 
     ]);
 
     // Function to make the actual API request
-    $make_request = function($token) use ($api_url, $method, $body_data) {
+    $make_request = function($token) use ($api_url, $method, $body_data, &$curl_handle) {
         $args = array(
             'method' => $method,
             'headers' => array(
                 'Authorization' => 'Bearer ' . $token,
-                'Content-Type' => 'application/json'
+                'Content-Type' => 'application/json',
+                'Connection' => 'keep-alive'
             ),
-            'timeout' => 45
+            'timeout' => 45,
+            'httpversion' => '1.1'
         );
 
         if ($body_data !== null) {
             $args['body'] = json_encode($body_data);
         }
 
-        return wp_remote_request($api_url, $args);
+        // Use the same cURL handle for all requests
+        add_action('http_api_curl', function($handle) use (&$curl_handle) {
+            if ($curl_handle === null) {
+                $curl_handle = $handle;
+            } else {
+                curl_copy_handle($curl_handle);
+            }
+            curl_setopt($handle, CURLOPT_FORBID_REUSE, false);
+            curl_setopt($handle, CURLOPT_FRESH_CONNECT, false);
+            curl_setopt($handle, CURLOPT_TCP_KEEPALIVE, 1);
+        });
+
+        $response = wp_remote_request($api_url, $args);
+
+        // Don't remove the action - we want to keep using the same handle
+        return $response;
     };
 
     // Get initial token

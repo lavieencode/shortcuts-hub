@@ -99,6 +99,10 @@ function sh_error_log($message, $file = '', $line = '') {
 }
 
 function should_enable_debug() {
+    // Temporarily enable debug for all contexts
+    return true;
+
+    /*
     // Always enable for plugin initialization
     if (did_action('plugins_loaded') <= 1) {
         return true;
@@ -123,6 +127,12 @@ function should_enable_debug() {
         if (isset($_GET['page']) && strpos($_GET['page'], 'shortcuts-hub') === 0) {
             return true;
         }
+        
+        // Enable in Elementor editor
+        if (isset($_GET['action']) && $_GET['action'] === 'elementor' || 
+            isset($_POST['action']) && $_POST['action'] === 'elementor_ajax') {
+            return true;
+        }
     }
     
     // Enable on single shortcut pages and shortcut archive
@@ -131,6 +141,7 @@ function should_enable_debug() {
     }
     
     return false;
+    */
 }
 
 // Enqueue debug script

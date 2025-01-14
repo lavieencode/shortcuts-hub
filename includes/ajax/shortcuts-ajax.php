@@ -182,17 +182,23 @@ function fetch_shortcuts() {
         $sb_id = get_post_meta($shortcut->ID, 'sb_id', true);
         
         $shortcut_data = array(
-            'post_id' => $shortcut->ID,
-            'name' => $shortcut->post_title,
-            'headline' => get_post_meta($shortcut->ID, '_shortcut_headline', true),
-            'description' => $shortcut->post_content,
-            'color' => get_post_meta($shortcut->ID, '_shortcut_color', true),
-            'icon' => get_post_meta($shortcut->ID, '_shortcut_icon', true),
-            'input' => get_post_meta($shortcut->ID, '_shortcut_input', true),
-            'result' => get_post_meta($shortcut->ID, '_shortcut_result', true),
-            'sb_id' => $sb_id,
-            'post_date' => $shortcut->post_date,
-            'post_status' => $shortcut->post_status
+            'ID' => $shortcut->ID,
+            'wordpress' => array(
+                'name' => $shortcut->post_title,
+                'description' => $shortcut->post_content,
+                'color' => get_post_meta($shortcut->ID, '_shortcut_color', true),
+                'icon' => get_post_meta($shortcut->ID, '_shortcut_icon', true),
+                'input' => get_post_meta($shortcut->ID, '_shortcut_input', true),
+                'result' => get_post_meta($shortcut->ID, '_shortcut_result', true),
+                'actions' => get_post_meta($shortcut->ID, '_shortcut_actions', true),
+                'state' => $shortcut->post_status === 'publish' ? 'publish' : 'draft',
+                'deleted' => $shortcut->post_status === 'trash'
+            ),
+            'switchblade' => array(
+                'headline' => get_post_meta($shortcut->ID, '_shortcut_headline', true),
+                'website' => get_permalink($shortcut),
+                'sb_id' => $sb_id
+            )
         );
 
         $data[] = $shortcut_data;
@@ -237,21 +243,25 @@ function fetch_shortcut() {
         // Get current permalink
         $permalink = get_permalink($shortcut);
 
-        // Get all metadata in a flat structure
+        // Get all metadata in a structured format
         $data = array(
-            'post_id' => $shortcut->ID,
-            'name' => $shortcut->post_title,
-            'description' => $shortcut->post_content,
-            'headline' => get_post_meta($post_id, '_shortcut_headline', true),
-            'website' => $permalink,
-            'sb_id' => get_post_meta($post_id, 'sb_id', true),
-            'color' => get_post_meta($post_id, '_shortcut_color', true),
-            'icon' => get_post_meta($post_id, '_shortcut_icon', true),
-            'input' => get_post_meta($post_id, '_shortcut_input', true),
-            'result' => get_post_meta($post_id, '_shortcut_result', true),
-            'actions' => get_post_meta($post_id, '_shortcut_actions', true),
-            'state' => $shortcut->post_status === 'publish' ? 'publish' : 'draft',
-            'deleted' => $shortcut->post_status === 'trash'
+            'ID' => $shortcut->ID,
+            'wordpress' => array(
+                'name' => $shortcut->post_title,
+                'description' => $shortcut->post_content,
+                'color' => get_post_meta($post_id, '_shortcut_color', true),
+                'icon' => get_post_meta($post_id, '_shortcut_icon', true),
+                'input' => get_post_meta($post_id, '_shortcut_input', true),
+                'result' => get_post_meta($post_id, '_shortcut_result', true),
+                'actions' => get_post_meta($post_id, '_shortcut_actions', true),
+                'state' => $shortcut->post_status === 'publish' ? 'publish' : 'draft',
+                'deleted' => $shortcut->post_status === 'trash'
+            ),
+            'switchblade' => array(
+                'headline' => get_post_meta($post_id, '_shortcut_headline', true),
+                'website' => $permalink,
+                'sb_id' => get_post_meta($post_id, 'sb_id', true)
+            )
         );
 
         // DEBUG: Log WordPress request and response for fetching shortcut
@@ -791,6 +801,8 @@ function delete_shortcut() {
     check_ajax_referer('shortcuts_hub_nonce', 'security');
     
     $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
+    $permanent = isset($_POST['permanent']) ? filter_var($_POST['permanent'], FILTER_VALIDATE_BOOLEAN) : false;
+    $restore = isset($_POST['restore']) ? filter_var($_POST['restore'], FILTER_VALIDATE_BOOLEAN) : false;
     
     if (!$post_id) {
         wp_send_json_error(['message' => 'No shortcut ID provided']);
@@ -803,21 +815,46 @@ function delete_shortcut() {
         return;
     }
 
-    // Get the Switchblade ID before deleting
+    // Get the Switchblade ID
     $sb_id = get_post_meta($post_id, 'sb_id', true);
+    $sb_response = null;
 
-    // Delete from WordPress
-    $result = wp_delete_post($post_id, true);
-    if (!$result) {
-        wp_send_json_error(['message' => 'Failed to delete shortcut from WordPress']);
-        return;
-    }
+    if ($permanent) {
+        // If there's a Switchblade ID, delete from Switchblade first
+        if ($sb_id) {
+            $sb_response = sb_api_call('shortcuts/' . $sb_id, 'DELETE');
+            if (is_wp_error($sb_response)) {
+                wp_send_json_error(['message' => 'Failed to delete shortcut from Switchblade: ' . $sb_response->get_error_message()]);
+                return;
+            }
+        }
 
-    // If there's a Switchblade ID, delete from Switchblade too
-    if ($sb_id) {
-        $sb_response = sb_api_call('shortcuts/' . $sb_id, 'DELETE');
-        if (is_wp_error($sb_response)) {
-            // Log the error but don't fail - the WordPress delete was successful
+        // Then delete from WordPress
+        $result = wp_delete_post($post_id, true);
+        if (!$result) {
+            // If WordPress delete fails but Switchblade succeeded, we have inconsistent state
+            wp_send_json_error(['message' => 'Failed to delete shortcut from WordPress']);
+            return;
+        }
+    } else {
+        // Status-level deletion/restoration
+        if ($restore) {
+            $result = wp_untrash_post($post_id);
+            if ($sb_id) {
+                // Update Switchblade deleted status to false
+                $sb_response = sb_api_call('shortcuts/' . $sb_id, 'PATCH', [], ['deleted' => false]);
+            }
+        } else {
+            $result = wp_trash_post($post_id);
+            if ($sb_id) {
+                // Update Switchblade deleted status to true
+                $sb_response = sb_api_call('shortcuts/' . $sb_id, 'PATCH', [], ['deleted' => true]);
+            }
+        }
+
+        if (!$result) {
+            wp_send_json_error(['message' => $restore ? 'Failed to restore shortcut' : 'Failed to move shortcut to trash']);
+            return;
         }
     }
 
@@ -825,7 +862,9 @@ function delete_shortcut() {
     sh_debug_log('Delete Shortcut - WordPress and Switchblade', [
         'request' => [
             'post_id' => $post_id,
-            'sb_id' => $sb_id
+            'sb_id' => $sb_id,
+            'permanent' => $permanent,
+            'restore' => $restore
         ],
         'response' => [
             'wordpress' => [
@@ -849,8 +888,8 @@ function delete_shortcut() {
     ]);
 
     wp_send_json_success([
-        'message' => 'Shortcut deleted successfully',
-        'redirect' => admin_url('admin.php?page=shortcuts')
+        'message' => $permanent ? 'Shortcut permanently deleted' : ($restore ? 'Shortcut restored' : 'Shortcut moved to trash'),
+        'redirect' => $permanent ? admin_url('admin.php?page=shortcuts') : null
     ]);
 }
 

@@ -124,3 +124,5 @@ wp_send_json_success(array(
     'content' => wp_kses_post($content)
 ));
 Following these guidelines ensures consistent data access, prevents undefined errors, maintains security, and simplifies debugging across the entire Shortcuts Hub plugin.
+
+6. You are an experienced WordPress developer with extensive knowledge of AJAX and localization. You have a solid understanding of WordPress core features and best practices. You have a deep understanding of how to structure and implement AJAX and localization in WordPress plugins, and can explain these concepts clearly. You write DRY and maintainable code based on proven design patterns and best practices, and always work new code suggestions into the existing codebase.

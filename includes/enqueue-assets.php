@@ -5,16 +5,28 @@ if (!defined('ABSPATH')) {
 }
 
 function shortcuts_hub_enqueue_assets($hook) {
+    // Get the current screen to determine which page we're on
+    $screen = get_current_screen();
+    $allowed_screens = array(
+        'toplevel_page_shortcuts-list',
+        'shortcuts-hub_page_add-shortcut',
+        'shortcuts-hub_page_edit-shortcut',
+        'shortcuts-hub_page_add-version',
+        'shortcuts-hub_page_settings'
+    );
+
+    if (!in_array($screen->id, $allowed_screens)) {
+        return;
+    }
+
     wp_enqueue_script('jquery');
 
     // Check if we're in the admin area
     $is_admin_page = in_array($hook, [
-        'shortcuts-hub_page_shortcuts-list',
+        'toplevel_page_shortcuts-list',
         'shortcuts-hub_page_add-shortcut',
         'shortcuts-hub_page_edit-shortcut',
-        'shortcuts-hub_page_shortcuts-settings',
-        'shortcuts-hub_page_add-version',
-        'shortcuts-hub_page_edit-version'
+        'shortcuts-hub_page_settings'
     ]);
 
     // Continue with existing admin page-specific enqueues
@@ -48,7 +60,7 @@ function shortcuts_hub_enqueue_assets($hook) {
     }
 
     switch ($hook) {
-        case 'shortcuts-hub_page_shortcuts-list':
+        case 'toplevel_page_shortcuts-list':
             wp_enqueue_style('shortcuts-display-style', plugins_url('../assets/css/shortcuts/shortcuts-display.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/shortcuts/shortcuts-display.css'));
             wp_enqueue_style('shortcut-modal-style', plugins_url('../assets/css/shortcuts/shortcut-modal.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/shortcuts/shortcut-modal.css'));
             wp_enqueue_style('shortcut-single-style', plugins_url('../assets/css/shortcuts/shortcut-single.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/shortcuts/shortcut-single.css'));
@@ -241,11 +253,12 @@ function shortcuts_hub_enqueue_assets($hook) {
                 'site_url' => get_site_url(),
                 'sb_api_url' => $settings['sb_url'],
                 'uploads_url' => $upload_dir['baseurl'],
-                'uploads_dir' => $upload_dir['basedir']
+                'uploads_dir' => $upload_dir['basedir'],
+                'security' => wp_create_nonce('shortcuts_hub_nonce')
             )));
             break;
 
-        case 'shortcuts-hub_page_shortcuts-settings':
+        case 'shortcuts-hub_page_settings':
             wp_enqueue_style('settings-style', plugins_url('../assets/css/settings.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/settings.css'));
             break;
 
@@ -261,13 +274,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             break;
 
         case 'shortcuts-hub_page_edit-version':
-            wp_enqueue_style('edit-version-style', plugins_url('../assets/css/pages/edit-version.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . '../assets/css/pages/edit-version.css'));
-            wp_enqueue_script('edit-version-script', plugins_url('../assets/js/pages/edit-version.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/pages/edit-version.js'), true);
-            wp_enqueue_script('versions-fetch-script', plugins_url('../assets/js/versions/versions-fetch.js', __FILE__), array('jquery', 'edit-version-script'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/versions/versions-fetch.js'), true);
-            wp_localize_script('versions-fetch-script', 'shortcutsHubData', $shortcuts_hub_data);
-            wp_enqueue_script('version-update-script', plugins_url('../assets/js/versions/version-update.js', __FILE__), array('jquery'), filemtime(plugin_dir_path(__FILE__) . '../assets/js/versions/version-update.js'), true);
-
-            wp_localize_script('edit-version-script', 'shortcutsHubData', $shortcuts_hub_data);
+            // Removed edit-version from allowed screens
             break;
     }
 

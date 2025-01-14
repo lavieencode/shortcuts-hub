@@ -16,227 +16,221 @@ if (!did_action('elementor/loaded')) {
     return;
 }
 
-class Name_Dynamic_Tag extends Tag {
-    public function get_name() {
-        return 'name';  
-    }
-
-    public function get_title() {
-        return __('Name', 'shortcuts-hub');  
-    }
-
+abstract class Shortcut_Dynamic_Tag extends Tag {
     public function get_group() {
         return 'shortcut_fields';
     }
 
-    public function get_categories() {
-        return [Module::TEXT_CATEGORY];
+    protected function register_controls() {
+        $this->add_control(
+            'shortcut_id',
+            [
+                'label' => __('Shortcut', 'shortcuts-hub'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => get_the_ID()
+            ]
+        );
+    }
+
+    protected function get_shortcut_id() {
+        $settings = $this->get_settings();
+        if (empty($settings['shortcut_id'])) {
+            if (wp_doing_ajax() && isset($_REQUEST['editor_post_id'])) {
+                return absint($_REQUEST['editor_post_id']);
+            }
+            return get_the_ID();
+        }
+        return $settings['shortcut_id'];
+    }
+
+    abstract protected function get_tag_value();
+
+    public function get_value(array $options = []) {
+        return ['value' => $this->get_tag_value()];
     }
 
     public function render() {
-        $post_id = get_the_ID();
-        echo esc_html(get_post_meta($post_id, 'name', true) ?: get_the_title($post_id));
+        $value = $this->get_tag_value();
+        echo wp_kses_post($value);
     }
 }
 
-class Headline_Dynamic_Tag extends Tag {
+class Name_Dynamic_Tag extends Shortcut_Dynamic_Tag {
     public function get_name() {
-        return 'headline';  
+        return 'name';
     }
 
     public function get_title() {
-        return __('Headline', 'shortcuts-hub');
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
+        return esc_html__('Name', 'shortcuts-hub');
     }
 
     public function get_categories() {
-        return [Module::TEXT_CATEGORY];
+        return ['text'];
     }
 
-    public function render() {
-        echo esc_html(get_post_meta(get_the_ID(), 'headline', true));
+    protected function get_tag_value() {
+        $post_id = $this->get_shortcut_id();
+        return get_the_title($post_id);
     }
 }
 
-class Description_Dynamic_Tag extends Tag {
+class Headline_Dynamic_Tag extends Shortcut_Dynamic_Tag {
     public function get_name() {
-        return 'description';  
+        return 'headline';
     }
 
     public function get_title() {
-        return __('Description', 'shortcuts-hub');
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
+        return esc_html__('Headline', 'shortcuts-hub');
     }
 
     public function get_categories() {
-        return [Module::TEXT_CATEGORY];
+        return ['text'];
     }
 
-    public function render() {
-        echo esc_html(get_post_meta(get_the_ID(), 'description', true));
+    protected function get_tag_value() {
+        $post_id = $this->get_shortcut_id();
+        return get_post_meta($post_id, '_shortcut_headline', true);
     }
 }
 
-class Color_Dynamic_Tag extends Tag {
+class Description_Dynamic_Tag extends Shortcut_Dynamic_Tag {
     public function get_name() {
-        return 'color';  
+        return 'description';
     }
 
     public function get_title() {
-        return __('Color', 'shortcuts-hub');
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
+        return esc_html__('Description', 'shortcuts-hub');
     }
 
     public function get_categories() {
-        return [Module::COLOR_CATEGORY];
+        return ['text'];
     }
 
-    public function render() {
-        $color = get_post_meta(get_the_ID(), 'color', true);
-        echo !empty($color) ? esc_html($color) : '';
+    protected function get_tag_value() {
+        $post_id = $this->get_shortcut_id();
+        return get_post_meta($post_id, '_shortcut_description', true);
     }
 }
 
-class Input_Dynamic_Tag extends Tag {
+class Color_Dynamic_Tag extends Shortcut_Dynamic_Tag {
     public function get_name() {
-        return 'input';  
+        return 'color';
     }
 
     public function get_title() {
-        return __('Input', 'shortcuts-hub');
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
+        return esc_html__('Color', 'shortcuts-hub');
     }
 
     public function get_categories() {
-        return [Module::TEXT_CATEGORY];
+        return ['color'];
     }
 
-    public function render() {
-        echo esc_html(get_post_meta(get_the_ID(), 'input', true));
+    protected function get_tag_value() {
+        $post_id = $this->get_shortcut_id();
+        return get_post_meta($post_id, '_shortcut_color', true);
     }
 }
 
-class Result_Dynamic_Tag extends Tag {
+class Input_Dynamic_Tag extends Shortcut_Dynamic_Tag {
     public function get_name() {
-        return 'result';  
+        return 'input';
     }
 
     public function get_title() {
-        return __('Result', 'shortcuts-hub');
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
+        return esc_html__('Input', 'shortcuts-hub');
     }
 
     public function get_categories() {
-        return [Module::TEXT_CATEGORY];
+        return ['text'];
     }
 
-    public function render() {
-        echo esc_html(get_post_meta(get_the_ID(), 'result', true));
+    protected function get_tag_value() {
+        $post_id = $this->get_shortcut_id();
+        return get_post_meta($post_id, '_shortcut_input', true);
     }
 }
 
-class Latest_Version_Dynamic_Tag extends Tag {
+class Result_Dynamic_Tag extends Shortcut_Dynamic_Tag {
     public function get_name() {
-        return 'latest_version';  
+        return 'result';
     }
 
     public function get_title() {
-        return __('Latest Version', 'shortcuts-hub');
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
+        return esc_html__('Result', 'shortcuts-hub');
     }
 
     public function get_categories() {
-        return [Module::TEXT_CATEGORY];
+        return ['text'];
     }
 
-    public function render() {
-        echo esc_html(get_post_meta(get_the_ID(), 'latest_version', true));
+    protected function get_tag_value() {
+        $post_id = $this->get_shortcut_id();
+        return get_post_meta($post_id, '_shortcut_result', true);
     }
 }
 
-class Latest_Version_URL_Dynamic_Tag extends Tag {
+class Latest_Version_Dynamic_Tag extends Shortcut_Dynamic_Tag {
+    public function get_name() {
+        return 'latest_version';
+    }
+
+    public function get_title() {
+        return esc_html__('Latest Version', 'shortcuts-hub');
+    }
+
+    public function get_categories() {
+        return ['text'];
+    }
+
+    protected function get_tag_value() {
+        $post_id = $this->get_shortcut_id();
+        return get_post_meta($post_id, '_shortcut_latest_version', true);
+    }
+}
+
+class Latest_Version_URL_Dynamic_Tag extends Shortcut_Dynamic_Tag {
     public function get_name() {
         return 'latest_version_url';
     }
 
     public function get_title() {
-        return __('Latest Version URL', 'shortcuts-hub');
-    }
-
-    public function get_group() {
-        return 'shortcut_fields';
+        return esc_html__('Latest Version URL', 'shortcuts-hub');
     }
 
     public function get_categories() {
-        return [Module::URL_CATEGORY];
+        return ['url'];
     }
 
-    public function render() {
-        $post_id = get_the_ID();
-        if (!$post_id) {
-            sh_debug_log('Dynamic Tag: No post ID found');
+    protected function get_tag_value() {
+        try {
+            $post_id = $this->get_shortcut_id();
+            if (!$post_id) {
+                return '';
+            }
+
+            // Get the shortcut ID from post meta
+            $shortcut_id = get_post_meta($post_id, '_shortcut_id', true);
+            if (!$shortcut_id) {
+                return '';
+            }
+
+            // Make API request to get latest version
+            $response = wp_remote_get(SHORTCUTS_HUB_API_URL . '/shortcuts/' . $shortcut_id . '/latest-version');
+            if (is_wp_error($response)) {
+                return '';
+            }
+
+            $body = wp_remote_retrieve_body($response);
+            $data = json_decode($body, true);
+
+            // Check if we have a successful response with version URL
+            if (!$data || !$data['success'] || !isset($data['data']['version']['url'])) {
+                return '';
+            }
+
+            return $data['data']['version']['url'];
+        } catch (\Exception $e) {
             return '';
         }
-
-        // Get the shortcut ID from post meta
-        $shortcut_id = get_post_meta($post_id, '_shortcut_id', true);
-        if (!$shortcut_id) {
-            sh_debug_log('Dynamic Tag: No shortcut ID found for post ' . $post_id);
-            return '';
-        }
-
-        sh_debug_log('Dynamic Tag: Fetching latest version for shortcut ' . $shortcut_id);
-
-        // Make AJAX call to fetch latest version
-        $response = wp_remote_post(admin_url('admin-ajax.php'), [
-            'body' => [
-                'action' => 'fetch_latest_version',
-                'security' => wp_create_nonce('shortcuts_hub_nonce'),
-                'id' => $shortcut_id
-            ]
-        ]);
-
-        if (is_wp_error($response)) {
-            sh_debug_log('Dynamic Tag: Error fetching version', [
-                'error' => $response->get_error_message()
-            ]);
-            return '';
-        }
-
-        $body = wp_remote_retrieve_body($response);
-        $data = json_decode($body, true);
-
-        sh_debug_log('Dynamic Tag: API Response', $data);
-
-        // Check if we have a successful response with version URL
-        if (!$data || !$data['success'] || !isset($data['data']['version']['url'])) {
-            sh_debug_log('Dynamic Tag: Invalid response structure');
-            return '';
-        }
-
-        $url = $data['data']['version']['url'];
-        sh_debug_log('Dynamic Tag: Successfully retrieved URL', [
-            'url' => $url
-        ]);
-        
-        echo esc_url($url);
     }
 }

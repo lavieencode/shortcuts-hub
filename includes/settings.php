@@ -8,34 +8,20 @@ require_once plugin_dir_path(__FILE__) . '../sh-debug.php';
 
 // Get settings from WordPress options
 function get_shortcuts_hub_settings() {
-    static $settings = null;
+    static $cached_settings = null;
     
-    // Return cached settings if already loaded
-    if ($settings !== null) {
-        // Only log if session has started
-        if (get_transient('sh_debug_session_started')) {
-            sh_debug_log('Returning cached settings', $settings);
-        }
-        return $settings;
-    }
-    
-    // Get settings from options
-    $settings = get_option('shortcuts_hub_settings');
-    
-    // If settings don't exist, set up defaults
-    if (false === $settings) {
-        $settings = array(
-            'sb_url' => 'https://debotchery-switchblade-bc6fa1ee4e01.herokuapp.com',
-            'sb_username' => 'nicole',
-            'sb_password' => 'QCW*nN@q8RfN&bFI2^qKuYZpG'
-        );
-        sh_debug_log('Using default settings', $settings);
-        // Save the default settings
-        update_option('shortcuts_hub_settings', $settings);
-        sh_debug_log('Saved default settings to database');
+    if ($cached_settings !== null) {
+        return $cached_settings;
     }
 
-    return $settings;
+    $settings = get_option('shortcuts_hub_settings', array());
+    $cached_settings = wp_parse_args($settings, array(
+        'sb_url' => '',
+        'sb_username' => '',
+        'sb_password' => ''
+    ));
+    
+    return $cached_settings;
 }
 
 // Register settings
