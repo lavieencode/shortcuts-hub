@@ -81,7 +81,7 @@ function should_enable_debug() {
         $action = sanitize_text_field($_REQUEST['action']);
         if (
             strpos($action, 'sh_') === 0 || 
-            strpos($action, 'shortcuts_') === 0 ||
+            strpos($action, 'shortcut_') === 0 ||
             strpos($action, 'elementor') === 0
         ) {
             $is_checking = false;

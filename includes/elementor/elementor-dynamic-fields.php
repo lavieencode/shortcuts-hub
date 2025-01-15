@@ -41,6 +41,21 @@ class Name_Dynamic_Tag extends Tag {
         // Get the current post
         $post_id = get_the_ID();
         
+        // DEBUG: Log post type check
+        sh_debug_log('Post Type Check', array(
+            'message' => 'Checking if post is a shortcut',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'post_id' => $post_id,
+                'post_type' => get_post_type($post_id)
+            ),
+            'debug' => true
+        ));
+
         // Only proceed if this is a shortcut post type
         if (!$post || get_post_type($post_id) !== 'shortcut') {
             sh_debug_log('Not a shortcut post type', array(
@@ -88,6 +103,21 @@ class Headline_Dynamic_Tag extends Tag {
         // Get the current post
         $post_id = get_the_ID();
         
+        // DEBUG: Log post type check
+        sh_debug_log('Post Type Check', array(
+            'message' => 'Checking if post is a shortcut',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'post_id' => $post_id,
+                'post_type' => get_post_type($post_id)
+            ),
+            'debug' => true
+        ));
+
         // Only proceed if this is a shortcut post type
         if (!$post || get_post_type($post_id) !== 'shortcut') {
             sh_debug_log('Not a shortcut post type', array(
@@ -135,6 +165,21 @@ class Description_Dynamic_Tag extends Tag {
         // Get the current post
         $post_id = get_the_ID();
         
+        // DEBUG: Log post type check
+        sh_debug_log('Post Type Check', array(
+            'message' => 'Checking if post is a shortcut',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'post_id' => $post_id,
+                'post_type' => get_post_type($post_id)
+            ),
+            'debug' => true
+        ));
+
         // Only proceed if this is a shortcut post type
         if (!$post || get_post_type($post_id) !== 'shortcut') {
             sh_debug_log('Not a shortcut post type', array(
@@ -182,6 +227,21 @@ class Color_Dynamic_Tag extends Tag {
         // Get the current post
         $post_id = get_the_ID();
         
+        // DEBUG: Log post type check
+        sh_debug_log('Post Type Check', array(
+            'message' => 'Checking if post is a shortcut',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'post_id' => $post_id,
+                'post_type' => get_post_type($post_id)
+            ),
+            'debug' => true
+        ));
+
         // Only proceed if this is a shortcut post type
         if (!$post || get_post_type($post_id) !== 'shortcut') {
             sh_debug_log('Not a shortcut post type', array(
@@ -229,6 +289,21 @@ class Input_Dynamic_Tag extends Tag {
         // Get the current post
         $post_id = get_the_ID();
         
+        // DEBUG: Log post type check
+        sh_debug_log('Post Type Check', array(
+            'message' => 'Checking if post is a shortcut',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'post_id' => $post_id,
+                'post_type' => get_post_type($post_id)
+            ),
+            'debug' => true
+        ));
+
         // Only proceed if this is a shortcut post type
         if (!$post || get_post_type($post_id) !== 'shortcut') {
             sh_debug_log('Not a shortcut post type', array(
@@ -276,6 +351,21 @@ class Result_Dynamic_Tag extends Tag {
         // Get the current post
         $post_id = get_the_ID();
         
+        // DEBUG: Log post type check
+        sh_debug_log('Post Type Check', array(
+            'message' => 'Checking if post is a shortcut',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'post_id' => $post_id,
+                'post_type' => get_post_type($post_id)
+            ),
+            'debug' => true
+        ));
+
         // Only proceed if this is a shortcut post type
         if (!$post || get_post_type($post_id) !== 'shortcut') {
             sh_debug_log('Not a shortcut post type', array(
@@ -323,6 +413,21 @@ class Latest_Version_Dynamic_Tag extends Tag {
         // Get the current post
         $post_id = get_the_ID();
         
+        // DEBUG: Log post type check
+        sh_debug_log('Post Type Check', array(
+            'message' => 'Checking if post is a shortcut',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'post_id' => $post_id,
+                'post_type' => get_post_type($post_id)
+            ),
+            'debug' => true
+        ));
+
         // Only proceed if this is a shortcut post type
         if (!$post || get_post_type($post_id) !== 'shortcut') {
             sh_debug_log('Not a shortcut post type', array(
@@ -370,6 +475,21 @@ class Latest_Version_URL_Dynamic_Tag extends Tag {
         // Get the current post
         $post_id = get_the_ID();
         
+        // DEBUG: Log post type check
+        sh_debug_log('Post Type Check', array(
+            'message' => 'Checking if post is a shortcut',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'post_id' => $post_id,
+                'post_type' => get_post_type($post_id)
+            ),
+            'debug' => true
+        ));
+
         // Only proceed if this is a shortcut post type
         if (!$post || get_post_type($post_id) !== 'shortcut') {
             sh_debug_log('Not a shortcut post type', array(

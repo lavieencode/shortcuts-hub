@@ -76,9 +76,9 @@ class Elementor_Manager {
                 // Map widget file names to their class names
                 $class_map = array(
                     'icon-widget' => 'Shortcuts_Icon_Widget',
-                    'download-button-widget' => 'download_button_widget',
-                    'download-log-widget' => 'download_log_widget',
-                    'my-account-widget' => 'my_account_widget'
+                    'download-button-widget' => 'Download_Button_Widget',
+                    'download-log-widget' => 'Download_Log_Widget',
+                    'my-account-widget' => 'My_Account_Widget'
                 );
                 
                 $widget_class .= isset($class_map[$base_name]) ? $class_map[$base_name] : str_replace('-', '_', $base_name);

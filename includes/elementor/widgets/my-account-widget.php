@@ -16,39 +16,10 @@ class My_Account_Widget extends Elementor_My_Account {
     }
 
     public function __construct($data = [], $args = null) {
-        // DEBUG: Log widget construction
-        sh_debug_log('My Account Widget Construction', array(
-            'message' => 'Constructing My Account Widget instance',
-            'source' => array(
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ),
-            'data' => array(
-                'data' => $data,
-                'args' => $args
-            ),
-            'debug' => true
-        ));
-        
         parent::__construct($data, $args);
     }
 
     public function get_categories() {
-        // DEBUG: Log category assignment
-        sh_debug_log('My Account Widget Categories', array(
-            'message' => 'Getting widget categories',
-            'source' => array(
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ),
-            'data' => array(
-                'categories' => ['shortcuts-hub']
-            ),
-            'debug' => true
-        ));
-        
         return ['shortcuts-hub'];
     }
 
@@ -63,20 +34,6 @@ class My_Account_Widget extends Elementor_My_Account {
     }
 
     protected function render() {
-        // DEBUG: Log render start
-        sh_debug_log('My Account Widget Render', array(
-            'message' => 'Starting widget render process',
-            'source' => array(
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ),
-            'data' => array(
-                'is_editor' => Plugin::$instance->editor->is_edit_mode()
-            ),
-            'debug' => true
-        ));
-
         $this->add_render_hooks();
         
         // Display our Widget
@@ -85,20 +42,6 @@ class My_Account_Widget extends Elementor_My_Account {
         } else {
             $this->render_html_editor();
         }
-
-        // DEBUG: Log render completion
-        sh_debug_log('My Account Widget Render Complete', array(
-            'message' => 'Completed widget render process',
-            'source' => array(
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ),
-            'data' => array(
-                'is_editor' => Plugin::$instance->editor->is_edit_mode()
-            ),
-            'debug' => true
-        ));
 
         // Remove filters and actions after rendering
         $this->remove_render_hooks();
@@ -145,18 +88,6 @@ class My_Account_Widget extends Elementor_My_Account {
     }
 
     protected function render_html_front_end() {
-        // DEBUG: Log frontend render
-        sh_debug_log('My Account Widget Frontend Render', array(
-            'message' => 'Rendering widget frontend HTML',
-            'source' => array(
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ),
-            'data' => array(),
-            'debug' => true
-        ));
-        
         $current_endpoint = $this->get_current_endpoint();
         $custom_dashboard_class = '';
         if ('dashboard' === $current_endpoint && $this->has_custom_template() && is_user_logged_in()) {

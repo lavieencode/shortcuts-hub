@@ -76,7 +76,7 @@ class Shortcuts_Hub {
             $this->init_ajax_handlers();
             
         } catch (Exception $e) {
-            // Log initialization errors using our debug logger
+            // DEBUG: Logging initialization error with detailed information
             sh_debug_log('Plugin Initialization Error', array(
                 'message' => 'Error during plugin initialization',
                 'source' => array(
@@ -356,6 +356,7 @@ class Shortcuts_Hub {
             // Flag that we need to flush rewrite rules
             update_option('shortcuts_hub_flush_rewrite_rules', true);
 
+            // DEBUG: Logging successful plugin activation with version and timestamp
             sh_debug_log('Plugin Activated', array(
                 'message' => 'Shortcuts Hub plugin has been activated',
                 'source' => array(
@@ -418,6 +419,7 @@ class Shortcuts_Hub {
         // Clean up rewrite rules
         flush_rewrite_rules();
 
+        // DEBUG: Logging plugin deactivation with version and timestamp
         sh_debug_log('Plugin Deactivated', array(
             'message' => 'Shortcuts Hub plugin has been deactivated',
             'source' => array(
