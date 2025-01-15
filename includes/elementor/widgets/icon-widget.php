@@ -7,11 +7,11 @@ use Elementor\Icons_Manager;
 
 class Shortcuts_Icon_Widget extends Widget_Base {
     public function get_name() {
-        return 'shortcuts_icon';
+        return 'icon_widget';
     }
 
     public function get_title() {
-        return __('Shortcuts Icon', 'shortcuts-hub');
+        return __('Shortcut Icon', 'shortcuts-hub');
     }
 
     public function get_icon() {

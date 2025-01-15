@@ -10,6 +10,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Load debug functionality first
+require_once plugin_dir_path(__FILE__) . 'sh-debug.php';
+
 define('SHORTCUTS_HUB_FILE', __FILE__);
 define('SHORTCUTS_HUB_PATH', plugin_dir_path(__FILE__));
 define('SHORTCUTS_HUB_VERSION', '1.0.0');
@@ -61,6 +64,11 @@ function shortcuts_hub_init() {
     $instance = shortcuts_hub();
     $instance->initialize();
 }
+
+// Initialize Elementor integration when Elementor is loaded
+add_action('elementor/loaded', function() {
+    \ShortcutsHub\Elementor\Elementor_Manager::get_instance();
+});
 
 // Register settings
 function shortcuts_hub_register_settings() {

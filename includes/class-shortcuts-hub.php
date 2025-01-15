@@ -36,7 +36,8 @@ class Shortcuts_Hub {
      * Protected constructor - does NOT initialize
      */
     protected function __construct() {
-        // Empty constructor - initialization happens separately
+        // Initialize the plugin during plugins_loaded
+        add_action('plugins_loaded', [$this, 'initialize']);
     }
 
     /**
@@ -49,29 +50,46 @@ class Shortcuts_Hub {
      * This sets up the basic plugin framework
      */
     public function initialize() {
-        // Prevent multiple initializations in the same request
         if (self::$initialized) {
             return;
         }
 
         try {
-            // Set initialized flag first
             self::$initialized = true;
-
-            // Load all dependencies
+            
+            // Load all dependencies first
             $this->load_dependencies();
-
+            
+            // Now that dependencies are loaded, check Elementor
+            if (did_action('elementor/loaded')) {
+                \ShortcutsHub\Elementor\Elementor_Manager::get_instance();
+            } else {
+                add_action('elementor/loaded', function() {
+                    \ShortcutsHub\Elementor\Elementor_Manager::get_instance();
+                });
+            }
+            
             // Register core WordPress hooks
             $this->register_core_hooks();
-
-            // Initialize AJAX handlers - these need to be available everywhere
+            
+            // Initialize AJAX handlers
             $this->init_ajax_handlers();
-
+            
         } catch (Exception $e) {
-            sh_debug_log('Plugin Initialization Failed', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
+            // Log initialization errors using our debug logger
+            sh_debug_log('Plugin Initialization Error', array(
+                'message' => 'Error during plugin initialization',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ),
+                'debug' => false
+            ));
         }
     }
 
@@ -131,15 +149,6 @@ class Shortcuts_Hub {
         
         // Load Elementor integration
         require_once SHORTCUTS_HUB_PATH . 'includes/elementor/classes/class-elementor-manager.php';
-        
-        // Initialize Elementor manager if Elementor is active, but wait until wp_loaded
-        if (did_action('elementor/loaded')) {
-            add_action('wp_loaded', function() {
-                if (!defined('DOING_AJAX') || !DOING_AJAX) {
-                    \ShortcutsHub\Elementor\Elementor_Manager::get_instance();
-                }
-            });
-        }
         
         // AJAX handlers
         require_once SHORTCUTS_HUB_PATH . 'includes/ajax/shortcuts-ajax.php';
@@ -347,10 +356,19 @@ class Shortcuts_Hub {
             // Flag that we need to flush rewrite rules
             update_option('shortcuts_hub_flush_rewrite_rules', true);
 
-            sh_debug_log('Plugin Activated', [
-                'timestamp' => time(),
-                'version' => SHORTCUTS_HUB_VERSION
-            ]);
+            sh_debug_log('Plugin Activated', array(
+                'message' => 'Shortcuts Hub plugin has been activated',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'timestamp' => time(),
+                    'version' => SHORTCUTS_HUB_VERSION
+                ),
+                'debug' => true
+            ));
         } finally {
             self::$is_activating = false;
         }
@@ -400,10 +418,19 @@ class Shortcuts_Hub {
         // Clean up rewrite rules
         flush_rewrite_rules();
 
-        sh_debug_log('Plugin Deactivated', [
-            'timestamp' => time(),
-            'version' => defined('SHORTCUTS_HUB_VERSION') ? SHORTCUTS_HUB_VERSION : '1.0.0'
-        ]);
+        sh_debug_log('Plugin Deactivated', array(
+            'message' => 'Shortcuts Hub plugin has been deactivated',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'timestamp' => time(),
+                'version' => defined('SHORTCUTS_HUB_VERSION') ? SHORTCUTS_HUB_VERSION : '1.0.0'
+            ),
+            'debug' => true
+        ));
     }
 
     /**

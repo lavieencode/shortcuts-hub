@@ -10,227 +10,450 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once dirname(dirname(dirname(__FILE__))) . '/sh-debug.php';
+if (!function_exists('sh_debug_log')) {
+    require_once dirname(dirname(dirname(__FILE__))) . '/sh-debug.php';
+}
 
 if (!did_action('elementor/loaded')) {
     return;
 }
 
-abstract class Shortcut_Dynamic_Tag extends Tag {
+class Name_Dynamic_Tag extends Tag {
+    public function get_name() {
+        return 'name';  
+    }
+
+    public function get_title() {
+        return __('Name', 'shortcuts-hub');  
+    }
+
     public function get_group() {
         return 'shortcut_fields';
     }
 
-    protected function register_controls() {
-        $this->add_control(
-            'shortcut_id',
-            [
-                'label' => __('Shortcut', 'shortcuts-hub'),
-                'type' => Controls_Manager::NUMBER,
-                'default' => get_the_ID()
-            ]
-        );
-    }
-
-    protected function get_shortcut_id() {
-        $settings = $this->get_settings();
-        if (empty($settings['shortcut_id'])) {
-            if (wp_doing_ajax() && isset($_REQUEST['editor_post_id'])) {
-                return absint($_REQUEST['editor_post_id']);
-            }
-            return get_the_ID();
-        }
-        return $settings['shortcut_id'];
-    }
-
-    abstract protected function get_tag_value();
-
-    public function get_value(array $options = []) {
-        return ['value' => $this->get_tag_value()];
+    public function get_categories() {
+        return [Module::TEXT_CATEGORY];
     }
 
     public function render() {
-        $value = $this->get_tag_value();
-        echo wp_kses_post($value);
+        global $post;
+        
+        // Get the current post
+        $post_id = get_the_ID();
+        
+        // Only proceed if this is a shortcut post type
+        if (!$post || get_post_type($post_id) !== 'shortcut') {
+            sh_debug_log('Not a shortcut post type', array(
+                'message' => 'Current post is not a shortcut post type',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'post_id' => $post_id,
+                    'post_type' => get_post_type($post_id)
+                ),
+                'debug' => true
+            ));
+            return '';
+        }
+        
+        // Get the shortcut name, fallback to post title if empty
+        $shortcut_name = get_post_meta($post_id, '_shortcut_name', true);
+        echo esc_html($shortcut_name ?: get_the_title($post_id));
     }
 }
 
-class Name_Dynamic_Tag extends Shortcut_Dynamic_Tag {
+class Headline_Dynamic_Tag extends Tag {
     public function get_name() {
-        return 'name';
+        return 'headline';  
     }
 
     public function get_title() {
-        return esc_html__('Name', 'shortcuts-hub');
+        return __('Headline', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
     }
 
     public function get_categories() {
-        return ['text'];
+        return [Module::TEXT_CATEGORY];
     }
 
-    protected function get_tag_value() {
-        $post_id = $this->get_shortcut_id();
-        return get_the_title($post_id);
+    public function render() {
+        global $post;
+        
+        // Get the current post
+        $post_id = get_the_ID();
+        
+        // Only proceed if this is a shortcut post type
+        if (!$post || get_post_type($post_id) !== 'shortcut') {
+            sh_debug_log('Not a shortcut post type', array(
+                'message' => 'Current post is not a shortcut post type',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'post_id' => $post_id,
+                    'post_type' => get_post_type($post_id)
+                ),
+                'debug' => true
+            ));
+            return '';
+        }
+        
+        // Get the shortcut headline
+        $headline = get_post_meta($post_id, '_shortcut_headline', true);
+        echo esc_html($headline);
     }
 }
 
-class Headline_Dynamic_Tag extends Shortcut_Dynamic_Tag {
+class Description_Dynamic_Tag extends Tag {
     public function get_name() {
-        return 'headline';
+        return 'description';  
     }
 
     public function get_title() {
-        return esc_html__('Headline', 'shortcuts-hub');
+        return __('Description', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
     }
 
     public function get_categories() {
-        return ['text'];
+        return [Module::TEXT_CATEGORY];
     }
 
-    protected function get_tag_value() {
-        $post_id = $this->get_shortcut_id();
-        return get_post_meta($post_id, '_shortcut_headline', true);
+    public function render() {
+        global $post;
+        
+        // Get the current post
+        $post_id = get_the_ID();
+        
+        // Only proceed if this is a shortcut post type
+        if (!$post || get_post_type($post_id) !== 'shortcut') {
+            sh_debug_log('Not a shortcut post type', array(
+                'message' => 'Current post is not a shortcut post type',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'post_id' => $post_id,
+                    'post_type' => get_post_type($post_id)
+                ),
+                'debug' => true
+            ));
+            return '';
+        }
+        
+        // Get the shortcut description
+        $description = get_post_meta($post_id, '_shortcut_description', true);
+        echo esc_html($description);
     }
 }
 
-class Description_Dynamic_Tag extends Shortcut_Dynamic_Tag {
+class Color_Dynamic_Tag extends Tag {
     public function get_name() {
-        return 'description';
+        return 'color';  
     }
 
     public function get_title() {
-        return esc_html__('Description', 'shortcuts-hub');
+        return __('Color', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
     }
 
     public function get_categories() {
-        return ['text'];
+        return [Module::COLOR_CATEGORY];
     }
 
-    protected function get_tag_value() {
-        $post_id = $this->get_shortcut_id();
-        return get_post_meta($post_id, '_shortcut_description', true);
+    public function render() {
+        global $post;
+        
+        // Get the current post
+        $post_id = get_the_ID();
+        
+        // Only proceed if this is a shortcut post type
+        if (!$post || get_post_type($post_id) !== 'shortcut') {
+            sh_debug_log('Not a shortcut post type', array(
+                'message' => 'Current post is not a shortcut post type',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'post_id' => $post_id,
+                    'post_type' => get_post_type($post_id)
+                ),
+                'debug' => true
+            ));
+            return '';
+        }
+        
+        // Get the shortcut color
+        $color = get_post_meta($post_id, '_shortcut_color', true);
+        echo esc_html($color);
     }
 }
 
-class Color_Dynamic_Tag extends Shortcut_Dynamic_Tag {
+class Input_Dynamic_Tag extends Tag {
     public function get_name() {
-        return 'color';
+        return 'input';  
     }
 
     public function get_title() {
-        return esc_html__('Color', 'shortcuts-hub');
+        return __('Input', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
     }
 
     public function get_categories() {
-        return ['color'];
+        return [Module::TEXT_CATEGORY];
     }
 
-    protected function get_tag_value() {
-        $post_id = $this->get_shortcut_id();
-        return get_post_meta($post_id, '_shortcut_color', true);
+    public function render() {
+        global $post;
+        
+        // Get the current post
+        $post_id = get_the_ID();
+        
+        // Only proceed if this is a shortcut post type
+        if (!$post || get_post_type($post_id) !== 'shortcut') {
+            sh_debug_log('Not a shortcut post type', array(
+                'message' => 'Current post is not a shortcut post type',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'post_id' => $post_id,
+                    'post_type' => get_post_type($post_id)
+                ),
+                'debug' => true
+            ));
+            return '';
+        }
+        
+        // Get the shortcut input
+        $input = get_post_meta($post_id, '_shortcut_input', true);
+        echo esc_html($input);
     }
 }
 
-class Input_Dynamic_Tag extends Shortcut_Dynamic_Tag {
+class Result_Dynamic_Tag extends Tag {
     public function get_name() {
-        return 'input';
+        return 'result';  
     }
 
     public function get_title() {
-        return esc_html__('Input', 'shortcuts-hub');
+        return __('Result', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
     }
 
     public function get_categories() {
-        return ['text'];
+        return [Module::TEXT_CATEGORY];
     }
 
-    protected function get_tag_value() {
-        $post_id = $this->get_shortcut_id();
-        return get_post_meta($post_id, '_shortcut_input', true);
+    public function render() {
+        global $post;
+        
+        // Get the current post
+        $post_id = get_the_ID();
+        
+        // Only proceed if this is a shortcut post type
+        if (!$post || get_post_type($post_id) !== 'shortcut') {
+            sh_debug_log('Not a shortcut post type', array(
+                'message' => 'Current post is not a shortcut post type',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'post_id' => $post_id,
+                    'post_type' => get_post_type($post_id)
+                ),
+                'debug' => true
+            ));
+            return '';
+        }
+        
+        // Get the shortcut result
+        $result = get_post_meta($post_id, '_shortcut_result', true);
+        echo esc_html($result);
     }
 }
 
-class Result_Dynamic_Tag extends Shortcut_Dynamic_Tag {
+class Latest_Version_Dynamic_Tag extends Tag {
     public function get_name() {
-        return 'result';
+        return 'latest_version';  
     }
 
     public function get_title() {
-        return esc_html__('Result', 'shortcuts-hub');
+        return __('Latest Version', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
     }
 
     public function get_categories() {
-        return ['text'];
+        return [Module::TEXT_CATEGORY];
     }
 
-    protected function get_tag_value() {
-        $post_id = $this->get_shortcut_id();
-        return get_post_meta($post_id, '_shortcut_result', true);
+    public function render() {
+        global $post;
+        
+        // Get the current post
+        $post_id = get_the_ID();
+        
+        // Only proceed if this is a shortcut post type
+        if (!$post || get_post_type($post_id) !== 'shortcut') {
+            sh_debug_log('Not a shortcut post type', array(
+                'message' => 'Current post is not a shortcut post type',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'post_id' => $post_id,
+                    'post_type' => get_post_type($post_id)
+                ),
+                'debug' => true
+            ));
+            return '';
+        }
+        
+        // Get the shortcut latest version
+        $latest_version = get_post_meta($post_id, '_shortcut_latest_version', true);
+        echo esc_html($latest_version);
     }
 }
 
-class Latest_Version_Dynamic_Tag extends Shortcut_Dynamic_Tag {
-    public function get_name() {
-        return 'latest_version';
-    }
-
-    public function get_title() {
-        return esc_html__('Latest Version', 'shortcuts-hub');
-    }
-
-    public function get_categories() {
-        return ['text'];
-    }
-
-    protected function get_tag_value() {
-        $post_id = $this->get_shortcut_id();
-        return get_post_meta($post_id, '_shortcut_latest_version', true);
-    }
-}
-
-class Latest_Version_URL_Dynamic_Tag extends Shortcut_Dynamic_Tag {
+class Latest_Version_URL_Dynamic_Tag extends Tag {
     public function get_name() {
         return 'latest_version_url';
     }
 
     public function get_title() {
-        return esc_html__('Latest Version URL', 'shortcuts-hub');
+        return __('Latest Version URL', 'shortcuts-hub');
+    }
+
+    public function get_group() {
+        return 'shortcut_fields';
     }
 
     public function get_categories() {
-        return ['url'];
+        return [Module::URL_CATEGORY];
     }
 
-    protected function get_tag_value() {
-        try {
-            $post_id = $this->get_shortcut_id();
-            if (!$post_id) {
-                return '';
-            }
-
-            // Get the shortcut ID from post meta
-            $shortcut_id = get_post_meta($post_id, '_shortcut_id', true);
-            if (!$shortcut_id) {
-                return '';
-            }
-
-            // Make API request to get latest version
-            $response = wp_remote_get(SHORTCUTS_HUB_API_URL . '/shortcuts/' . $shortcut_id . '/latest-version');
-            if (is_wp_error($response)) {
-                return '';
-            }
-
-            $body = wp_remote_retrieve_body($response);
-            $data = json_decode($body, true);
-
-            // Check if we have a successful response with version URL
-            if (!$data || !$data['success'] || !isset($data['data']['version']['url'])) {
-                return '';
-            }
-
-            return $data['data']['version']['url'];
-        } catch (\Exception $e) {
+    public function render() {
+        global $post;
+        
+        // Get the current post
+        $post_id = get_the_ID();
+        
+        // Only proceed if this is a shortcut post type
+        if (!$post || get_post_type($post_id) !== 'shortcut') {
+            sh_debug_log('Not a shortcut post type', array(
+                'message' => 'Current post is not a shortcut post type',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'post_id' => $post_id,
+                    'post_type' => get_post_type($post_id)
+                ),
+                'debug' => true
+            ));
             return '';
         }
+
+        // Get the shortcut ID from post meta
+        $shortcut_id = get_post_meta($post_id, '_shortcut_id', true);
+        if (!$shortcut_id) {
+            sh_debug_log('No shortcut ID found for post', array(
+                'message' => 'No shortcut ID found for post',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'post_id' => $post_id,
+                    'shortcut_id' => $shortcut_id
+                ),
+                'debug' => true
+            ));
+            return '';
+        }
+
+        // Make AJAX call to fetch latest version URL
+        $response = wp_remote_get(admin_url('admin-ajax.php'), [
+            'body' => [
+                'action' => 'get_latest_version',
+                'shortcut_id' => $shortcut_id
+            ]
+        ]);
+
+        if (is_wp_error($response)) {
+            sh_debug_log('Error fetching version URL', array(
+                'message' => 'Error fetching version URL',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'error' => $response->get_error_message()
+                ),
+                'debug' => true
+            ));
+            return '';
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        // Check if we have a successful response with version URL
+        if (!$data || !isset($data['success']) || !$data['success'] || 
+            !isset($data['data']) || !isset($data['data']['version']) || 
+            !isset($data['data']['version']['url'])) {
+            sh_debug_log('Invalid version URL response', array(
+                'message' => 'Invalid version URL response structure',
+                'source' => array(
+                    'file' => __FILE__,
+                    'line' => __LINE__,
+                    'function' => __FUNCTION__
+                ),
+                'data' => array(
+                    'response' => $data
+                ),
+                'debug' => true
+            ));
+            return '';
+        }
+
+        $url = $data['data']['version']['url'];
+        echo esc_url($url);
     }
 }

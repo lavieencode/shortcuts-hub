@@ -12,12 +12,14 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-require_once dirname(dirname(dirname(dirname(__FILE__)))) . '/sh-debug.php';
+// Ensure debug functionality is available
+if (!function_exists('sh_debug_log')) {
+    require_once dirname(dirname(dirname(__FILE__))) . '/sh-debug.php';
+}
 
 class Elementor_Manager {
     private static $instance = null;
     private static $initialized = false;
-    private static $widgets_registered = false;
 
     public static function get_instance() {
         if (null === self::$instance) {
@@ -26,48 +28,34 @@ class Elementor_Manager {
         return self::$instance;
     }
 
-    public function __construct() {
-        $this->init();
+    protected function __construct() {
+        // Register category first
+        add_action('elementor/elements/categories_registered', array($this, 'register_category'));
+        
+        // Then register widgets and dynamic tags
+        add_action('elementor/widgets/register', array($this, 'register_widgets'));
+        add_action('elementor/dynamic_tags/register', array($this, 'register_dynamic_tags'));
+    }
+
+    public function register_category($elements_manager) {
+        $elements_manager->add_category(
+            'shortcuts-hub',
+            [
+                'title' => __('Shortcuts Hub', 'shortcuts-hub'),
+                'icon' => 'fa fa-plug',
+            ]
+        );
     }
 
     public function init() {
-        // Wait for Elementor to be fully initialized
-        if (!did_action('elementor/init')) {
-            add_action('elementor/init', [$this, 'init_elementor']);
+        if (self::$initialized) {
             return;
         }
 
         self::$initialized = true;
-
-        // Register dynamic tags
-        add_action('elementor/dynamic_tags/register', [$this, 'register_dynamic_tags']);
-        
-        // Register for AJAX
-        add_action('elementor/ajax', [$this, 'register_dynamic_tags']);
-
-        // Load widget files and register widgets
-        add_action('elementor/widgets/register', [$this, 'load_widget_files_and_register']);
-
-        // Register styles and scripts
-        add_action('elementor/frontend/after_enqueue_styles', [$this, 'register_frontend_styles']);
-        add_action('elementor/preview/enqueue_styles', [$this, 'register_frontend_styles']);
-        add_action('elementor/editor/after_enqueue_styles', [$this, 'register_frontend_styles']);
-        add_action('elementor/editor/before_enqueue_scripts', [$this, 'register_scripts']);
-        add_action('wp_enqueue_scripts', [$this, 'register_scripts']);
-        add_action('elementor/frontend/after_register_scripts', [$this, 'register_scripts']);
-        add_action('elementor/preview/enqueue_scripts', [$this, 'register_scripts']);
     }
 
-    public function init_elementor() {
-        // Do nothing, initialization is now handled in the constructor
-    }
-
-    public function load_widget_files_and_register($widgets_manager) {
-        if (self::$widgets_registered) {
-            return;
-        }
-        self::$widgets_registered = true;
-
+    public function register_widgets($widgets_manager) {
         $widget_files = [
             'download-button-widget.php',
             'download-log-widget.php',
@@ -76,68 +64,58 @@ class Elementor_Manager {
         ];
 
         foreach ($widget_files as $file) {
-            $file_path = plugin_dir_path(dirname(__FILE__)) . 'widgets/' . $file;
-            if (file_exists($file_path)) {
-                require_once $file_path;
-            }
-        }
-
-        // Register all widgets
-        $widgets = [
-            'Download_Button' => Widgets\Download_Button_Widget::class,
-            'Download_Log' => Widgets\Download_Log::class,
-            'My_Account_Widget' => Widgets\My_Account_Widget::class,
-            'Shortcuts_Icon_Widget' => Widgets\Shortcuts_Icon_Widget::class
-        ];
-
-        foreach ($widgets as $name => $widget_class) {
-            try {
+            $widget_file = plugin_dir_path(__FILE__) . '../widgets/' . $file;
+            
+            if (file_exists($widget_file)) {
+                require_once $widget_file;
+                
+                // Handle special cases for class names
+                $base_name = str_replace('.php', '', $file);
+                $widget_class = '\\ShortcutsHub\\Elementor\\Widgets\\';
+                
+                // Map widget file names to their class names
+                $class_map = array(
+                    'icon-widget' => 'Shortcuts_Icon_Widget',
+                    'download-button-widget' => 'download_button_widget',
+                    'download-log-widget' => 'download_log_widget',
+                    'my-account-widget' => 'my_account_widget'
+                );
+                
+                $widget_class .= isset($class_map[$base_name]) ? $class_map[$base_name] : str_replace('-', '_', $base_name);
+                
                 if (class_exists($widget_class)) {
-                    $widget = new $widget_class();
-                    $widgets_manager->register($widget);
+                    $widgets_manager->register(new $widget_class());
                 }
-            } catch (\Exception $e) {
-                // Silent fail - don't break the site if a widget fails
             }
         }
     }
 
-    public function register_dynamic_tags($dynamic_tags_manager = null) {
-        if (!class_exists('\Elementor\Plugin')) {
-            return;
-        }
+    public function register_dynamic_tags($dynamic_tags_manager) {
+        // Register dynamic tags module
+        \Elementor\Plugin::$instance->dynamic_tags->register_group('shortcut_fields', [
+            'title' => 'Shortcut Fields'
+        ]);
 
-        // If we're in an AJAX request, get the dynamic tags manager
-        if (wp_doing_ajax() && !is_object($dynamic_tags_manager)) {
-            $dynamic_tags_manager = \Elementor\Plugin::$instance->dynamic_tags;
-        }
+        // Include dynamic tags file
+        require_once plugin_dir_path(__FILE__) . '../elementor-dynamic-fields.php';
 
-        // Register group
-        $dynamic_tags_manager->register_group(
-            'shortcut_fields',
-            [
-                'title' => esc_html__('Shortcut Fields', 'shortcuts-hub')
-            ]
-        );
-
-        // Load tags file
-        require_once dirname(dirname(__FILE__)) . '/elementor-dynamic-fields.php';
-
-        // Register tags
+        // Register all dynamic tags
         $tags = [
-            '\ShortcutsHub\Elementor\DynamicTags\Name_Dynamic_Tag',
-            '\ShortcutsHub\Elementor\DynamicTags\Headline_Dynamic_Tag',
-            '\ShortcutsHub\Elementor\DynamicTags\Description_Dynamic_Tag',
-            '\ShortcutsHub\Elementor\DynamicTags\Color_Dynamic_Tag',
-            '\ShortcutsHub\Elementor\DynamicTags\Input_Dynamic_Tag',
-            '\ShortcutsHub\Elementor\DynamicTags\Result_Dynamic_Tag',
-            '\ShortcutsHub\Elementor\DynamicTags\Latest_Version_Dynamic_Tag',
-            '\ShortcutsHub\Elementor\DynamicTags\Latest_Version_URL_Dynamic_Tag'
+            new \ShortcutsHub\Elementor\DynamicTags\Name_Dynamic_Tag(),
+            new \ShortcutsHub\Elementor\DynamicTags\Headline_Dynamic_Tag(),
+            new \ShortcutsHub\Elementor\DynamicTags\Description_Dynamic_Tag(),
+            new \ShortcutsHub\Elementor\DynamicTags\Color_Dynamic_Tag(),
+            new \ShortcutsHub\Elementor\DynamicTags\Input_Dynamic_Tag(),
+            new \ShortcutsHub\Elementor\DynamicTags\Result_Dynamic_Tag(),
+            new \ShortcutsHub\Elementor\DynamicTags\Latest_Version_Dynamic_Tag(),
+            new \ShortcutsHub\Elementor\DynamicTags\Latest_Version_URL_Dynamic_Tag()
         ];
 
-        foreach ($tags as $tag_class) {
-            if (class_exists($tag_class)) {
-                $dynamic_tags_manager->register(new $tag_class());
+        foreach ($tags as $tag) {
+            try {
+                $dynamic_tags_manager->register($tag);
+            } catch (\Exception $e) {
+                // Handle exception silently
             }
         }
     }

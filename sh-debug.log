@@ -1,73 +1,43 @@
-********************************************************************************************************************
-                                   [START DEBUG LOG: 2025-01-14 07:22:28 PM UTC]                                    
-********************************************************************************************************************
-
-[DEBUG] Filters reset
-SOURCE: [shortcuts-filters.js:130 in initializeFilters]
+[DEBUG] Plugin Deactivated
+[SOURCE] class-shortcuts-hub.php:425
 {
-    "message": "User reset all filters to default values",
-    "data": {
-        "old_state": {
-            "status": "publish",
-            "deleted": "false",
-            "search": ""
-        },
-        "new_state": {
-            "status": "publish",
-            "deleted": "false",
-            "search": ""
-        }
-    },
-    "debug": true
+    "timestamp": 1736916941,
+    "version": "1.0.0"
 }
 
-[DEBUG] Dropdown filter changed
-SOURCE: [shortcuts-filters.js:70 in initializeFilters]
+[DEBUG] Plugin Activated
+[SOURCE] class-shortcuts-hub.php:363
 {
-    "message": "User changed a dropdown filter",
-    "data": {
-        "filter_type": "Status",
-        "new_value": "draft",
-        "all_filters": {
-            "status": "draft",
-            "deleted": "false",
-            "search": ""
-        }
-    },
-    "debug": true
+    "timestamp": 1736916943,
+    "version": "1.0.0"
 }
 
-[DEBUG] Dropdown filter changed
-SOURCE: [shortcuts-filters.js:70 in initializeFilters]
+[DEBUG] My Account Widget Construction
+[SOURCE] my-account-widget.php:24
 {
-    "message": "User changed a dropdown filter",
-    "data": {
-        "filter_type": "Status",
-        "new_value": "publish",
-        "all_filters": {
-            "status": "publish",
-            "deleted": "false",
-            "search": ""
-        }
-    },
-    "debug": true
+    "data": [],
+    "args": null
 }
 
-[DEBUG] Making filtered versions API call
-SOURCE: [versions-ajax.php:121 in fetch_versions]
+[DEBUG] My Account Widget Categories
+[SOURCE] my-account-widget.php:43
 {
-    "message": "Making versions API call with filters",
-    "data": {
-        "endpoint": "\/shortcuts\/69\/history",
-        "query_params": [],
-        "shortcut_id": "69",
-        "raw_post_data": {
-            "status": "any",
-            "deleted": "",
-            "required_update": "",
-            "search_term": ""
-        }
-    },
-    "debug": true
+    "categories": [
+        "shortcuts-hub"
+    ]
+}
+
+[DEBUG] My Account Widget Construction
+[SOURCE] my-account-widget.php:24
+{
+    "data": [],
+    "args": null
+}
+
+[DEBUG] My Account Widget Construction
+[SOURCE] my-account-widget.php:24
+{
+    "data": [],
+    "args": null
 }
 

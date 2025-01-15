@@ -19,7 +19,7 @@ use \Elementor\Group_Control_Border;
 use \Elementor\Group_Control_Background;
 use \Elementor\Group_Control_Box_Shadow;
 
-class Download_Log extends Widget_Base {
+class Download_Log_Widget extends Widget_Base {
     public function get_name() {
         return 'shortcuts-download-log';
     }
