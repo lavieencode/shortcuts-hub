@@ -24,9 +24,34 @@ jQuery(document).ready(function(jQuery) {
         }
     });
 
-    // Prevent default form submission
+    // Initialize actions selector functionality
+    jQuery('#add-actions').click(function() {
+        jQuery('#available-actions option:selected').each(function() {
+            jQuery(this).remove().appendTo('#selected-actions');
+        });
+        sortSelectOptions('#selected-actions');
+    });
+
+    jQuery('#remove-actions').click(function() {
+        jQuery('#selected-actions option:selected').each(function() {
+            jQuery(this).remove().appendTo('#available-actions');
+        });
+        sortSelectOptions('#available-actions');
+    });
+
+    // Helper function to sort options alphabetically
+    function sortSelectOptions(selectElement) {
+        var options = jQuery(selectElement + ' option').toArray();
+        options.sort(function(a, b) {
+            return jQuery(a).text().localeCompare(jQuery(b).text());
+        });
+        jQuery(selectElement).empty().append(options);
+    }
+
+    // Prevent default form submission and ensure all selected actions are included
     jQuery('#edit-shortcut-form').on('submit', function(event) {
         event.preventDefault();
+        jQuery('#selected-actions option').prop('selected', true);
         return false;
     });
 
@@ -55,6 +80,7 @@ jQuery(document).ready(function(jQuery) {
             icon: jQuery('#shortcut-icon').val(),
             input: jQuery('#shortcut-input').val(),
             result: jQuery('#shortcut-result').val(),
+            actions: jQuery('#selected-actions').val(),
             state: newState
         };
 
@@ -100,6 +126,7 @@ jQuery(document).ready(function(jQuery) {
             icon: jQuery('#shortcut-icon').val(),
             input: jQuery('#shortcut-input').val(),
             result: jQuery('#shortcut-result').val(),
+            actions: jQuery('#selected-actions').val(),
             state: jQuery('#shortcut-post-id').data('post-status')
         };
 

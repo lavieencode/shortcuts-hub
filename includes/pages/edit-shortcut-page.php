@@ -123,11 +123,66 @@ function shortcuts_hub_render_edit_shortcut_page() {
                 </div>
             </div>
             
-            <div class="form-group">
+            <div class="form-group actions-selector-group">
                 <label for="shortcut-actions">Actions</label>
-                <select id="shortcut-actions" name="actions[]" multiple>
-                    <!-- Populate with existing actions if needed -->
-                </select>
+                <div class="actions-selector-container">
+                    <div class="actions-list-container">
+                        <h4>Available Actions</h4>
+                        <select id="available-actions" class="actions-list" multiple>
+                            <?php
+                            // Get all actions
+                            $actions = get_posts(array(
+                                'post_type' => 'action',
+                                'posts_per_page' => -1,
+                                'orderby' => 'title',
+                                'order' => 'ASC'
+                            ));
+
+                            // Get currently selected actions
+                            $selected_action_ids = array();
+                            if ($post_id) {
+                                global $wpdb;
+                                $table_name = $wpdb->prefix . 'shortcut_action_relationships';
+                                $selected_action_ids = $wpdb->get_col($wpdb->prepare(
+                                    "SELECT action_id FROM $table_name WHERE shortcut_id = %d",
+                                    $post_id
+                                ));
+                            }
+
+                            foreach ($actions as $action) {
+                                if (!in_array($action->ID, $selected_action_ids)) {
+                                    echo '<option value="' . esc_attr($action->ID) . '">' . esc_html($action->post_title) . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                    
+                    <div class="actions-buttons">
+                        <button type="button" id="add-actions" class="action-button">&rarr;</button>
+                        <button type="button" id="remove-actions" class="action-button">&larr;</button>
+                    </div>
+                    
+                    <div class="actions-list-container">
+                        <h4>Selected Actions</h4>
+                        <select id="selected-actions" name="actions[]" class="actions-list" multiple>
+                            <?php
+                            if (!empty($selected_action_ids)) {
+                                $selected_actions = get_posts(array(
+                                    'post_type' => 'action',
+                                    'include' => $selected_action_ids,
+                                    'orderby' => 'title',
+                                    'order' => 'ASC'
+                                ));
+
+                                foreach ($selected_actions as $action) {
+                                    echo '<option value="' . esc_attr($action->ID) . '">' . esc_html($action->post_title) . '</option>';
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
             </div>
             
             <input type="hidden" id="sb-id" name="sb_id" value="<?php echo esc_attr($id); ?>">

@@ -1,0 +1,66 @@
+[DEBUG] Creating database tables
+[SOURCE] class-shortcuts-hub.php:421
+[]
+
+[DEBUG] Database tables created successfully
+[SOURCE] class-shortcuts-hub.php:533
+{
+    "tables": [
+        "eD3BU_shortcuts_hub_shortcuts",
+        "eD3BU_shortcut_action_relationships",
+        "eD3BU_shortcutshub_downloads"
+    ]
+}
+
+[DEBUG] Initial Filter State
+[SOURCE] shortcuts-filters.js:20
+{
+    "status": "publish",
+    "deleted": "false",
+    "search": ""
+}
+
+[DEBUG] Initial Filter State
+[SOURCE] shortcuts-filters.js:20
+{
+    "status": "publish",
+    "deleted": "false",
+    "search": ""
+}
+
+[DEBUG] Dropdown filter changed
+[SOURCE] shortcuts-filters.js:70
+{
+    "filter_type": "Status",
+    "new_value": "",
+    "all_filters": {
+        "status": "",
+        "deleted": "false",
+        "search": ""
+    }
+}
+
+[DEBUG] Dropdown filter changed
+[SOURCE] shortcuts-filters.js:70
+{
+    "filter_type": "Status",
+    "new_value": "draft",
+    "all_filters": {
+        "status": "draft",
+        "deleted": "false",
+        "search": ""
+    }
+}
+
+[DEBUG] Dropdown filter changed
+[SOURCE] shortcuts-filters.js:70
+{
+    "filter_type": "Status",
+    "new_value": "",
+    "all_filters": {
+        "status": "",
+        "deleted": "false",
+        "search": ""
+    }
+}
+

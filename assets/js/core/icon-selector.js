@@ -96,161 +96,155 @@
  * - IE11 support if needed (requires polyfills)
  */
 
-// Define the IconSelector class in the global scope
-window.IconSelector = class IconSelector {
-    constructor(options) {
-        this.container = options.container;
-        // Store the instance on the container element
-        if (this.container) {
+(function($) {
+    'use strict';
+
+    // Define icon categories with expanded icon sets
+    const icons = {
+        'fas': [ // Solid
+            'mobile-alt', 'laptop', 'desktop', 'tablet-alt', 'keyboard', 'mouse',
+            'tv', 'camera', 'video', 'headphones', 'microphone', 'speaker',
+            'print', 'scanner', 'gamepad', 'server', 'network-wired', 'wifi',
+            'bluetooth', 'battery-full', 'power-off', 'hdd', 'memory', 'microchip',
+            'usb', 'ethernet', 'router', 'satellite-dish', 'broadcast-tower', 'rss',
+            'cog', 'cogs', 'wrench', 'tools', 'hammer', 'screwdriver',
+            'home', 'building', 'store', 'warehouse', 'industry', 'factory',
+            'car', 'truck', 'bus', 'plane', 'train', 'subway',
+            'search', 'plus', 'minus', 'times', 'check', 'exclamation',
+            'question', 'info', 'bell', 'calendar', 'clock', 'folder',
+            'file', 'user', 'users', 'chart-bar', 'database', 'globe',
+            'map-marker', 'envelope', 'lock', 'unlock', 'shield', 'key'
+        ],
+        'far': [ // Regular
+            'bell', 'bookmark', 'calendar', 'chart-bar', 'clock', 'comment',
+            'compass', 'envelope', 'eye', 'file', 'folder', 'heart',
+            'image', 'keyboard', 'lightbulb', 'list-alt', 'map', 'moon',
+            'paper-plane', 'save', 'share-square', 'star', 'sun', 'thumbs-up',
+            'trash-alt', 'user', 'window-maximize', 'window-minimize',
+            'edit', 'copy', 'paste', 'cut', 'clone', 'file-alt',
+            'folder-open', 'smile', 'frown', 'meh', 'laugh', 'angry',
+            'check-circle', 'times-circle', 'question-circle', 'info-circle',
+            'comment-dots', 'hand-point-right', 'hand-point-left', 'hand-point-up',
+            'hand-point-down', 'credit-card', 'flag', 'gem', 'life-ring', 'play-circle'
+        ],
+        'fab': [ // Brands
+            'android', 'apple', 'chrome', 'discord', 'docker', 'dropbox',
+            'edge', 'firefox', 'github', 'google', 'instagram', 'java',
+            'jira', 'js', 'linux', 'microsoft', 'npm', 'php',
+            'python', 'react', 'sass', 'slack', 'spotify', 'stack-overflow',
+            'telegram', 'trello', 'twitter', 'ubuntu', 'vuejs', 'wordpress',
+            'aws', 'bootstrap', 'css3', 'html5', 'node', 'yarn',
+            'facebook', 'linkedin', 'youtube', 'whatsapp', 'skype', 'twitch',
+            'medium', 'pinterest', 'reddit', 'vimeo', 'behance', 'dribbble'
+        ]
+    };
+
+    class IconSelector {
+        constructor(options) {
+            if (!options.container) {
+                console.error('IconSelector: container is required');
+                return;
+            }
+
+            this.container = options.container;
+            this.inputField = options.inputField;
+            this.onChange = options.onChange || (() => {});
+            this.currentValue = null;
+
+            // Store the instance on the container element
             this.container._iconSelector = this;
-        } else {
-            console.error('IconSelector: container element not found');
-            return;
+
+            // Create the HTML structure
+            this.container.innerHTML = `
+                <div class="icon-input-row">
+                    <select class="icon-type-selector">
+                        <option value="fontawesome">Font Awesome Icon</option>
+                        <option value="custom">Custom Upload</option>
+                    </select>
+                    <div class="icon-preview-container">
+                        <div class="icon-preview empty">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                    <button type="button" class="icon-reset">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="icon-selector">
+                    <div class="selector-popup">
+                        <div class="selector-controls">
+                            <input type="text" class="search-input" placeholder="Search icons...">
+                            <select class="category-select">
+                                <option value="all">All Icons</option>
+                                <option value="fas">Solid</option>
+                                <option value="far">Regular</option>
+                                <option value="fab">Brands</option>
+                            </select>
+                        </div>
+                        <div class="icons-grid"></div>
+                    </div>
+                </div>
+            `;
+
+            this.init();
         }
-        
-        this.inputField = options.inputField;
-        if (!this.inputField) {
-            console.error('IconSelector: input field not found');
-            return;
-        }
-        
-        this.previewContainer = options.previewContainer;
-        if (!this.previewContainer) {
-            console.error('IconSelector: preview container not found');
-            return;
-        }
-        
-        this.onChange = options.onChange || (() => {});
-        
-        let initialValue = this.inputField.value || '';
-        
-        // Try parsing as JSON first
-        try {
-            const parsed = JSON.parse(initialValue);
-            if (parsed.type === 'fontawesome' && parsed.name) {
-                // Handle FontAwesome icon
-                this.currentValue = parsed;
-            } else if (parsed.url) {
-                // Handle custom uploaded icon
-                let url = parsed.url;
-                if (!url.startsWith('http') && !url.startsWith('/wp-content')) {
-                    if (typeof window.shortcutsHubData !== 'undefined' && window.shortcutsHubData.uploads_url) {
-                        url = window.shortcutsHubData.uploads_url + '/' + url;
-                    }
-                }
-                this.currentValue = {
-                    type: 'custom',
-                    name: parsed.name || '',
-                    url: url
-                };
+
+        init() {
+            this.typeSelect = this.container.querySelector('.icon-type-selector');
+            if (!this.typeSelect) {
+                console.error('IconSelector: type selector not found');
+                return;
             }
-        } catch (e) {
-            // Not JSON, check if it's a URL or FontAwesome class
-            if (initialValue.includes('fa-')) {
-                // It's a FontAwesome class
-                this.currentValue = {
-                    type: 'fontawesome',
-                    name: initialValue.replace(/\+/g, ' '),
-                    url: null
-                };
-            } else if (initialValue) {
-                // Assume it's a URL
-                let url = initialValue;
-                if (!url.startsWith('http') && !url.startsWith('/wp-content')) {
-                    if (typeof window.shortcutsHubData !== 'undefined' && window.shortcutsHubData.uploads_url) {
-                        url = window.shortcutsHubData.uploads_url + '/' + url;
-                    }
-                }
-                this.currentValue = {
-                    type: 'custom',
-                    name: '',
-                    url: url
-                };
+            
+            this.attachEvents();
+            this.createResetButton();
+            
+            // Initialize based on current type
+            if (this.currentValue && this.currentValue.type === 'custom') {
+                this.typeSelect.value = 'custom';
+                this.showCustomUpload();
             } else {
-                // Empty or invalid value
-                this.currentValue = {
-                    type: 'fontawesome',
-                    name: '',
-                    url: null
-                };
+                this.typeSelect.value = 'fontawesome';
+                this.showFontAwesomePicker();
             }
+            
+            this.updatePreview();
         }
-        
-        this.init();
-    }
 
-    init() {
-        this.typeSelect = document.getElementById('icon-type-selector');
-        if (!this.typeSelect) {
-            console.error('IconSelector: type selector not found');
-            return;
+        createResetButton() {
+            const resetButton = this.container.querySelector('.icon-reset');
+            if (!resetButton) return;
+            
+            resetButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.resetIcon();
+            });
         }
-        
-        this.attachEvents();
-        this.createResetButton();
-        
-        // Initialize based on current type
-        if (this.currentValue.type === 'custom') {
-            this.typeSelect.value = 'custom';
-            this.showCustomUpload();
-        } else {
-            this.typeSelect.value = 'fontawesome';
-            this.showFontAwesomePicker();
-        }
-        
-        this.updatePreview();
-    }
 
-    createResetButton() {
-        if (!this.previewContainer) return;
-        
-        // Remove existing reset button if any
-        const existingButton = this.previewContainer.parentNode.querySelector('.icon-reset-button');
-        if (existingButton) {
-            existingButton.remove();
+        resetIcon() {
+            this.currentValue = null;
+            
+            // Reset the preview
+            const previewContainer = this.container.querySelector('.icon-preview');
+            if (previewContainer) {
+                previewContainer.innerHTML = '<i class="fas fa-image"></i>';
+                previewContainer.classList.add('empty');
+            }
+            
+            // Clear the input value if it exists
+            if (this.inputField) {
+                this.inputField.value = '';
+            }
+            
+            // Trigger the onChange callback
+            this.onChange(null);
         }
-        
-        const resetButton = document.createElement('button');
-        resetButton.type = 'button';
-        resetButton.className = 'icon-reset-button';
-        resetButton.innerHTML = '<i class="fas fa-times"></i>';
-        resetButton.title = 'Reset Icon';
-        
-        resetButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            this.resetIcon();
-        });
-        
-        // Add reset button next to preview
-        this.previewContainer.parentNode.appendChild(resetButton);
-    }
 
-    resetIcon() {
-        // Clear the value but maintain the current type
-        const currentType = this.typeSelect ? this.typeSelect.value : 'fontawesome';
-        this.currentValue = {
-            type: currentType,
-            name: '',
-            url: null
-        };
-        this.inputField.value = JSON.stringify(this.currentValue);
-        this.updatePreview();
-        
-        // Don't change the type selector or clear the container
-        // Just update the selection state in the current view
-        if (currentType === 'fontawesome') {
-            const options = this.container.querySelectorAll('.icon-option');
-            options.forEach(opt => opt.classList.remove('selected'));
-        }
-        
-        this.onChange(this.currentValue);
-    }
-
-    attachEvents() {
-        if (this.typeSelect) {
-            this.typeSelect.addEventListener('change', (e) => {
-                const type = e.target.value;
+        attachEvents() {
+            // Type selector change event
+            this.typeSelect.addEventListener('change', () => {
+                const type = this.typeSelect.value;
                 if (type === 'custom') {
                     this.showCustomUpload();
                 } else {
@@ -258,185 +252,182 @@ window.IconSelector = class IconSelector {
                 }
             });
         }
-    }
 
-    showFontAwesomePicker() {
-        if (!this.container) {
-            console.error('IconSelector: container not found');
-            return;
-        }
-        
-        this.container.innerHTML = `
-            <div class="icon-search-wrapper">
-                <input type="text" class="icon-search" placeholder="Search icons...">
-            </div>
-            <div class="icons-grid"></div>
-        `;
-        
-        // Show the container
-        this.container.style.display = 'block';
-        
-        const searchInput = this.container.querySelector('.icon-search');
-        const iconsGrid = this.container.querySelector('.icons-grid');
-        
-        // Add font awesome icons
-        this.addFontAwesomeIcons(iconsGrid);
-        
-        // Add search functionality
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const searchTerm = e.target.value.toLowerCase();
-                const icons = iconsGrid.querySelectorAll('.icon-option');
+        showFontAwesomePicker() {
+            const selectorContainer = this.container.querySelector('.icon-selector');
+            const iconsGrid = selectorContainer.querySelector('.icons-grid');
+            if (!iconsGrid) return;
+
+            // Add icons to the grid
+            this.addFontAwesomeIcons(iconsGrid);
+
+            // Add search functionality
+            const searchInput = selectorContainer.querySelector('.search-input');
+            const categorySelect = selectorContainer.querySelector('.category-select');
+            
+            if (searchInput && categorySelect) {
+                const filterIcons = () => {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    const category = categorySelect.value;
+                    
+                    const options = iconsGrid.querySelectorAll('.icon-option');
+                    options.forEach(option => {
+                        const iconName = option.getAttribute('data-name');
+                        const iconPrefix = option.getAttribute('data-icon');
+                        
+                        const matchesSearch = iconName.includes(searchTerm);
+                        const matchesCategory = category === 'all' || iconPrefix === category;
+                        
+                        option.style.display = matchesSearch && matchesCategory ? 'flex' : 'none';
+                    });
+                };
                 
-                icons.forEach(icon => {
-                    const iconName = icon.getAttribute('data-icon').toLowerCase();
-                    if (iconName.includes(searchTerm)) {
-                        icon.style.display = 'flex';
-                    } else {
-                        icon.style.display = 'none';
+                searchInput.addEventListener('input', filterIcons);
+                categorySelect.addEventListener('change', filterIcons);
+            }
+
+            // Show the selector
+            selectorContainer.style.display = 'block';
+        }
+
+        showCustomUpload() {
+            const selectorContainer = this.container.querySelector('.icon-selector');
+            if (!selectorContainer) return;
+
+            // Update the selector content
+            selectorContainer.innerHTML = `
+                <div class="selector-popup">
+                    <div class="upload-container">
+                        <button type="button" class="upload-button">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Click or drag to upload an image</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Add click handler for upload button
+            const uploadButton = selectorContainer.querySelector('.upload-button');
+            if (uploadButton) {
+                uploadButton.addEventListener('click', () => this.openMediaUploader());
+            }
+
+            // Show the selector
+            selectorContainer.style.display = 'block';
+        }
+
+        addFontAwesomeIcons(iconsGrid) {
+            if (!iconsGrid) {
+                console.error('IconSelector: icons grid not found');
+                return;
+            }
+
+            // Create document fragment for better performance
+            const fragment = document.createDocumentFragment();
+
+            // Add icons for each category
+            Object.entries(icons).forEach(([prefix, iconNames]) => {
+                iconNames.forEach(name => {
+                    const iconClass = `${prefix} fa-${name}`;
+                    const iconOption = document.createElement('div');
+                    iconOption.className = 'icon-option';
+                    iconOption.setAttribute('data-icon', prefix);
+                    iconOption.setAttribute('data-name', name);
+
+                    // Create icon element with loading check
+                    const icon = document.createElement('i');
+                    icon.className = iconClass;
+                    icon.style.visibility = 'hidden';
+
+                    const checkIcon = () => {
+                        const style = window.getComputedStyle(icon);
+                        const fontFamily = style.getPropertyValue('font-family');
+                        
+                        if (fontFamily === 'serif' || fontFamily === 'sans-serif') {
+                            icon.className = 'fas fa-exclamation-circle';
+                            icon.style.color = '#ff0000';
+                        }
+                        
+                        icon.style.visibility = 'visible';
+                    };
+
+                    setTimeout(checkIcon, 100);
+                    iconOption.appendChild(icon);
+
+                    if (this.currentValue && 
+                        this.currentValue.type === 'fontawesome' && 
+                        this.currentValue.name === iconClass) {
+                        iconOption.classList.add('selected');
                     }
+
+                    iconOption.addEventListener('click', () => {
+                        iconsGrid.querySelectorAll('.icon-option').forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        iconOption.classList.add('selected');
+                        this.setIcon('fontawesome', iconClass);
+                    });
+
+                    fragment.appendChild(iconOption);
                 });
             });
-        }
-    }
 
-    showCustomUpload() {
-        if (!this.container) {
-            console.error('IconSelector: container not found');
-            return;
+            iconsGrid.innerHTML = '';
+            iconsGrid.appendChild(fragment);
         }
-        
-        this.container.innerHTML = `
-            <div class="custom-upload-container">
-                <button type="button" class="upload-image-button">Upload Custom Icon</button>
-            </div>
-        `;
-        
-        // Hide the container since we don't need the grid for custom upload
-        this.container.style.display = 'none';
-        
-        const uploadButton = this.container.querySelector('.upload-image-button');
-        if (uploadButton) {
-            uploadButton.addEventListener('click', () => this.openMediaUploader());
-        }
-    }
 
-    addFontAwesomeIcons(iconsGrid) {
-        if (!iconsGrid) {
-            console.error('IconSelector: icons grid not found');
-            return;
+        openMediaUploader() {
+            // WordPress media uploader functionality would go here
+            console.log('Custom upload not implemented');
         }
-        
-        const popularIcons = [
-            'fas fa-mobile-alt', 'fas fa-laptop', 'fas fa-desktop', 
-            'fas fa-tablet-alt', 'fas fa-keyboard', 'fas fa-mouse',
-            'fas fa-tv', 'fas fa-camera', 'fas fa-video',
-            'fas fa-headphones', 'fas fa-microphone', 'fas fa-speaker',
-            'fas fa-print', 'fas fa-scanner', 'fas fa-gamepad',
-            'fas fa-server', 'fas fa-network-wired', 'fas fa-wifi',
-            'fas fa-bluetooth', 'fas fa-battery-full', 'fas fa-power-off',
-            'fas fa-hdd', 'fas fa-memory', 'fas fa-microchip',
-            'fas fa-usb', 'fas fa-ethernet', 'fas fa-router',
-            'fas fa-satellite-dish', 'fas fa-broadcast-tower', 'fas fa-rss'
-        ];
-        
-        popularIcons.forEach(icon => {
-            const iconOption = document.createElement('div');
-            iconOption.className = 'icon-option';
-            iconOption.setAttribute('data-icon', icon);
+
+        setIcon(type, name, url = null) {
+            this.currentValue = { type, name, url };
             
-            // Check if this icon is currently selected
-            if (this.currentValue && this.currentValue.type === 'fontawesome' && this.currentValue.name === icon) {
-                iconOption.classList.add('selected');
+            if (this.inputField) {
+                this.inputField.value = JSON.stringify(this.currentValue);
             }
             
-            iconOption.innerHTML = `<i class="${icon}"></i>`;
-            
-            iconOption.addEventListener('click', () => {
-                // Remove selected class from all options
-                iconsGrid.querySelectorAll('.icon-option').forEach(opt => opt.classList.remove('selected'));
-                // Add selected class to clicked option
-                iconOption.classList.add('selected');
-                
-                this.setIcon('fontawesome', icon);
-            });
-            
-            iconsGrid.appendChild(iconOption);
-        });
-    }
-
-    openMediaUploader() {
-        // Create the media frame
-        const frame = wp.media({
-            title: 'Select or Upload Icon',
-            button: {
-                text: 'Use this icon'
-            },
-            multiple: false
-        });
-        
-        // When an image is selected in the media frame...
-        frame.on('select', () => {
-            // Get media attachment details from the frame state
-            const attachment = frame.state().get('selection').first().toJSON();
-            
-            // Set the icon data
-            this.setIcon('custom', attachment.title || `image-${Date.now()}`, attachment.url);
-        });
-        
-        // Finally, open the modal on click
-        frame.open();
-    }
-
-    setIcon(type, name, url = null) {
-        this.currentValue = {
-            type: type,
-            name: name,
-            url: url
-        };
-        
-        // Update the hidden input
-        this.inputField.value = JSON.stringify(this.currentValue);
-        
-        // Update the preview
-        this.updatePreview();
-        
-        // Update the type selector
-        if (this.typeSelect) {
-            this.typeSelect.value = type;
+            this.updatePreview();
+            this.onChange(this.currentValue);
         }
-        
-        // Trigger onChange callback
-        this.onChange(this.currentValue);
-    }
 
-    updatePreview() {
-        if (!this.previewContainer) return;
-        
-        // Clear existing preview
-        this.previewContainer.innerHTML = '';
-        
-        if (this.currentValue) {
-            if (this.currentValue.type === 'fontawesome' && this.currentValue.name) {
-                // Show FontAwesome icon
-                const icon = document.createElement('i');
-                icon.className = this.currentValue.name;
-                this.previewContainer.appendChild(icon);
-                this.previewContainer.style.display = 'flex';
+        updatePreview() {
+            const previewContainer = this.container.querySelector('.icon-preview');
+            if (!previewContainer) return;
+
+            if (!this.currentValue) {
+                previewContainer.innerHTML = '<i class="fas fa-image"></i>';
+                previewContainer.classList.add('empty');
+                return;
+            }
+
+            previewContainer.classList.remove('empty');
+            
+            if (this.currentValue.type === 'fontawesome') {
+                previewContainer.innerHTML = `<i class="${this.currentValue.name}"></i>`;
             } else if (this.currentValue.type === 'custom' && this.currentValue.url) {
-                // Show custom icon
-                const img = document.createElement('img');
-                img.src = this.currentValue.url;
-                img.alt = this.currentValue.name || 'Custom Icon';
-                this.previewContainer.appendChild(img);
-                this.previewContainer.style.display = 'flex';
-            } else {
-                // No valid icon
-                this.previewContainer.style.display = 'none';
+                previewContainer.innerHTML = `<img src="${this.currentValue.url}" alt="Custom Icon">`;
             }
-        } else {
-            // No icon data
-            this.previewContainer.style.display = 'none';
         }
     }
-}
+
+    // Make IconSelector available globally
+    window.IconSelector = IconSelector;
+
+    // Initialize when document is ready
+    jQuery(document).ready(function($) {
+        $('.icon-selector-container').each(function() {
+            const container = $(this);
+            const input = container.find('input[type="hidden"]');
+            
+            new IconSelector({
+                container: this,
+                inputField: input[0],
+                onChange: function(value) {
+                    // Optional: Add any onChange handling here
+                }
+            });
+        });
+    });
+})(jQuery);

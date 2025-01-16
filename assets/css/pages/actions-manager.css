@@ -1,0 +1,464 @@
+/* GENERAL PAGE STYLES */
+#actions-manager-page {
+    padding: 20px;
+}
+
+.actions-page-title {
+    color: #909CFE;
+    font-size: 24px;
+    margin-bottom: 20px !important;
+}
+
+/* ACTIONS FILTER BAR */
+.actions-header-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    background-color: transparent;
+    height: 50px;
+    margin: 20px 0 30px;
+}
+
+.actions-header-bar input,
+.actions-header-bar select {
+    height: 50px;
+    min-width: 200px !important;
+    width: 200px !important;
+    background-color: #373737;
+    color: #CACACA;
+    border: none;
+    padding: 0 10px;
+    font-size: 15px;
+    border-radius: 0;
+    box-sizing: border-box;
+    margin-bottom: 0 !important;
+}
+
+.actions-header-bar select.action-filter {
+    width: auto;
+    min-width: 150px;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23909CFE' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    padding-right: 35px;
+}
+
+.actions-header-bar .reset-filters {
+    background-color: #909CFE;
+    color: #252525;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    height: 50px;
+    padding: 0 20px;
+    width: 120px !important;
+    min-width: 120px !important;
+}
+
+.actions-header-bar .add-action {
+    background: none;
+    border: none;
+    color: #909CFE;
+    font-size: 40px;
+    font-weight: 800;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+}
+
+/* ACTIONS CONTAINER */
+.actions-container {
+    margin-top: 20px;
+}
+
+@media (max-width: 1200px) {
+}
+
+@media (max-width: 768px) {
+}
+
+/* MODAL STYLES */
+.modal {
+    display: block;
+    visibility: hidden;
+    filter: none;
+    z-index: 1000;
+    pointer-events: auto;
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 403px;
+    height: 100%;
+    padding: 20px;
+    padding-top: 60px !important;
+    background-color: #373737;
+    color: #CACACA;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.modal.active {
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.modal-content {
+    padding: 0;
+}
+
+/* SHARED MODAL STYLES */
+.modal h2 {
+    font-size: 34px !important;
+    text-transform: uppercase !important;
+    font-weight: 800;
+    color: #909CFE;
+    margin-bottom: 30px !important;
+}
+
+.modal .form-group {
+    margin-bottom: 30px;
+}
+
+.modal .form-group label {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 0px;
+    padding-bottom: 5px;
+    display: inline-block;
+    color: #252525;
+    background-color: #909cfe;
+    line-height: 1.3em;
+    padding-top: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+
+#edit-action-modal .form-group input,
+#edit-action-modal .form-group textarea,
+#edit-action-modal .form-group select,
+#add-action-modal .form-group input,
+#add-action-modal .form-group textarea,
+#add-action-modal .form-group select {
+    display: block;
+    background-color: #252525 !important;
+    color: #CACACA;
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 0;
+    border: none !important;
+    font-size: 15px;
+}
+
+/* ICON SELECTOR STYLES */
+.icon-selector-container {
+    margin-top: 10px;
+}
+
+.icon-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.icon-type-selector {
+    flex: 1;
+}
+
+.icon-preview {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #252525;
+}
+
+.icon-preview i {
+    font-size: 20px;
+    color: #909CFE;
+}
+
+.icon-preview img {
+    max-width: 30px;
+    max-height: 30px;
+}
+
+/* BUTTON STYLES */
+.button-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.button-container button {
+    padding: 8px 15px;
+    border-radius: 0;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 15px;
+    min-width: 120px;
+    border: none;
+}
+
+.primary-buttons {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+}
+
+/* Hide all action buttons by default */
+.update-action,
+.publish-action,
+.save-draft,
+.revert-draft {
+    display: none;
+}
+
+/* MODAL BACKDROP */
+body.modal-open::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+/* WPBODY OVERRIDES */
+#wpbody select {
+    max-width: none;
+}
+
+#wpbody input[type="text"] {
+    max-width: none;
+}
+
+/* ACTIONS TABLE */
+.actions-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    margin-top: -4px;
+}
+
+.actions-table thead th {
+    color: #909CFE;
+    font-weight: 700;
+    text-align: left;
+    padding: 12px 15px;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.actions-table tbody tr {
+    transition: transform 0.2s ease;
+    border-bottom: 1px solid #373737;
+}
+
+.actions-table td {
+    padding: 8px 15px;
+    color: #CACACA;
+    vertical-align: middle;
+}
+
+.actions-table .icon-column {
+    width: 60px;
+    text-align: center;
+}
+
+.actions-table .name-column {
+    width: 400px;
+    padding-left: 0 !important;
+}
+
+.actions-table .description-column {
+    max-width: 600px;
+    width: 600px;
+    padding-left: 10px;
+}
+
+.actions-table .actions-column {
+    width: auto;
+    text-align: left;
+    padding-left: 0;
+}
+
+.actions-table td.actions-column {
+    padding-left: 0;
+}
+
+.actions-table button {
+    background: none;
+    border: none;
+    color: #909CFE;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    display: inline-block;
+}
+
+.actions-table button:hover {
+    background-color: #252525;
+}
+
+.actions-table button i {
+    font-size: 16px;
+}
+
+.actions-table .delete-action {
+    color: #ff6b6b;
+}
+
+/* ACTION ICON */
+.action-icon {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-icon i {
+    font-size: 16px;
+    color: #909CFE;
+}
+
+.action-icon img {
+    max-width: 20px;
+    max-height: 20px;
+}
+
+/* ACTION DETAILS */
+.action-name-container {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background-color: #373737;
+    padding: 10px 0;
+    padding-left: 20px;
+    margin-right: 30px !important;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 350px !important;
+}
+
+.action-name {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    color: #CACACA;
+}
+
+.action-description {
+    font-size: 16px !important;
+    line-height: 1.4;
+    color: #CACACA;
+    max-width: 600px;
+}
+
+/* TABLE BUTTONS */
+
+/* NO ITEMS MESSAGE */
+.no-items {
+    text-align: left;
+    color: #CACACA;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+/* STATUS COLUMN */
+.status-column {
+    width: 100px;
+    text-align: center;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.status-published {
+    background-color: #909CFE;
+    color: #252525;
+}
+
+.status-draft {
+    background-color: #868686;
+    color: #252525;
+}
+
+/* Modal Button Container */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Status Badge Styles */
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-published {
+    background-color: #909cfe;
+    color: #252525;
+}
+
+.status-draft {
+    background-color: #aaaaaa;
+    color: #252525
+}
+
+/* Hide buttons by default */
+.edit-action-modal .save-button {
+    display: none;
+}
+
+/* Show appropriate buttons based on status */
+.edit-action-modal[data-status="publish"] .update-action,
+.edit-action-modal[data-status="publish"] .revert-draft {
+    display: inline-block;
+}
+
+.edit-action-modal[data-status="draft"] .publish-action,
+.edit-action-modal[data-status="draft"] .save-draft {
+    display: inline-block;
+}
+
+/* SHORTCUTS COUNT COLUMN */
+.actions-table .shortcuts-column {
+    width: 100px;
+    text-align: center;
+}
+
+.actions-table .shortcut-count {
+    display: inline-block;
+    min-width: 30px;
+    padding: 2px 8px;
+    background-color: #909CFE;
+    color: #252525;
+    font-weight: 600;
+    border-radius: 12px;
+    font-size: 13px;
+}

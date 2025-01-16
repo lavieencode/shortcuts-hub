@@ -1027,3 +1027,150 @@ function send_json_response($response, $success = true) {
         wp_send_json_error($response);
     }
 }
+
+function shortcuts_hub_fetch_actions() {
+    check_ajax_referer('shortcuts_hub_nonce', 'security');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(array('message' => 'Insufficient permissions'));
+        return;
+    }
+
+    // DEBUG: Log the fetch actions request
+    sh_debug_log('Fetch Actions Request', array(
+        'message' => 'Fetching actions with filters',
+        'source' => array(
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ),
+        'data' => array(
+            'search' => isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '',
+            'status' => isset($_POST['status']) ? sanitize_text_field($_POST['status']) : ''
+        ),
+        'debug' => true
+    ));
+
+    $args = array(
+        'post_type' => 'action',
+        'posts_per_page' => -1,
+        'orderby' => 'title',
+        'order' => 'ASC'
+    );
+
+    // Add search filter
+    if (!empty($_POST['search'])) {
+        $args['s'] = sanitize_text_field($_POST['search']);
+    }
+
+    // Add status filter
+    if (!empty($_POST['status'])) {
+        $args['post_status'] = sanitize_text_field($_POST['status']);
+    }
+
+    $actions = get_posts($args);
+    $formatted_actions = array();
+
+    foreach ($actions as $action) {
+        $formatted_actions[] = array(
+            'id' => $action->ID,
+            'title' => $action->post_title,
+            'description' => get_post_meta($action->ID, '_action_description', true),
+            'icon' => get_post_meta($action->ID, '_action_icon', true),
+            'status' => $action->post_status
+        );
+    }
+
+    // DEBUG: Log the fetch actions response
+    sh_debug_log('Fetch Actions Response', array(
+        'message' => 'Actions fetched successfully',
+        'source' => array(
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ),
+        'data' => array(
+            'count' => count($formatted_actions),
+            'actions' => $formatted_actions
+        ),
+        'debug' => true
+    ));
+
+    wp_send_json_success($formatted_actions);
+}
+add_action('wp_ajax_fetch_actions', 'shortcuts_hub_fetch_actions');
+
+function shortcuts_hub_create_action() {
+    check_ajax_referer('shortcuts_hub_nonce', 'security');
+
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(array('message' => 'Insufficient permissions'));
+        return;
+    }
+
+    // Validate required fields
+    if (empty($_POST['name'])) {
+        wp_send_json_error(array('message' => 'Action name is required'));
+        return;
+    }
+
+    // DEBUG: Log the create action request
+    sh_debug_log('Create Action Request', array(
+        'message' => 'Creating new action',
+        'source' => array(
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ),
+        'data' => array(
+            'name' => sanitize_text_field($_POST['name']),
+            'description' => isset($_POST['description']) ? sanitize_textarea_field($_POST['description']) : '',
+            'icon' => isset($_POST['icon']) ? $_POST['icon'] : ''
+        ),
+        'debug' => true
+    ));
+
+    // Create the action post
+    $action_data = array(
+        'post_title' => sanitize_text_field($_POST['name']),
+        'post_type' => 'action',
+        'post_status' => 'publish'
+    );
+
+    $action_id = wp_insert_post($action_data);
+
+    if (is_wp_error($action_id)) {
+        wp_send_json_error(array('message' => $action_id->get_error_message()));
+        return;
+    }
+
+    // Save meta data
+    if (!empty($_POST['description'])) {
+        update_post_meta($action_id, '_action_description', sanitize_textarea_field($_POST['description']));
+    }
+
+    if (!empty($_POST['icon'])) {
+        update_post_meta($action_id, '_action_icon', $_POST['icon']);
+    }
+
+    // DEBUG: Log the create action response
+    sh_debug_log('Create Action Response', array(
+        'message' => 'Action created successfully',
+        'source' => array(
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ),
+        'data' => array(
+            'action_id' => $action_id,
+            'post_data' => $action_data
+        ),
+        'debug' => true
+    ));
+
+    wp_send_json_success(array(
+        'id' => $action_id,
+        'message' => 'Action created successfully'
+    ));
+}
+add_action('wp_ajax_create_action', 'shortcuts_hub_create_action');

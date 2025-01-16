@@ -34,6 +34,8 @@ h2#shortcut-name-display {
 /* Form Labels */
 label {
     display: inline-block;
+    margin-bottom: 0px !important;
+    font-size: 15px;
     font-weight: bold;
     color: #252525;
     background-color: #909CFE;
@@ -62,17 +64,19 @@ label {
     display: block;
 }
 
+#wpbody input[type="text"]:focus,
+#wpbody input[type="color"]:focus,
+#wpbody textarea:focus,
+#wpbody select:focus {
+    box-shadow: none !important;
+}
+
 input[type="checkbox"] {
     margin-right: 10px;
 }
 
 /* Form Row Spacing */
 .form-row {
-    margin-bottom: 30px;
-}
-
-/* Icon Selector Spacing */
-#icon-selector-container {
     margin-bottom: 30px;
 }
 
