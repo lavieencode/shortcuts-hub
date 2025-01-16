@@ -7,59 +7,74 @@
 
 /* Unified Shortcut Styles */
 .shortcut-item {
-    background-color: #373737;
-    padding: 15px;
-    color: #CACACA;
+    background-color: #909cfe;
+    border-radius: 16px;
+    padding: 25px;
     position: relative;
-    min-height: 200px;
+    width: 250px;
+    height: 100px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding-bottom: 20px;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
+
+.shortcut-item:hover {
+    transform: scale(1.02);
+}
+
+.shortcut-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: #252525;
+}
+
+.shortcut-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .shortcut-item h3 {
-    margin-bottom: 12px;
+    font-family: 'Inter', sans-serif;
+    color: #252525;
     font-size: 18px;
-    color: #909CFE;
-}
-
-.shortcut-item p {
-    margin-bottom: 10px;
-    flex-grow: 1;
-    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+    margin-top: auto;
 }
 
 /* Badge Styles */
 
 .badge-container {
-    display: flex;
-    justify-content: flex-end;
-    gap: 5px;
     position: absolute;
     top: 10px;
     right: 10px;
-}
-
-.badge.draft {
-    background-color: #b8b8b8;
-    color: #252525;
-    order: 1;
-}
-
-.badge.deleted {
-    background-color: #e46e6e;
-    color: #252525;
-    order: 2;
+    display: flex;
+    gap: 4px;
 }
 
 .badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 5px 10px;
-    font-weight: 800;
-    font-size: 13px;
-    border-radius: 0;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.badge.draft {
+    background-color: #252525;
+    color: #CACACA;
+}
+
+.badge.deleted {
+    background-color: #ff4444;
+    color: #252525;
 }
 
 /* Button Styles */
@@ -165,4 +180,102 @@
     font-size: 12px;
     color: #8a8a8a;
     margin-bottom: 5px;
+}
+
+.shortcuts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Menu and Action Buttons Styles */
+
+.menu-container {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 10;
+}
+
+.menu-toggle {
+    background: none;
+    border: none;
+    color: #252525;
+    font-size: 18px;
+    padding: 5px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.menu-toggle:hover {
+    opacity: 1;
+}
+
+.menu-toggle.active {
+    display: none;
+}
+
+.action-menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 8px;
+    gap: 8px;
+}
+
+.action-menu.active {
+    display: flex;
+}
+
+.action-button {
+    position: relative;
+    background: none;
+    border: none;
+    color: #252525;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: opacity 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-button[data-tooltip]:before {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    background: transparent !important;
+    color: #252525;
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    pointer-events: none;
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+}
+
+.action-button[data-tooltip]:hover:before {
+    opacity: 1;
+    visibility: visible;
+}
+
+.action-button:hover {
+    color: #252525 !important;
+}
+
+.action-button.delete-button {
+    background-color: transparent !important;
+}
+
+.action-button.delete-button:hover {
+    color: #b32836;
 }

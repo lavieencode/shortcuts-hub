@@ -9,6 +9,10 @@ body {
     padding: 20px;
 }
 
+a {
+    box-shadow: none !important;
+}
+
 /* Headers */
 
 h1 {

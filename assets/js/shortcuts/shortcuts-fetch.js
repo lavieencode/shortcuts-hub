@@ -24,20 +24,28 @@ function fetchShortcutsFromSource(source) {
 
     const data = {
         action: 'fetch_shortcuts',
-        security: shortcutsHubData.security,
+        security: shortcutsHubData.security.fetch_shortcuts,
         filter: searchTerm || '',
         status: filterStatus || '',
         deleted: filterDeleted === 'true' ? true : (filterDeleted === 'false' ? false : null),
         source: source
     };
 
-    // DEBUG: Log the current filter parameters before making the AJAX request to track what filters are being applied
+    // DEBUG: Log the current filter parameters and security token
     sh_debug_log('Filter Parameters', {
-        filter_status: filterStatus,
-        filter_deleted: filterDeleted,
-        search_term: searchTerm,
-        source: source,
-        debug: false
+        message: 'Preparing to fetch shortcuts',
+        source: {
+            file: 'shortcuts-fetch.js',
+            function: 'fetchShortcutsFromSource'
+        },
+        data: {
+            filter_status: filterStatus,
+            filter_deleted: filterDeleted,
+            search_term: searchTerm,
+            source: source,
+            security_token: shortcutsHubData.security.fetch_shortcuts
+        },
+        debug: true
     });
 
     jQuery.ajax({
@@ -47,66 +55,68 @@ function fetchShortcutsFromSource(source) {
         success: function(response) {
             if (response.success) {
                 if (source === 'WP') {
-                    // DEBUG: Log the results of the filter operation, including total count and full shortcut data for verification
+                    // Store shortcuts globally for re-rendering
+                    window.currentShortcuts = response.data;
+                    
+                    // DEBUG: Log the results
                     sh_debug_log('Filter Results', {
-                        total_shortcuts: response.data.length,
-                        filter_params: data,
-                        shortcuts: response.data,
-                        debug: false
+                        message: 'Successfully fetched shortcuts',
+                        source: {
+                            file: 'shortcuts-fetch.js',
+                            function: 'fetchShortcutsFromSource'
+                        },
+                        data: {
+                            total_shortcuts: response.data.length,
+                            filter_params: data,
+                            shortcuts: response.data
+                        },
+                        debug: true
                     });
+                    
                     renderShortcuts(response.data);
                 }
-                // For Switchblade, we just want to log the data
-                console.log('Switchblade shortcuts:', response.data);
             } else {
-                // DEBUG: Log any errors that occur during the filter operation to help diagnose filter failures
+                // DEBUG: Log any errors
                 sh_debug_log('Filter Error', {
-                    error: response.data.message,
-                    filter_params: data,
-                    debug: false
+                    message: 'Failed to fetch shortcuts',
+                    source: {
+                        file: 'shortcuts-fetch.js',
+                        function: 'fetchShortcutsFromSource'
+                    },
+                    data: {
+                        error: response.data.message,
+                        filter_params: data
+                    },
+                    debug: true
                 });
+                
                 console.error('Error fetching shortcuts:', response.data.message);
                 if (source === 'WP') {
-                    jQuery('#shortcuts-container').html('<div class="no-shortcuts">No shortcuts found</div>');
+                    renderShortcuts([]);
                 }
             }
         },
         error: function(xhr, status, error) {
             if (source === 'WP') {
-                jQuery('#shortcuts-container').html('<div class="no-shortcuts">No shortcuts found</div>');
+                renderShortcuts([]);
             }
-            // DEBUG: Log AJAX-specific errors that occur during the filter request for network-related issues
+            
+            // DEBUG: Log AJAX errors
             sh_debug_log('Ajax Error', {
-                error: error,
-                status: status,
-                filter_params: data,
-                debug: false
+                message: 'AJAX request failed',
+                source: {
+                    file: 'shortcuts-fetch.js',
+                    function: 'fetchShortcutsFromSource'
+                },
+                data: {
+                    error: error,
+                    status: status,
+                    filter_params: data
+                },
+                debug: true
             });
+            
             console.error('Ajax error fetching shortcuts from ' + source);
-        }
-    });
-}
-
-function fetchShortcut(shortcutId) {
-    const data = {
-        action: 'fetch_shortcut',
-        security: shortcutsHubData.security,
-        id: shortcutId
-    };
-
-    jQuery.ajax({
-        url: shortcutsHubData.ajax_url,
-        method: 'POST',
-        data: data,
-        success: function(response) {
-            if (response.success) {
-                populateEditModal(response.data);
-            } else {
-                console.error('Error fetching shortcut:', response.data.message);
-            }
-        },
-        error: function() {
-            console.error('Error loading shortcut');
         }
     });
 }

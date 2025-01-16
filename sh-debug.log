@@ -1,66 +1,6606 @@
-[DEBUG] Creating database tables
-[SOURCE] class-shortcuts-hub.php:421
-[]
-
-[DEBUG] Database tables created successfully
-[SOURCE] class-shortcuts-hub.php:533
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
 {
-    "tables": [
-        "eD3BU_shortcuts_hub_shortcuts",
-        "eD3BU_shortcut_action_relationships",
-        "eD3BU_shortcutshub_downloads"
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
     ]
 }
 
-[DEBUG] Initial Filter State
-[SOURCE] shortcuts-filters.js:20
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
 {
-    "status": "publish",
-    "deleted": "false",
-    "search": ""
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
 }
 
-[DEBUG] Initial Filter State
-[SOURCE] shortcuts-filters.js:20
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
 {
-    "status": "publish",
-    "deleted": "false",
-    "search": ""
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
 }
 
-[DEBUG] Dropdown filter changed
-[SOURCE] shortcuts-filters.js:70
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
 {
-    "filter_type": "Status",
-    "new_value": "",
-    "all_filters": {
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
         "status": "",
-        "deleted": "false",
-        "search": ""
-    }
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
 }
 
-[DEBUG] Dropdown filter changed
-[SOURCE] shortcuts-filters.js:70
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
 {
-    "filter_type": "Status",
-    "new_value": "draft",
-    "all_filters": {
-        "status": "draft",
-        "deleted": "false",
-        "search": ""
-    }
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
 }
 
-[DEBUG] Dropdown filter changed
-[SOURCE] shortcuts-filters.js:70
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
 {
-    "filter_type": "Status",
-    "new_value": "",
-    "all_filters": {
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
         "status": "",
-        "deleted": "false",
-        "search": ""
+        "deleted": "",
+        "source": "WP"
     }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Fetch Shortcuts Security Check
+[SOURCE] shortcuts-ajax.php:20
+{
+    "is_user_logged_in": true,
+    "security_token": "723b8e4bfa",
+    "nonce_action": "shortcuts_hub_fetch_shortcuts_nonce",
+    "post_data": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": "",
+        "source": "WP"
+    }
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "publish",
+    "filter_deleted": null,
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Parameters
+[SOURCE] shortcuts-fetch.js:0
+{
+    "filter_status": "",
+    "filter_deleted": "",
+    "search_term": "",
+    "source": "WP",
+    "security_token": "723b8e4bfa"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:49
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:111
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:173
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:297
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Post Type Check
+[SOURCE] elementor-dynamic-fields.php:359
+{
+    "post_id": 6998,
+    "post_type": "shortcut"
+}
+
+[DEBUG] Filter Results
+[SOURCE] shortcuts-fetch.js:0
+{
+    "total_shortcuts": 1,
+    "filter_params": {
+        "action": "fetch_shortcuts",
+        "security": "723b8e4bfa",
+        "filter": "",
+        "status": "publish",
+        "deleted": null,
+        "source": "WP"
+    },
+    "shortcuts": [
+        {
+            "ID": 6998,
+            "wordpress": {
+                "name": "Test Shortcut",
+                "description": "...and a description!",
+                "color": "#909CFE",
+                "icon": "{\"type\":\"fontawesome\",\"name\":\"fas fa-server\",\"url\":null}",
+                "input": "Some input goes here",
+                "result": "And a result",
+                "actions": "",
+                "state": "publish",
+                "deleted": false
+            },
+            "switchblade": {
+                "headline": "Here's a headline!",
+                "website": "https:\/\/debotchery.ai\/shortcut\/test-shortcut\/",
+                "sb_id": "69"
+            }
+        }
+    ]
+}
+
+[DEBUG] Table Creation Start
+[SOURCE] class-shortcuts-hub.php:420
+{
+    "message": "Starting table creation process",
+    "source": {
+        "file": "\/home\/user\/htdocs\/srv608334.hstgr.cloud\/wp-content\/plugins\/shortcuts-hub\/includes\/class-shortcuts-hub.php",
+        "line": 420,
+        "function": "maybe_create_tables"
+    },
+    "debug": true
+}
+
+[DEBUG] Table Creation Result
+[SOURCE] class-shortcuts-hub.php:448
+{
+    "table_name": "eD3BU_shortcuts_hub_action_shortcut",
+    "sql": "CREATE TABLE IF NOT EXISTS eD3BU_shortcuts_hub_action_shortcut (\n            id bigint(20) NOT NULL AUTO_INCREMENT,\n            action_id bigint(20) NOT NULL,\n            shortcut_id bigint(20) NOT NULL,\n            created_at datetime DEFAULT CURRENT_TIMESTAMP,\n            PRIMARY KEY  (id),\n            UNIQUE KEY action_shortcut (action_id,shortcut_id),\n            KEY action_id (action_id),\n            KEY shortcut_id (shortcut_id)\n        ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci;",
+    "result": {
+        "IF": "Created table IF"
+    }
+}
+
+[DEBUG] Table Verification
+[SOURCE] class-shortcuts-hub.php:474
+{
+    "table_exists": true,
+    "columns": [
+        "id",
+        "action_id",
+        "shortcut_id",
+        "created_at"
+    ],
+    "missing_columns": [],
+    "verification_sql": "SHOW TABLES LIKE 'eD3BU_shortcuts_hub_action_shortcut'"
 }
 

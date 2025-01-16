@@ -411,137 +411,79 @@ class Shortcuts_Hub {
      */
     private function maybe_create_tables() {
         global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
 
-        // Debug log for table creation start
-        sh_debug_log('Creating database tables', array(
-            'message' => 'Starting database table creation/update process',
+        // DEBUG: Log table creation attempt
+        sh_debug_log('Table Creation Start', array(
+            'message' => 'Starting table creation process',
             'source' => array(
                 'file' => __FILE__,
                 'line' => __LINE__,
                 'function' => __FUNCTION__
             ),
-            'data' => array(),
             'debug' => true
         ));
 
-        // Define table names
-        $shortcuts_table = $wpdb->prefix . 'shortcuts_hub_shortcuts';
-        $action_shortcut_table = $wpdb->prefix . 'shortcut_action_relationships';
-        $downloads_table = $wpdb->prefix . 'shortcutshub_downloads';
+        $charset_collate = $wpdb->get_charset_collate();
+        $table_name = $wpdb->prefix . 'shortcuts_hub_action_shortcut';
 
-        // Define table schemas
-        $tables = array(
-            // Shortcuts table
-            $shortcuts_table => "CREATE TABLE $shortcuts_table (
-                id bigint(20) NOT NULL AUTO_INCREMENT,
-                title varchar(255) NOT NULL,
-                description text,
-                icon text,
-                color varchar(20),
-                command text NOT NULL,
-                created_at datetime DEFAULT CURRENT_TIMESTAMP,
-                updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                PRIMARY KEY  (id)
-            ) $charset_collate;",
-
-            // Action-Shortcut relationships table (many-to-many)
-            $action_shortcut_table => "CREATE TABLE $action_shortcut_table (
-                id bigint(20) NOT NULL AUTO_INCREMENT,
-                shortcut_id bigint(20) NOT NULL,
-                action_id bigint(20) NOT NULL,
-                created_at datetime DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY  (id),
-                UNIQUE KEY unique_relationship (shortcut_id,action_id),
-                KEY shortcut_id (shortcut_id),
-                KEY action_id (action_id)
-            ) $charset_collate;",
-
-            // Downloads tracking table
-            $downloads_table => "CREATE TABLE $downloads_table (
-                id bigint(20) NOT NULL AUTO_INCREMENT,
-                user_id bigint(20) NOT NULL,
-                shortcut_id varchar(255) NOT NULL,
-                post_id bigint(20) NOT NULL,
-                post_url text NOT NULL,
-                shortcut_name varchar(255) NOT NULL,
-                version varchar(50) NOT NULL,
-                version_notes text,
-                minimum_ios varchar(50),
-                minimum_mac varchar(50),
-                download_url text NOT NULL,
-                ip_address varchar(45) NOT NULL,
-                is_required tinyint(1) NOT NULL DEFAULT 0,
-                created_at datetime DEFAULT CURRENT_TIMESTAMP,
-                download_date datetime DEFAULT CURRENT_TIMESTAMP,
-                PRIMARY KEY  (id),
-                KEY user_id (user_id),
-                KEY shortcut_id (shortcut_id),
-                KEY post_id (post_id),
-                KEY download_date (download_date),
-                KEY ip_address (ip_address)
-            ) $charset_collate;"
-        );
+        $sql = "CREATE TABLE IF NOT EXISTS $table_name (
+            id bigint(20) NOT NULL AUTO_INCREMENT,
+            action_id bigint(20) NOT NULL,
+            shortcut_id bigint(20) NOT NULL,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY  (id),
+            UNIQUE KEY action_shortcut (action_id,shortcut_id),
+            KEY action_id (action_id),
+            KEY shortcut_id (shortcut_id)
+        ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        $result = dbDelta($sql);
 
-        // Create/update tables and track results
-        $results = array();
-        foreach ($tables as $table_name => $sql) {
-            $results[$table_name] = array(
+        // DEBUG: Log table creation result
+        sh_debug_log('Table Creation Result', array(
+            'message' => 'Results from table creation attempt',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'table_name' => $table_name,
                 'sql' => $sql,
-                'result' => dbDelta($sql),
-                'exists' => (bool)$wpdb->get_var("SHOW TABLES LIKE '$table_name'")
-            );
+                'result' => $result
+            ),
+            'debug' => true
+        ));
+
+        // Verify table exists and has correct structure
+        $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+        
+        if ($table_exists) {
+            $columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name");
+            $column_names = array_map(function($col) { return $col->Field; }, $columns);
+            $expected_columns = array('id', 'action_id', 'shortcut_id', 'created_at');
+            $missing_columns = array_diff($expected_columns, $column_names);
         }
 
-        // Check for any failures
-        $failures = array_filter($results, function($result) {
-            return !$result['exists'];
-        });
+        // DEBUG: Log table verification
+        sh_debug_log('Table Verification', array(
+            'message' => 'Verifying table structure',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'table_exists' => $table_exists,
+                'columns' => $table_exists ? $column_names : array(),
+                'missing_columns' => $table_exists ? $missing_columns : array(),
+                'verification_sql' => "SHOW TABLES LIKE '$table_name'"
+            ),
+            'debug' => true
+        ));
 
-        if (!empty($failures)) {
-            // Log detailed error information for failed tables
-            sh_debug_log('Database Table Creation Failed', array(
-                'message' => 'One or more tables failed to create',
-                'source' => array(
-                    'file' => __FILE__,
-                    'line' => __LINE__,
-                    'function' => __FUNCTION__
-                ),
-                'data' => array(
-                    'failed_tables' => $failures,
-                    'wpdb_error' => $wpdb->last_error,
-                    'wpdb_query' => $wpdb->last_query,
-                    'wpdb_ready' => $wpdb->ready,
-                    'wpdb_has_connected' => $wpdb->has_connected,
-                    'wpdb_dbname' => $wpdb->dbname,
-                    'wpdb_dbuser' => $wpdb->dbuser,
-                    'wpdb_dbhost' => $wpdb->dbhost,
-                    'wpdb_prefix' => $wpdb->prefix,
-                    'wpdb_charset' => $wpdb->charset,
-                    'wpdb_collate' => $wpdb->collate
-                ),
-                'debug' => true
-            ));
-        } else {
-            // Log successful table creation
-            sh_debug_log('Database tables created successfully', array(
-                'message' => 'All tables were created/updated successfully',
-                'source' => array(
-                    'file' => __FILE__,
-                    'line' => __LINE__,
-                    'function' => __FUNCTION__
-                ),
-                'data' => array(
-                    'tables' => array_keys($tables)
-                ),
-                'debug' => true
-            ));
-        }
-
-        // Store the current database version
-        update_option('shortcuts_hub_db_version', SHORTCUTS_HUB_VERSION);
+        return $table_exists && empty($missing_columns);
     }
 
     /**
@@ -591,5 +533,34 @@ class Shortcuts_Hub {
             add_action('init', [$this, 'init_admin']);
             add_filter('admin_body_class', [$this, 'admin_body_class']);
         }
+    }
+
+    /**
+     * Enqueue scripts
+     */
+    public function enqueue_scripts() {
+        if (!isset($_GET['page']) || $_GET['page'] !== 'shortcuts-list') {
+            return;
+        }
+
+        wp_enqueue_script(
+            'shortcuts-hub-list',
+            plugins_url('/assets/js/pages/shortcuts-list.js', SHORTCUTS_HUB_PLUGIN_FILE),
+            array('jquery', 'sh-debug'),
+            SHORTCUTS_HUB_VERSION,
+            true
+        );
+
+        // Create security nonces
+        $security = array(
+            'toggle_view' => wp_create_nonce('shortcuts_hub_toggle_view_nonce'),
+            // Add other nonces as needed
+        );
+
+        // Localize script
+        wp_localize_script('shortcuts-hub-list', 'shortcutsHubData', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'security' => $security
+        ));
     }
 }

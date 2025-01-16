@@ -12,7 +12,41 @@ require_once dirname(dirname(dirname(__FILE__))) . '/sh-debug.php';
 
 function fetch_shortcuts() {
     
-    if (is_user_logged_in() && (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce'))) {
+    // DEBUG: Log security check details
+    sh_debug_log('Fetch Shortcuts Security Check', array(
+        'message' => 'Verifying security token for fetch_shortcuts',
+        'source' => array(
+            'file' => __FILE__,
+            'line' => __LINE__,
+            'function' => __FUNCTION__
+        ),
+        'data' => array(
+            'is_user_logged_in' => is_user_logged_in(),
+            'security_token' => isset($_POST['security']) ? $_POST['security'] : 'not_set',
+            'nonce_action' => 'shortcuts_hub_fetch_shortcuts_nonce',
+            'post_data' => $_POST
+        ),
+        'debug' => true
+    ));
+    
+    // Verify nonce regardless of login status
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_fetch_shortcuts_nonce')) {
+        // DEBUG: Log security check failure
+        sh_debug_log('Fetch Shortcuts Security Check Failed', array(
+            'message' => 'Security token verification failed',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'is_user_logged_in' => is_user_logged_in(),
+                'security_token' => isset($_POST['security']) ? $_POST['security'] : 'not_set',
+                'nonce_action' => 'shortcuts_hub_fetch_shortcuts_nonce',
+                'post_data' => $_POST
+            ),
+            'debug' => true
+        ));
         wp_send_json_error(['message' => 'Invalid security token']);
         return;
     }
@@ -961,33 +995,30 @@ function process_download_token() {
 
 class Shortcuts_Ajax_Handler {
     private static $instance = null;
-    private static $registered = false;
 
     public static function instance() {
-        if (self::$instance === null) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
     }
 
-    private function __construct() {
-        // Empty constructor
+    public function __construct() {
+        if ($this->is_registered()) {
+            return;
+        }
+        $this->register_handlers();
     }
 
-    public function is_registered() {
-        return self::$registered;
+    private function is_registered() {
+        return did_action('init') || doing_action('init');
     }
 
     public function register_handlers() {
-        if (self::$registered) {
-            return;
-        }
-
-        self::$registered = true;  
-
-        // Register AJAX handlers with namespace
-        add_action('wp_ajax_create_shortcut', __NAMESPACE__ . '\\create_shortcut');
+        // Shortcuts AJAX handlers
         add_action('wp_ajax_fetch_shortcuts', __NAMESPACE__ . '\\fetch_shortcuts');
+        add_action('wp_ajax_nopriv_fetch_shortcuts', __NAMESPACE__ . '\\fetch_shortcuts');
+        add_action('wp_ajax_create_shortcut', __NAMESPACE__ . '\\create_shortcut');
         add_action('wp_ajax_fetch_shortcut', __NAMESPACE__ . '\\fetch_shortcut');
         add_action('wp_ajax_update_shortcut', __NAMESPACE__ . '\\update_shortcut');
         add_action('wp_ajax_toggle_draft', __NAMESPACE__ . '\\toggle_draft');

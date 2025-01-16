@@ -4,6 +4,10 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
+if (!defined('SHORTCUTS_HUB_PLUGIN_DIR')) {
+    define('SHORTCUTS_HUB_PLUGIN_DIR', plugin_dir_path(dirname(dirname(__FILE__))));
+}
+
 function shortcuts_hub_render_shortcuts_list_page() {
     // Get URL parameters
     $view = isset($_GET['view']) ? sanitize_text_field($_GET['view']) : '';
@@ -19,21 +23,47 @@ function shortcuts_hub_render_shortcuts_list_page() {
         <div id="shortcuts-view" style="display: <?php echo $show_shortcuts ? 'block' : 'none'; ?>">
             <h1 class="shortcuts-page-title">SHORTCUTS</h1>
             <div id="shortcuts-header-bar">
-                <input type="text" id="search-input" placeholder="Search shortcuts">
+                <input type="text" id="search-input" placeholder="Search shortcuts...">
                 <select id="filter-status">
-                    <option value="">Any</option>
+                    <option value="">All Status</option>
                     <option value="publish">Published</option>
                     <option value="draft">Draft</option>
                 </select>
                 <select id="filter-deleted">
-                    <option value="">Any</option>
-                    <option value="false">Not Deleted</option>
-                    <option value="true">Deleted</option>
+                    <option value="">Not Deleted</option>
+                    <option value="trash">Deleted</option>
                 </select>
-                <button id="reset-filters">Reset filters</button>
+                <button id="reset-filters">Reset Filters</button>
                 <a href="<?php echo admin_url('admin.php?page=add-shortcut'); ?>" class="add-shortcut-button">+</a>
+                <div class="view-toggle-container">
+                    <button id="view-toggle" class="view-toggle-button" data-view="grid">
+                        <div class="toggle-slider">
+                            <i class="fas fa-th-large grid-icon"></i>
+                            <i class="fas fa-list list-icon"></i>
+                            <span class="slider-thumb"></span>
+                        </div>
+                    </button>
+                </div>
             </div>
-            <div id="shortcuts-container" class="shortcuts-container"></div>
+            <div id="shortcuts-container">
+                <div id="shortcuts-grid-container" class="active">
+                    <div class="shortcuts-grid"></div>
+                </div>
+                <div id="shortcuts-table-container">
+                    <table class="shortcuts-table">
+                        <thead>
+                            <tr>
+                                <th class="name-column">Name</th>
+                                <th class="headline-column">Headline</th>
+                                <th class="status-column">Status</th>
+                                <th class="actions-count-column">Actions</th>
+                                <th class="actions-column">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div id="versions-view" style="display: <?php echo $show_versions ? 'block' : 'none'; ?>">
@@ -172,5 +202,70 @@ function shortcuts_hub_render_shortcuts_list_page() {
             </div>
         </form>
     </div>
+    <?php
+}
+
+function render_grid_view($shortcuts) {
+    echo '<div class="shortcuts-container">';
+    foreach ($shortcuts as $shortcut) {
+        $headline = get_post_meta($shortcut->ID, '_shortcut_headline', true);
+        $status = $shortcut->post_status;
+        ?>
+        <div class="shortcut-card">
+            <div class="shortcut-header">
+                <h3 class="shortcut-title"><?php echo esc_html($shortcut->post_title); ?></h3>
+                <span class="shortcut-status <?php echo esc_attr($status); ?>"><?php echo esc_html(ucfirst($status)); ?></span>
+            </div>
+            <div class="shortcut-content">
+                <p class="shortcut-headline"><?php echo esc_html($headline); ?></p>
+                <span class="action-count"><?php echo esc_html($shortcut->action_count); ?></span>
+            </div>
+            <div class="shortcut-actions">
+                <a href="<?php echo admin_url('admin.php?page=edit-shortcut&id=' . $shortcut->ID); ?>" class="edit-shortcut">Edit</a>
+                <a href="#" class="delete-shortcut" data-id="<?php echo esc_attr($shortcut->ID); ?>">Delete</a>
+                <a href="#" class="duplicate-shortcut" data-id="<?php echo esc_attr($shortcut->ID); ?>">Duplicate</a>
+            </div>
+        </div>
+        <?php
+    }
+    echo '</div>';
+}
+
+function render_list_view($shortcuts) {
+    ?>
+    <table class="shortcuts-table">
+        <thead>
+            <tr>
+                <th class="name-column">Name</th>
+                <th class="headline-column">Headline</th>
+                <th class="status-column">Status</th>
+                <th class="actions-count-column">Actions</th>
+                <th class="actions-column">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach ($shortcuts as $shortcut): ?>
+                <?php 
+                $headline = get_post_meta($shortcut->ID, '_shortcut_headline', true);
+                $status = $shortcut->post_status;
+                ?>
+                <tr>
+                    <td class="name-column"><?php echo esc_html($shortcut->post_title); ?></td>
+                    <td class="headline-column"><?php echo esc_html($headline); ?></td>
+                    <td class="status-column"><?php echo esc_html(ucfirst($status)); ?></td>
+                    <td class="actions-count-column">
+                        <span class="action-count"><?php echo esc_html($shortcut->action_count); ?></span>
+                    </td>
+                    <td class="actions-column">
+                        <div class="shortcut-actions">
+                            <a href="<?php echo admin_url('admin.php?page=edit-shortcut&id=' . $shortcut->ID); ?>" class="edit-shortcut">Edit</a>
+                            <a href="#" class="delete-shortcut" data-id="<?php echo esc_attr($shortcut->ID); ?>">Delete</a>
+                            <a href="#" class="duplicate-shortcut" data-id="<?php echo esc_attr($shortcut->ID); ?>">Duplicate</a>
+                        </div>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
     <?php
 }
