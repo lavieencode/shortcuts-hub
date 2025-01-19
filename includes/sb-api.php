@@ -21,20 +21,6 @@ function sb_api_call($endpoint, $method = 'GET', $query_params = [], $body_data 
         $api_url .= '?' . http_build_query($query_params);
     }
 
-    // Log the API request details
-    sh_debug_log('Switchblade API Request', [
-        'url' => $api_url,
-        'method' => $method,
-        'query_params' => $query_params,
-        'body_data' => $body_data,
-        'source' => [
-            'file' => __FILE__,
-            'line' => __LINE__,
-            'function' => __FUNCTION__
-        ],
-        'debug' => strpos($endpoint, 'versions') === false ? false : true
-    ]);
-
     // Function to make the actual API request
     $make_request = function($token) use ($api_url, $method, $body_data, &$curl_handle) {
         $args = array(
@@ -73,47 +59,17 @@ function sb_api_call($endpoint, $method = 'GET', $query_params = [], $body_data 
     // Get initial token
     $bearer_token = get_refresh_sb_token();
     if (is_wp_error($bearer_token)) {
-        sh_debug_log('Switchblade API Token Error', [
-            'error' => $bearer_token->get_error_message(),
-            'source' => [
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ],
-            'debug' => strpos($endpoint, 'versions') === false ? false : true
-        ]);
         return $bearer_token;
     }
 
     // Make initial request
     $response = $make_request($bearer_token);
     if (is_wp_error($response)) {
-        sh_debug_log('Switchblade API Request Error', [
-            'error' => $response->get_error_message(),
-            'source' => [
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ],
-            'debug' => strpos($endpoint, 'versions') === false ? false : true
-        ]);
         return $response;
     }
 
     $response_code = wp_remote_retrieve_response_code($response);
     $response_body = wp_remote_retrieve_body($response);
-    
-    // Log the API response
-    sh_debug_log('Switchblade API Response', [
-        'status_code' => $response_code,
-        'body' => json_decode($response_body, true),
-        'source' => [
-            'file' => __FILE__,
-            'line' => __LINE__,
-            'function' => __FUNCTION__
-        ],
-        'debug' => strpos($endpoint, 'versions') === false ? false : true
-    ]);
     
     // If unauthorized, try refreshing token and retry request
     if ($response_code === 401) {
@@ -130,18 +86,6 @@ function sb_api_call($endpoint, $method = 'GET', $query_params = [], $body_data 
         }
         $response_code = wp_remote_retrieve_response_code($response);
         $response_body = wp_remote_retrieve_body($response);
-        
-        // Log the retry response
-        sh_debug_log('Switchblade API Retry Response', [
-            'status_code' => $response_code,
-            'body' => json_decode($response_body, true),
-            'source' => [
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ],
-            'debug' => strpos($endpoint, 'versions') === false ? false : true
-        ]);
     }
 
     if ($response_code !== 200) {

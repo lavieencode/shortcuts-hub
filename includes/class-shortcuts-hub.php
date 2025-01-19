@@ -80,20 +80,7 @@ class Shortcuts_Hub {
             $this->init_ajax_handlers();
             
         } catch (Exception $e) {
-            // DEBUG: Logging initialization error with detailed information
-            sh_debug_log('Plugin Initialization Error', array(
-                'message' => 'Error during plugin initialization',
-                'source' => array(
-                    'file' => __FILE__,
-                    'line' => __LINE__,
-                    'function' => __FUNCTION__
-                ),
-                'data' => array(
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ),
-                'debug' => false
-            ));
+            // Exception handling without logging
         }
     }
 
@@ -383,20 +370,7 @@ class Shortcuts_Hub {
             // Flag that we need to flush rewrite rules
             update_option('shortcuts_hub_flush_rewrite_rules', true);
         } catch (\Exception $e) {
-            // Log any errors during activation
-            sh_debug_log('Activation Error', array(
-                'message' => 'Error during plugin activation',
-                'source' => array(
-                    'file' => __FILE__,
-                    'line' => __LINE__,
-                    'function' => __FUNCTION__
-                ),
-                'data' => array(
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString()
-                ),
-                'debug' => true
-            ));
+            // Exception handling without logging
         }
     }
 
@@ -411,17 +385,6 @@ class Shortcuts_Hub {
      */
     private function maybe_create_tables() {
         global $wpdb;
-
-        // DEBUG: Log table creation attempt
-        sh_debug_log('Table Creation Start', array(
-            'message' => 'Starting table creation process',
-            'source' => array(
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ),
-            'debug' => true
-        ));
 
         $charset_collate = $wpdb->get_charset_collate();
         $table_name = $wpdb->prefix . 'shortcuts_hub_action_shortcut';
@@ -440,22 +403,6 @@ class Shortcuts_Hub {
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         $result = dbDelta($sql);
 
-        // DEBUG: Log table creation result
-        sh_debug_log('Table Creation Result', array(
-            'message' => 'Results from table creation attempt',
-            'source' => array(
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ),
-            'data' => array(
-                'table_name' => $table_name,
-                'sql' => $sql,
-                'result' => $result
-            ),
-            'debug' => true
-        ));
-
         // Verify table exists and has correct structure
         $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
         
@@ -465,23 +412,6 @@ class Shortcuts_Hub {
             $expected_columns = array('id', 'action_id', 'shortcut_id', 'created_at');
             $missing_columns = array_diff($expected_columns, $column_names);
         }
-
-        // DEBUG: Log table verification
-        sh_debug_log('Table Verification', array(
-            'message' => 'Verifying table structure',
-            'source' => array(
-                'file' => __FILE__,
-                'line' => __LINE__,
-                'function' => __FUNCTION__
-            ),
-            'data' => array(
-                'table_exists' => $table_exists,
-                'columns' => $table_exists ? $column_names : array(),
-                'missing_columns' => $table_exists ? $missing_columns : array(),
-                'verification_sql' => "SHOW TABLES LIKE '$table_name'"
-            ),
-            'debug' => true
-        ));
 
         return $table_exists && empty($missing_columns);
     }

@@ -1,8 +1,47 @@
 function createShortcut(shortcutData, status = 'publish') {
+    // Process icon data
+    let iconData;
+    try {
+        if (typeof shortcutData.icon === 'string') {
+            // Try to parse if it's already a JSON string
+            try {
+                iconData = JSON.parse(shortcutData.icon);
+            } catch {
+                // If not a JSON string, assume it's a legacy format with just the name
+                iconData = {
+                    type: 'fontawesome',
+                    name: shortcutData.icon,
+                    url: null
+                };
+            }
+        } else if (typeof shortcutData.icon === 'object') {
+            // If it's already an object, ensure it has all required fields
+            iconData = {
+                type: shortcutData.icon.type || 'fontawesome',
+                name: shortcutData.icon.name || '',
+                url: shortcutData.icon.url || null
+            };
+        } else {
+            // Default empty icon data
+            iconData = {
+                type: 'fontawesome',
+                name: '',
+                url: null
+            };
+        }
+    } catch (error) {
+        // Use default icon data on error
+        iconData = {
+            type: 'fontawesome',
+            name: '',
+            url: null
+        };
+    }
+
     // First create in Switchblade
     const data = {
         action: 'create_shortcut',
-        security: shortcutsHubData.security,
+        security: shortcutsHubData.security.create_shortcut,
         shortcut_data: {
             name: shortcutData.name,
             headline: shortcutData.headline,
@@ -13,7 +52,7 @@ function createShortcut(shortcutData, status = 'publish') {
             input: shortcutData.input,
             result: shortcutData.result,
             color: shortcutData.color,
-            icon: shortcutData.icon,
+            icon: JSON.stringify(iconData),
             post_status: status
         }
     };
@@ -22,6 +61,7 @@ function createShortcut(shortcutData, status = 'publish') {
     let debugData = {
         request: {
             shortcut: shortcutData,
+            processedIcon: iconData,
             ajax: data
         }
     };
@@ -37,48 +77,25 @@ function createShortcut(shortcutData, status = 'publish') {
             debugData.response = response;
             
             if (response.success) {
-                const websiteUrl = shortcutsHubData.site_url + '/wp-admin/admin.php?page=edit-shortcut&id=' + response.data.post_id;
-                
                 jQuery('#message')
                     .removeClass('error-message')
                     .addClass('success-message')
-                    .text('Shortcut created successfully: ' + response.data.message)
+                    .text('Shortcut created successfully')
                     .show();
 
-                // Log successful creation
-                sh_debug_log('Create Shortcut', debugData);
-
-                // Debug: Redirecting to edit page
-                sh_debug_log('4. Create Shortcut - Redirecting', {
-                    redirectUrl: websiteUrl,
-                    post_id: response.data.post_id
-                });
-
+                // Hide message after 3 seconds
                 setTimeout(function() {
-                    window.location.href = websiteUrl;
-                }, 2000);
+                    jQuery('#message').fadeOut();
+                }, 3000);
             } else {
                 jQuery('#message')
                     .removeClass('success-message')
                     .addClass('error-message')
                     .text('Error creating shortcut: ' + (response.data?.message || 'Unknown error'))
                     .show();
-
-                // Log failed creation
-                sh_debug_log('Error - Create Shortcut Failed', {
-                    error: response.data?.message || 'Unknown error',
-                    debug: debugData
-                });
             }
         },
         error: function(xhr, status, error) {
-            // Debug: AJAX error occurred
-            sh_debug_log('Error - AJAX Failed', {
-                status: status,
-                error: error,
-                response: xhr.responseText
-            });
-
             jQuery('#message')
                 .removeClass('success-message')
                 .addClass('error-message')

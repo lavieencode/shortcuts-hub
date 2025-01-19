@@ -41,6 +41,8 @@
 .icon-preview {
     width: 30px;
     height: 30px;
+    background-color: transparent !important;
+    border: none !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,7 +88,6 @@
 /* Icon Selector */
 .icon-selector {
     position: static;
-    min-height: 400px;
     height: auto;
     width: 100%;
     box-sizing: border-box;
@@ -95,7 +96,6 @@
 .selector-popup {
     position: static;
     width: 100%;
-    min-height: 400px !important;
     height: auto !important;
     background-color: #252525;
     padding: 5px !important;
@@ -111,9 +111,11 @@
 
 .selector-controls {
     display: flex;
+    flex-direction: row;
     gap: 10px;
     margin-bottom: 15px;
     padding: 0px !important;
+    width: 100%;
 }
 
 .search-input {
@@ -126,7 +128,7 @@
     border-radius: 0;
     font-size: 15px;
     box-sizing: border-box;
-    width: auto !important;
+    width: 50% !important;
 }
 
 .category-select {
@@ -139,7 +141,7 @@
     border-radius: 0;
     font-size: 15px;
     box-sizing: border-box;
-    width: auto !important;
+    width: 50% !important;
 }
 
 .icons-grid {
@@ -148,7 +150,7 @@
     gap: 10px;
     padding: 15px;
     justify-content: start;
-    max-height: 300px;
+    height: 200px;
     overflow-y: auto;
     overflow-x: hidden;
     background-color: #373737;

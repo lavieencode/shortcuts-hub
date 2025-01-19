@@ -98,6 +98,7 @@ function shortcuts_hub_render_shortcuts_list_page() {
     </div>
     <div id="edit-version-modal" class="modal">
         <h1>Edit Version</h1>
+        
         <h2 id="version-display"></h2>
         <form id="edit-version-form">
             <input type="hidden" id="id" name="id">
@@ -136,6 +137,8 @@ function shortcuts_hub_render_shortcuts_list_page() {
         </form>
     </div>
     <div id="edit-shortcut-modal" class="modal" style="display: none;">
+        <h1>Edit Shortcut</h1>
+        <h2 id="edit-shortcut-name-display"></h2>
         <form id="edit-shortcut-form">
             <input type="hidden" id="id" name="id">
             <div class="form-group">
@@ -151,17 +154,145 @@ function shortcuts_hub_render_shortcuts_list_page() {
                 <textarea id="shortcut-description" name="shortcut_description" required></textarea>
             </div>
             <div class="form-group">
-                <label for="shortcut-website">Website</label>
-                <input type="text" id="shortcut-website" name="shortcut_website">
+                <label for="shortcut-icon-type">Icon</label>
+                <div class="icon-selector-container">
+                    <div class="icon-input-row">
+                        <select id="shortcut-icon-type" class="icon-type-selector">
+                            <option value="" disabled selected>Select a new icon...</option>
+                            <option value="fontawesome">Font Awesome Icon</option>
+                            <option value="custom">Custom Upload</option>
+                        </select>
+                        <div class="icon-preview empty">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                    <div id="icon-selector" class="icon-selector" style="display: none;">
+                        <div class="selector-popup">
+                            <div class="selector-controls">
+                                <input type="text" class="search-input" placeholder="Search icons...">
+                                <select class="category-select">
+                                    <option value="fas">Solid</option>
+                                    <option value="far">Regular</option>
+                                    <option value="fab">Brands</option>
+                                </select>
+                            </div>
+                            <div class="icons-grid"></div>
+                        </div>
+                    </div>
+                    <div id="custom-icon-upload" class="custom-upload" style="display: none;">
+                        <button type="button" class="upload-button">Upload Icon</button>
+                        <div class="upload-preview"></div>
+                    </div>
+                </div>
+                <input type="hidden" id="shortcut-icon" name="icon" value="">
             </div>
+
+            <div class="form-group">
+                <label for="shortcut-color">Color</label>
+                <div class="color-selector-container">
+                    <input type="text" class="color-value" value="Select a color..." readonly>
+                    <input type="color" class="color-picker" value="#909CFE">
+                </div>
+                <input type="hidden" id="shortcut-color" name="color" value="#909CFE">
+            </div>
+
+            <div class="form-group">
+                <label for="shortcut-input">Input</label>
+                <input type="text" id="shortcut-input" name="input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="shortcut-result">Result</label>
+                <input type="text" id="shortcut-result" name="result" required>
+            </div>
+
             <div class="button-container">
-                <button type="submit" class="save-button">Save Shortcut</button>
+                <div class="primary-buttons">
+                    <!-- Published state buttons -->
+                    <button type="submit" class="save-button update-shortcut publish-button" data-status="publish">Update</button>
+                    <button type="submit" class="save-button revert-draft revert-button" data-status="draft">Revert to Draft</button>
+                    
+                    <!-- Draft state buttons -->
+                    <button type="submit" class="save-button publish-shortcut publish-button" data-status="publish">Publish</button>
+                    <button type="submit" class="save-button save-draft save-draft-button" data-status="draft">Save as Draft</button>
+                </div>
                 <button type="button" class="cancel-button">Cancel</button>
             </div>
         </form>
     </div>
+    <div id="add-shortcut-modal" class="modal" style="display: none;">
+        <h1>Add New Shortcut</h1>
+        <form id="add-shortcut-form" method="post">
+            <?php wp_nonce_field('add_shortcut_nonce', 'shortcut_nonce'); ?>
+
+            <div class="form-group">
+                <label for="shortcut-name">Name</label>
+                <input type="text" id="shortcut-name" name="shortcut_name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="shortcut-headline">Headline</label>
+                <input type="text" id="shortcut-headline" name="shortcut_headline" required>
+            </div>
+
+            <div class="form-group">
+                <label for="shortcut-description">Description</label>
+                <textarea id="shortcut-description" name="shortcut_description" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="shortcut-input">Input</label>
+                <input type="text" id="shortcut-input" name="input" required>
+            </div>
+
+            <div class="form-group">
+                <label for="shortcut-result">Result</label>
+                <input type="text" id="shortcut-result" name="result" required>
+            </div>
+
+            <div class="form-group">
+                <label for="shortcut-color">Color</label>
+                <div class="color-selector-container">
+                    <input type="text" class="color-value" value="Select a color..." readonly>
+                    <input type="color" class="color-picker" value="#909CFE">
+                </div>
+                <input type="hidden" id="shortcut-color" name="color" value="#909CFE">
+            </div>
+
+            <div class="form-group">
+                <label for="shortcut-icon">Icon</label>
+                <div class="icon-selector-container">
+                    <div class="icon-input-row">
+                        <select id="shortcut-icon-type" class="icon-type-selector">
+                            <option value="" disabled selected>Select a new icon...</option>
+                            <option value="fontawesome">Font Awesome Icon</option>
+                            <option value="custom">Custom Upload</option>
+                        </select>
+                        <div class="icon-preview empty">
+                            <i class="fas fa-image"></i>
+                        </div>
+                    </div>
+                    <div id="icon-selector" class="icon-selector" style="display: none;">
+                        <div class="selector-popup">
+                            <div class="selector-controls">
+                                <input type="text" class="search-input" placeholder="Search icons...">
+                                <button type="button" class="reset-button">Reset</button>
+                            </div>
+                            <div class="icons-grid"></div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="shortcut-icon" name="icon" value="">
+            </div>
+
+            <div class="button-container">
+                <button type="submit" class="button button-primary">Add Shortcut</button>
+                <button type="button" class="button button-secondary cancel-button">Cancel</button>
+            </div>
+        </form>
+    </div>
     <div id="add-version-modal" class="modal">
-        <h1>ADD VERSION</h1>
+        <h1>Add New Version</h1>
         <h2 id="shortcut-name-display"></h2>
         <form id="add-version-form">
             <input type="hidden" id="id" name="id">

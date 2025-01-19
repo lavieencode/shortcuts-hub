@@ -5,48 +5,123 @@ body.modal-open #wpcontent {
 }
 
 /* Ensuring the modal is not affected and remains interactive */
-#edit-modal {
+#edit-shortcut-modal,
+#add-shortcut-modal {
+    display: block !important;
     filter: none;
     z-index: 1001; /* Higher than #wpcontent to ensure it's on top */
-    pointer-events: auto; /* Enable interactions with modal */
+    pointer-events: none; /* Enable interactions with modal */
     position: fixed;
     right: 0;
     top: 0;
     width: 403px;
     height: 100%;
     padding: 20px;
-    padding-top: 30px;
+    padding-top: 50px !important;
     background-color: #373737;
     color: #CACACA;
+    visibility: hidden;
     transform: translateX(100%);
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
 }
 
-#edit-modal.active {
-    transform: translateX(0); /* Slide-in effect for the modal */
+#edit-shortcut-modal.active,
+#add-shortcut-modal.active {
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    overflow-y: auto;
+    max-height: 100vh;
+    padding-bottom: 40px;
+}
+
+.modal.active {
+    transform: translateX(0);
+}
+
+.modal-content {
+    position: relative;
+    background-color: #252525;
+    margin: 5vh auto;
+    padding: 20px;
+    width: 90%;
+    max-width: 700px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Form inside modal */
+.modal form {
+    height: 100%;
 }
 
 /* Modal Heading */
-#edit-modal h2 {
+.modal h1 {
     font-size: 26px;
+    margin-bottom: 30px;
     text-transform: uppercase;
+    color: #909CFE
+}
+
+/* Ensure form groups have proper spacing */
+.modal .form-group {
     margin-bottom: 20px;
 }
 
+/* Button container at bottom */
+.modal .button-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal .button-container .primary-buttons {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+}
+
+.modal .button-container button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+    height: 36px;
+    min-width: 100px;
+    white-space: nowrap;
+}
+
+/* Prevent background scrolling when modal is open */
+body.modal-open {
+    overflow: hidden;
+}
+
 /* Input, Textarea, Select Styles in Modal */
-#edit-modal input, #edit-modal textarea, #edit-modal select {
-    background-color: #252525;
+#edit-shortcut-modal .form-group input,
+#edit-shortcut-modal .form-group textarea,
+#edit-shortcut-modal .form-group select,
+#add-shortcut-modal .form-group input,
+#add-shortcut-modal .form-group textarea,
+#add-shortcut-modal .form-group select {
+    background-color: #252525 !important;
     color: #CACACA;
-    border: 1px solid #909CFE;
     padding: 10px;
     width: 100%;
+    border: none;
     margin-bottom: 15px;
     border-radius: 0;
     font-size: 15px;
 }
 
 /* Modal form labels */
-#edit-modal label {
+#edit-modal label, #add-shortcut-modal label {
     font-weight: 600;
     font-size: 13px;
     margin-bottom: 0;
@@ -60,23 +135,90 @@ body.modal-open #wpcontent {
     padding-left: 10px;
 }
 
-#edit-modal button.shortcuts-button {
-    display: inline-block;
+#edit-shortcut-modal .button-container,
+#add-shortcut-modal .button-container {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: flex-start;
+}
+
+#edit-shortcut-modal .button-container button,
+#add-shortcut-modal .button-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#edit-shortcut-modal .button-container .shortcuts-button,
+#add-shortcut-modal .button-container .shortcuts-button {
     background-color: #909CFE;
     color: #252525;
     font-weight: 600;
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
-    margin-top: 15px;
 }
 
-#edit-modal .close-button {
-    display: inline-block;
-    color: #252525;
-    font-weight: 600;
-    margin-left: 15px;
+#edit-modal .button-container .close-button,
+#add-shortcut-modal .button-container .close-button {
+    background-color: transparent;
+    color: #CACACA;
+    border: 1px solid #CACACA;
+}
+
+/* Icon Selector Styles */
+.icon-selector-container {
+    margin-bottom: 20px;
+}
+
+.icon-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.icon-type-selector {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.icon-preview {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f5f5;
+}
+
+.icon-preview.empty i {
+    color: #ccc;
+}
+
+/* Color Selector Styles */
+.color-selector {
+    margin-bottom: 20px;
+}
+
+.color-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.color-preview {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-left: 10px;
 }
 
 /* Success and Error Message Styling */
@@ -89,9 +231,4 @@ body.modal-open #wpcontent {
 
 .error-message {
     color: #FF6B6B; /* For error messages */
-}
-
-/* Deactivate scrolling and interaction with the background when modal is open */
-body.modal-open {
-    overflow: hidden; /* Prevent background scrolling */
 }

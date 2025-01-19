@@ -31,23 +31,6 @@ function fetchShortcutsFromSource(source) {
         source: source
     };
 
-    // DEBUG: Log the current filter parameters and security token
-    sh_debug_log('Filter Parameters', {
-        message: 'Preparing to fetch shortcuts',
-        source: {
-            file: 'shortcuts-fetch.js',
-            function: 'fetchShortcutsFromSource'
-        },
-        data: {
-            filter_status: filterStatus,
-            filter_deleted: filterDeleted,
-            search_term: searchTerm,
-            source: source,
-            security_token: shortcutsHubData.security.fetch_shortcuts
-        },
-        debug: true
-    });
-
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
@@ -57,21 +40,6 @@ function fetchShortcutsFromSource(source) {
                 if (source === 'WP') {
                     // Store shortcuts globally for re-rendering
                     window.currentShortcuts = response.data;
-                    
-                    // DEBUG: Log the results
-                    sh_debug_log('Filter Results', {
-                        message: 'Successfully fetched shortcuts',
-                        source: {
-                            file: 'shortcuts-fetch.js',
-                            function: 'fetchShortcutsFromSource'
-                        },
-                        data: {
-                            total_shortcuts: response.data.length,
-                            filter_params: data,
-                            shortcuts: response.data
-                        },
-                        debug: true
-                    });
                     
                     renderShortcuts(response.data);
                 }

@@ -11,23 +11,43 @@ function deleteShortcut(postId, sbId, buttonElement, permanent = false, restore 
     const loadingText = restore ? 'Restoring...' : (permanent ? 'Deleting Permanently...' : 'Moving to Trash...');
     $button.text(loadingText).prop('disabled', true);
 
+    const requestData = {
+        action: 'delete_shortcut',
+        security: shortcutsHubData.security,
+        post_id: postId,
+        sb_id: sbId,
+        permanent: permanent,
+        restore: restore
+    };
+
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         type: 'POST',
-        data: {
-            action: 'delete_shortcut',
-            security: shortcutsHubData.security,
-            post_id: postId,
-            sb_id: sbId,
-            permanent: permanent,
-            restore: restore
-        },
+        data: requestData,
         success: function(response) {
-            console.log('Delete/Restore Response:', response);
+            // DEBUG: Log request and response details
+            sh_debug_log('Shortcut Deletion Operation', {
+                message: 'Processing shortcut deletion operation',
+                source: {
+                    file: 'shortcut-delete.js',
+                    line: 'deleteShortcut',
+                    function: 'deleteShortcut'
+                },
+                data: {
+                    request: requestData,
+                    response: response,
+                    shortcut_element: {
+                        post_id: postId,
+                        sb_id: sbId,
+                        permanent: permanent,
+                        restore: restore
+                    }
+                },
+                debug: true
+            });
+
             if (response.success) {
-                console.log('Operation successful, updating UI...');
                 if (permanent) {
-                    console.log('Removing item permanently');
                     $shortcutItem.fadeOut(400, function() {
                         $shortcutItem.remove();
                         if (jQuery('.shortcut-item').length === 0) {
@@ -35,7 +55,6 @@ function deleteShortcut(postId, sbId, buttonElement, permanent = false, restore 
                         }
                     });
                 } else if (restore) {
-                    console.log('Restoring item, updating badges');
                     // Update buttons for restored state
                     $btnGroup.html(`
                         <button class="delete-button" data-post_id="${postId}" data-sb_id="${sbId}">Delete</button>
@@ -47,14 +66,11 @@ function deleteShortcut(postId, sbId, buttonElement, permanent = false, restore 
                         </div>
                     `);
                     // Update badges for restored state
-                    console.log('Current badges:', $badgesContainer.html());
                     $badgesContainer.find('.deleted, .published').remove();
                     if (!$badgesContainer.find('.draft').length) {
                         $badgesContainer.append('<span class="badge draft">Draft</span>');
                     }
-                    console.log('Updated badges:', $badgesContainer.html());
                 } else {
-                    console.log('Moving to trash, updating badges');
                     // Update buttons for deleted state
                     $btnGroup.html(`
                         <button class="restore-button" data-post_id="${postId}" data-sb_id="${sbId}">Restore</button>
@@ -66,22 +82,36 @@ function deleteShortcut(postId, sbId, buttonElement, permanent = false, restore 
                         </div>
                     `);
                     // Update badges for deleted state
-                    console.log('Current badges:', $badgesContainer.html());
                     $badgesContainer.find('.draft, .published').remove();
                     if (!$badgesContainer.find('.deleted').length) {
                         $badgesContainer.append('<span class="badge deleted">Deleted</span>');
                     }
-                    console.log('Updated badges:', $badgesContainer.html());
                 }
             } else {
-                // Show error and reset button
-                console.error('Operation failed:', response.data);
                 alert(response.data.message || 'Error updating shortcut status');
                 $button.text(originalText).prop('disabled', false);
             }
         },
         error: function(xhr, status, error) {
-            console.error('AJAX error:', {xhr, status, error});
+            // DEBUG: Log AJAX error with request details
+            sh_debug_log('Shortcut Deletion Operation', {
+                message: 'AJAX request failed',
+                source: {
+                    file: 'shortcut-delete.js',
+                    line: 'deleteShortcut.ajaxError',
+                    function: 'deleteShortcut'
+                },
+                data: {
+                    request: requestData,
+                    error: {
+                        xhr: xhr,
+                        status: status,
+                        error: error
+                    }
+                },
+                debug: true
+            });
+
             alert('Error updating shortcut status. Please try again later.');
             $button.text(originalText).prop('disabled', false);
         }

@@ -6,9 +6,118 @@ jQuery(document).ready(function($) {
     // Add shortcut button click handler
     $('.add-shortcut-button').on('click', function(e) {
         e.preventDefault();
-        window.location.href = $(this).attr('href');
+        // Reset form and show empty modal for new shortcut
+        $('#add-shortcut-modal').addClass('active').css('transform', 'translateX(0)').show();
+        $('#add-shortcut-form')[0].reset();
+        $('body').addClass('modal-open');
     });
     
+    // Add shortcut form submission handler
+    $('#add-shortcut-form').on('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form values
+        const shortcutData = {
+            name: $('#add-shortcut-form #shortcut-name').val().trim(),
+            headline: $('#add-shortcut-form #shortcut-headline').val().trim(),
+            description: $('#add-shortcut-form #shortcut-description').val().trim(),
+            input: $('#add-shortcut-form #shortcut-input').val().trim(),
+            result: $('#add-shortcut-form #shortcut-result').val().trim(),
+            color: $('#add-shortcut-form .color-picker').val().trim(),
+            icon: $('#add-shortcut-form #shortcut-icon').val().trim()
+        };
+
+        // Validate required fields
+        if (!shortcutData.name || !shortcutData.headline) {
+            sh_debug_log('Form Validation Failed', {
+                message: 'Required fields missing',
+                source: {
+                    file: 'shortcuts-list.js',
+                    line: 'validateForm',
+                    function: 'validateForm'
+                },
+                data: {
+                    form_data: shortcutData,
+                    missing_fields: {
+                        name: !shortcutData.name,
+                        headline: !shortcutData.headline
+                    }
+                },
+                debug: true
+            });
+
+            $('#message')
+                .removeClass('success-message')
+                .addClass('error-message')
+                .text('Please fill in all required fields')
+                .show();
+            return;
+        }
+
+        createShortcut(shortcutData, 'publish')
+            .then(function(response) {
+                if (response.success) {
+                    // Close modal
+                    $('#add-shortcut-modal').removeClass('active');
+                    setTimeout(function() {
+                        $('#add-shortcut-modal').hide();
+                        $('body').removeClass('modal-open');
+                    }, 300);
+
+                    // Reset form
+                    $('#add-shortcut-form')[0].reset();
+                    
+                    // Refresh shortcuts list
+                    refreshShortcuts();
+                }
+            })
+            .catch(function(error) {
+                console.error('Error creating shortcut:', error);
+                $('#message')
+                    .removeClass('success-message')
+                    .addClass('error-message')
+                    .text('Error creating shortcut: ' + error)
+                    .show();
+            });
+    });
+
+    // Close modal button handler
+    $('.cancel-button').on('click', function() {
+        $('#add-shortcut-modal').removeClass('active');
+        setTimeout(function() {
+            $('#add-shortcut-modal').hide();
+        }, 300);
+        $('body').removeClass('modal-open');
+    });
+
+    // Add shortcut form handlers
+    $('#add-shortcut-form .save-draft-button').on('click', function() {
+        const formData = new FormData($('#add-shortcut-form')[0]);
+        formData.append('action', 'add_shortcut');
+        formData.append('security', shortcutsHubData.security.add_shortcut);
+        formData.append('post_status', 'draft');
+        
+        $.ajax({
+            url: shortcutsHubData.ajax_url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                if (response.success) {
+                    $('#add-shortcut-modal').removeClass('active').hide();
+                    $('body').removeClass('modal-open');
+                    refreshShortcuts();
+                } else {
+                    alert('Error adding shortcut: ' + response.data.message);
+                }
+            },
+            error: function() {
+                alert('Error adding shortcut. Please try again.');
+            }
+        });
+    });
+
     function toggleView(view) {
         shortcutsContainer.removeClass('view-grid view-list').addClass('view-' + view);
     }
@@ -56,11 +165,8 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    // Update the container content
                     shortcutsContainer.html(response.data.html);
-                    updateView(newView);
-                } else {
-                    console.error('Failed to toggle view');
+                    renderShortcuts(window.currentShortcuts);
                 }
             },
             error: function(xhr, status, error) {
@@ -79,6 +185,9 @@ jQuery(document).ready(function($) {
         
         shortcutsContainer.addClass('loading');
         
+        // Set refresh flag for render logging
+        window.isRefreshing = true;
+        
         $.ajax({
             url: shortcutsHubData.ajax_url,
             type: 'POST',
@@ -92,10 +201,15 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     shortcutsContainer.html(response.data.html);
+                    if (window.currentShortcuts) {
+                        renderShortcuts(window.currentShortcuts);
+                    }
                 }
             },
             complete: function() {
                 shortcutsContainer.removeClass('loading');
+                // Reset refresh flag
+                window.isRefreshing = false;
             }
         });
     }

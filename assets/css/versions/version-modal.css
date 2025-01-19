@@ -1,10 +1,10 @@
 /* Modal for Editing or Adding Version */
 #edit-version-modal, #add-version-modal {
-    display: block;
+    display: block !important;
     visibility: hidden;
     filter: none;
     z-index: 1000;
-    pointer-events: auto;
+    pointer-events: none;
     position: fixed;
     right: 0;
     top: 0;
@@ -15,11 +15,13 @@
     background-color: #373737;
     color: #CACACA;
     transform: translateX(100%);
-    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
 }
 
 #edit-version-modal.active, #add-version-modal.active {
     visibility: visible;
+    pointer-events: auto;
     transform: translateX(0);
 }
 

@@ -158,6 +158,7 @@
             this.container.innerHTML = `
                 <div class="icon-input-row">
                     <select class="icon-type-selector">
+                        <option value="">Select Icon Type</option>
                         <option value="fontawesome">Font Awesome Icon</option>
                         <option value="custom">Custom Upload</option>
                     </select>
@@ -190,25 +191,27 @@
         }
 
         init() {
+            // Cache DOM elements
             this.typeSelect = this.container.querySelector('.icon-type-selector');
-            if (!this.typeSelect) {
-                console.error('IconSelector: type selector not found');
-                return;
-            }
             
-            this.attachEvents();
-            this.createResetButton();
+            // Initially hide the selector container
+            const selectorContainer = this.container.querySelector('.icon-selector');
+            if (selectorContainer) {
+                selectorContainer.style.display = 'none';
+            }
             
             // Initialize based on current type
             if (this.currentValue && this.currentValue.type === 'custom') {
                 this.typeSelect.value = 'custom';
                 this.showCustomUpload();
-            } else {
+            } else if (this.currentValue && this.currentValue.type === 'fontawesome') {
                 this.typeSelect.value = 'fontawesome';
                 this.showFontAwesomePicker();
             }
             
             this.updatePreview();
+            this.createResetButton();
+            this.attachEvents();
         }
 
         createResetButton() {
@@ -245,6 +248,14 @@
             // Type selector change event
             this.typeSelect.addEventListener('change', () => {
                 const type = this.typeSelect.value;
+                const selectorContainer = this.container.querySelector('.icon-selector');
+                
+                if (type === '') {
+                    selectorContainer.style.display = 'none';
+                    return;
+                }
+                
+                selectorContainer.style.display = 'block';
                 if (type === 'custom') {
                     this.showCustomUpload();
                 } else {
@@ -255,8 +266,36 @@
 
         showFontAwesomePicker() {
             const selectorContainer = this.container.querySelector('.icon-selector');
+            if (!selectorContainer) return;
+
+            // Show the container
+            selectorContainer.style.display = 'block';
+
+            // Restore the original HTML structure if needed
+            if (!selectorContainer.querySelector('.selector-controls')) {
+                selectorContainer.innerHTML = `
+                    <div class="selector-popup">
+                        <div class="selector-controls">
+                            <input type="text" class="search-input" placeholder="Search icons...">
+                            <select class="category-select">
+                                <option value="all">All Icons</option>
+                                <option value="fas">Solid</option>
+                                <option value="far">Regular</option>
+                                <option value="fab">Brands</option>
+                            </select>
+                        </div>
+                        <div class="icons-grid"></div>
+                    </div>
+                `;
+            }
+
             const iconsGrid = selectorContainer.querySelector('.icons-grid');
             if (!iconsGrid) return;
+
+            // Show the font awesome selector elements
+            const selectorControls = selectorContainer.querySelector('.selector-controls');
+            if (iconsGrid) iconsGrid.style.display = 'grid';
+            if (selectorControls) selectorControls.style.display = 'flex';
 
             // Add icons to the grid
             this.addFontAwesomeIcons(iconsGrid);
@@ -287,14 +326,22 @@
             }
 
             // Show the selector
-            selectorContainer.style.display = 'block';
         }
 
         showCustomUpload() {
             const selectorContainer = this.container.querySelector('.icon-selector');
             if (!selectorContainer) return;
 
-            // Update the selector content
+            // Show the container
+            selectorContainer.style.display = 'block';
+
+            // Hide the font awesome selector
+            const iconsGrid = selectorContainer.querySelector('.icons-grid');
+            const selectorControls = selectorContainer.querySelector('.selector-controls');
+            if (iconsGrid) iconsGrid.style.display = 'none';
+            if (selectorControls) selectorControls.style.display = 'none';
+
+            // Show the custom upload interface
             selectorContainer.innerHTML = `
                 <div class="selector-popup">
                     <div class="upload-container">
@@ -311,9 +358,6 @@
             if (uploadButton) {
                 uploadButton.addEventListener('click', () => this.openMediaUploader());
             }
-
-            // Show the selector
-            selectorContainer.style.display = 'block';
         }
 
         addFontAwesomeIcons(iconsGrid) {
@@ -382,10 +426,30 @@
         }
 
         setIcon(type, name, url = null) {
+            // DEBUG: Log icon data being set
+            sh_debug_log('Setting Icon Data', {
+                'message': 'Setting new icon data',
+                'source': {
+                    'file': 'icon-selector.js',
+                    'line': __LINE__,
+                    'function': 'setIcon'
+                },
+                'data': {
+                    'type': type,
+                    'name': name,
+                    'url': url
+                },
+                'debug': true
+            });
+
             this.currentValue = { type, name, url };
             
             if (this.inputField) {
-                this.inputField.value = JSON.stringify(this.currentValue);
+                this.inputField.value = JSON.stringify({
+                    type: type,
+                    name: name,
+                    url: url
+                });
             }
             
             this.updatePreview();

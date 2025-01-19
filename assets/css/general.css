@@ -122,6 +122,7 @@ button {
     padding-left: 15px;
     padding-right: 15px;
     height: 40px;
+    line-height: normal !important;
     text-align: center;
     text-decoration: none;
     margin: 0;
@@ -155,7 +156,7 @@ button {
 }
 
 .cancel-button {
-    background-color: #b8b8b8;
+    background-color: #b8b8b8 !important;
     color: #252525;
 }
 

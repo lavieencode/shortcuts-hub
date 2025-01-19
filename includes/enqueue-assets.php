@@ -32,14 +32,6 @@ function shortcuts_hub_enqueue_assets($hook) {
     wp_enqueue_script('jquery');
     wp_enqueue_script('sh-debug', plugins_url('../assets/js/core/sh-debug.js', __FILE__), array('jquery'), SHORTCUTS_HUB_VERSION, true);
 
-    // Global admin styles
-    wp_enqueue_style(
-        'shortcuts-hub-admin',
-        plugins_url('../assets/css/core/admin.css', __FILE__),
-        array(),
-        SHORTCUTS_HUB_VERSION
-    );
-
     // Font Awesome for icons
     wp_enqueue_style(
         'shortcuts-hub-fontawesome',
@@ -62,30 +54,45 @@ function shortcuts_hub_enqueue_assets($hook) {
         wp_enqueue_style(
             'shortcuts-hub-general',
             plugins_url('../assets/css/general.css', __FILE__),
-            array(),
-            SHORTCUTS_HUB_VERSION
+            array('shortcuts-hub-fontawesome'),
+            SHORTCUTS_HUB_VERSION . '.' . time()
         );
 
         // Shortcuts styles
         wp_enqueue_style(
             'shortcuts-hub-display',
             plugins_url('../assets/css/shortcuts/shortcuts-display.css', __FILE__),
-            array(),
-            SHORTCUTS_HUB_VERSION
+            array('shortcuts-hub-general', 'shortcuts-hub-fontawesome'),
+            SHORTCUTS_HUB_VERSION . '.' . time()
         );
 
         wp_enqueue_style(
             'shortcuts-hub-single',
             plugins_url('../assets/css/shortcuts/shortcut-single.css', __FILE__),
-            array(),
-            SHORTCUTS_HUB_VERSION
+            array('shortcuts-hub-general', 'shortcuts-hub-fontawesome'),
+            SHORTCUTS_HUB_VERSION . '.' . time(),
+            'all'
         );
 
         wp_enqueue_style(
             'shortcuts-hub-modal',
             plugins_url('../assets/css/shortcuts/shortcut-modal.css', __FILE__),
-            array(),
-            SHORTCUTS_HUB_VERSION
+            array('shortcuts-hub-general'),
+            SHORTCUTS_HUB_VERSION . '.' . time()
+        );
+
+        wp_enqueue_style(
+            'shortcuts-hub-icon-selector',
+            plugins_url('../assets/css/core/icon-selector.css', __FILE__),
+            array('shortcuts-hub-general'),
+            SHORTCUTS_HUB_VERSION . '.' . time()
+        );
+
+        wp_enqueue_style(
+            'shortcuts-hub-color-selector',
+            plugins_url('../assets/css/core/color-selector.css', __FILE__),
+            array('shortcuts-hub-general'),
+            SHORTCUTS_HUB_VERSION . '.' . time()
         );
 
         // Versions styles
@@ -93,21 +100,21 @@ function shortcuts_hub_enqueue_assets($hook) {
             'shortcuts-hub-versions-display',
             plugins_url('../assets/css/versions/versions-display.css', __FILE__),
             array(),
-            SHORTCUTS_HUB_VERSION
+            SHORTCUTS_HUB_VERSION . '.' . time()
         );
 
         wp_enqueue_style(
             'shortcuts-hub-version-single',
             plugins_url('../assets/css/versions/version-single.css', __FILE__),
             array(),
-            SHORTCUTS_HUB_VERSION
+            SHORTCUTS_HUB_VERSION . '.' . time()
         );
 
         wp_enqueue_style(
             'shortcuts-hub-version-modal',
             plugins_url('../assets/css/versions/version-modal.css', __FILE__),
             array(),
-            SHORTCUTS_HUB_VERSION
+            SHORTCUTS_HUB_VERSION . '.' . time()
         );
 
         // Core scripts
@@ -169,9 +176,30 @@ function shortcuts_hub_enqueue_assets($hook) {
             true
         );
 
+        wp_enqueue_script('shortcuts-hub-icon-selector', 
+            plugins_url('../assets/js/core/icon-selector.js', __FILE__), 
+            array('jquery', 'shortcuts-hub-debug'), 
+            SHORTCUTS_HUB_VERSION,
+            true
+        );
+
+        wp_enqueue_script('shortcuts-hub-color-selector', 
+            plugins_url('../assets/js/core/color-selector.js', __FILE__), 
+            array('jquery', 'shortcuts-hub-debug'), 
+            SHORTCUTS_HUB_VERSION,
+            true
+        );
+
+        wp_enqueue_script('shortcuts-hub-shortcut-create', 
+            plugins_url('../assets/js/shortcuts/shortcut-create.js', __FILE__), 
+            array('jquery', 'shortcuts-hub-debug'), 
+            SHORTCUTS_HUB_VERSION,
+            true
+        );
+
         wp_enqueue_script('shortcuts-hub-shortcuts-handlers', 
             plugins_url('../assets/js/shortcuts/shortcuts-handlers.js', __FILE__), 
-            array('jquery', 'shortcuts-hub-debug', 'shortcuts-hub-shortcuts-modal'), 
+            array('jquery', 'shortcuts-hub-debug', 'shortcuts-hub-icon-selector'), 
             SHORTCUTS_HUB_VERSION,
             true
         );
@@ -229,7 +257,8 @@ function shortcuts_hub_enqueue_assets($hook) {
             'filter_shortcuts' => wp_create_nonce('shortcuts_hub_filter_shortcuts_nonce'),
             'fetch_versions' => wp_create_nonce('shortcuts_hub_fetch_versions_nonce'),
             'delete_version' => wp_create_nonce('shortcuts_hub_delete_version_nonce'),
-            'update_version' => wp_create_nonce('shortcuts_hub_update_version_nonce')
+            'update_version' => wp_create_nonce('shortcuts_hub_update_version_nonce'),
+            'create_shortcut' => wp_create_nonce('shortcuts_hub_nonce')
         );
 
         // Localize script with all required data
@@ -260,7 +289,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             'shortcuts-hub-icon-selector',
             plugins_url('../assets/css/core/icon-selector.css', __FILE__),
             array(),
-            SHORTCUTS_HUB_VERSION
+            SHORTCUTS_HUB_VERSION . '.' . time()
         );
 
         wp_enqueue_script(
@@ -313,7 +342,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             'shortcuts-hub-actions',
             plugins_url('../assets/css/actions/actions-manager.css', __FILE__),
             array(),
-            SHORTCUTS_HUB_VERSION
+            SHORTCUTS_HUB_VERSION . '.' . time()
         );
     } elseif ($screen->id === 'shortcuts-hub_page_settings') {
         // Scripts
@@ -341,7 +370,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             'shortcuts-hub-settings',
             plugins_url('../assets/css/core/settings.css', __FILE__),
             array(),
-            SHORTCUTS_HUB_VERSION
+            SHORTCUTS_HUB_VERSION . '.' . time()
         );
     }
 }

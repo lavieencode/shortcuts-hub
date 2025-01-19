@@ -28,6 +28,13 @@ jQuery(document).ready(function($) {
 
     // Function to gather form data
     function getShortcutData() {
+        // Prepare icon data as a proper object
+        const iconData = {
+            type: $('#icon-type-selector').val() || 'fontawesome',
+            name: $('#shortcut-icon').val(),
+            url: null // Add URL handling if needed
+        };
+
         return {
             name: $('#name').val(),
             description: $('#description').val(),
@@ -35,11 +42,55 @@ jQuery(document).ready(function($) {
             input: $('#input').val(),
             result: $('#result').val(),
             color: $('#color').val(),
-            icon: $('#shortcut-icon').val(),
+            icon: JSON.stringify(iconData),
             actions: $('#actions').val(),
             sb_id: $('#sb_id').val(),
             post_id: $('#post_id').val()
         };
+    }
+
+    // Function to create shortcut
+    function createShortcut(shortcutData, state) {
+        const formData = {
+            action: 'create_shortcut',
+            security: shortcutsHubData.security.create_shortcut,
+            shortcut_data: {
+                name: shortcutData.name,
+                headline: shortcutData.headline,
+                description: shortcutData.description,
+                state: state
+            },
+            wp_data: {
+                input: shortcutData.input,
+                result: shortcutData.result,
+                color: shortcutData.color,
+                icon: shortcutData.icon
+            }
+        };
+
+        return $.ajax({
+            url: shortcutsHubData.ajax_url,
+            type: 'POST',
+            data: formData,
+            success: function(response) {
+                if (response.success) {
+                    window.location.href = response.data.redirect_url;
+                } else {
+                    $('#feedback-message')
+                        .removeClass('success')
+                        .addClass('error')
+                        .text(response.data.message)
+                        .show();
+                }
+            },
+            error: function(xhr, status, error) {
+                $('#feedback-message')
+                    .removeClass('success')
+                    .addClass('error')
+                    .text('Error creating shortcut. Please try again.')
+                    .show();
+            }
+        });
     }
 
     // Handle publish button
