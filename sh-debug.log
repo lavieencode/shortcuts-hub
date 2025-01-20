@@ -1,76 +1,213 @@
-[DEBUG] Menu Toggle Interaction Flow
-[SOURCE] shortcuts-handlers.js:0
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:0
 {
-    "executedCode": {
-        "toggleButton": "menuToggle.toggleClass(\"active\")",
-        "actionMenu": "actionMenu.toggleClass(\"active\")"
-    },
-    "domStructure": {
-        "toggleSelector": "<button class=\"menu-toggle active\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>",
-        "menuContainer": "<div class=\"menu-container\">\n                <button class=\"menu-toggle active\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>\n                <div class=\"action-menu active\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>\n            <\/div>",
-        "actionMenuHTML": "<div class=\"action-menu active\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>"
-    },
-    "beforeToggle": {
-        "menuToggle": {
-            "hasActiveClass": false,
-            "opacity": "1",
-            "visibility": "visible"
-        },
-        "actionMenu": {
-            "hasActiveClass": false,
-            "opacity": "0",
-            "visibility": "hidden"
-        },
-        "firstButton": {
-            "opacity": "1",
-            "visibility": "visible"
-        }
-    },
-    "afterToggle": {
-        "menuToggle": {
-            "hasActiveClass": true,
-            "opacity": "1",
-            "visibility": "visible"
-        },
-        "actionMenu": {
-            "hasActiveClass": true,
-            "opacity": "0",
-            "visibility": "hidden"
-        },
-        "firstButton": {
-            "opacity": "1",
-            "visibility": "visible"
-        }
-    },
-    "cssRules": {
-        "menuToggleActive": ".menu-toggle.active { opacity: 0 !important; visibility: hidden !important; }",
-        "actionMenuActive": ".action-menu.active { opacity: 1 !important; visibility: visible !important; }"
+    "documentReadyState": "loading",
+    "jQueryLoaded": true,
+    "shortcutsHubDataExists": true,
+    "shortcutsHubSecurityExists": true,
+    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737334793",
+    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:245:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:289:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:8"
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:0
+{
+    "documentReadyState": "loading",
+    "jQueryLoaded": true,
+    "shortcutsHubDataExists": true,
+    "shortcutsHubSecurityExists": true,
+    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737338654",
+    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:259:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:302:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:309:8"
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:0
+{
+    "documentReadyState": "loading",
+    "jQueryLoaded": true,
+    "shortcutsHubDataExists": true,
+    "shortcutsHubSecurityExists": true,
+    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737338760",
+    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:273:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:316:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:323:8"
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:0
+{
+    "documentReadyState": "loading",
+    "jQueryLoaded": true,
+    "shortcutsHubDataExists": true,
+    "shortcutsHubSecurityExists": true,
+    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737338854",
+    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:285:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:328:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:335:8"
+}
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:0
+{
+    "documentReadyState": "loading",
+    "jQueryLoaded": true,
+    "shortcutsHubDataExists": true,
+    "shortcutsHubSecurityExists": true,
+    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339017",
+    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "documentReadyState": "loading",
+    "jQueryLoaded": true,
+    "shortcutsHubDataExists": true,
+    "shortcutsHubSecurityExists": true,
+    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339098",
+    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339192",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
     }
 }
 
-[DEBUG] Menu Toggle Interaction Flow
-[SOURCE] shortcuts-handlers.js:0
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
 {
-    "executedCode": {
-        "toggleButton": "menuToggle.toggleClass(\"active\")",
-        "actionMenu": "actionMenu.toggleClass(\"active\")"
-    },
-    "domStructure": {
-        "toggleSelector": "<button class=\"menu-toggle active\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>",
-        "menuContainer": "<div class=\"menu-container\">\n                <button class=\"menu-toggle active\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>\n                <div class=\"action-menu active\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>\n            <\/div>",
-        "actionMenuHTML": "<div class=\"action-menu active\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>"
-    },
-    "finalComputedStyles": {
-        "menuToggle": {
-            "opacity": "1",
-            "visibility": "visible",
-            "pointerEvents": "none"
-        },
-        "actionMenu": {
-            "opacity": "0",
-            "visibility": "visible",
-            "pointerEvents": "auto"
-        }
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339202",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
     }
 }
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339222",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
+    }
+}
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339202",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
+    }
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339357",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
+    }
+}
+
+[DEBUG] Debug session started
+[]
+
+[DEBUG] Debug session started
 

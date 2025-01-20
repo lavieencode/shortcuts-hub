@@ -10,7 +10,7 @@ if (!defined('SHORTCUTS_HUB_PLUGIN_DIR')) {
 
 function shortcuts_hub_render_shortcuts_list_page() {
     // Get URL parameters
-    $view = isset($_GET['view']) ? sanitize_text_field($_GET['view']) : '';
+    $view = isset($_GET['view']) ? sanitize_text_field($_GET['view']) : 'shortcuts';
     $id = isset($_GET['id']) ? sanitize_text_field($_GET['id']) : '';
     $add_version_url = admin_url("admin.php?page=add-version&id={$id}");
 

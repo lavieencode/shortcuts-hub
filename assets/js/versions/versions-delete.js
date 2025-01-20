@@ -6,17 +6,17 @@ jQuery(document).on('click', '.delete-version', function() {
 });
 
 function deleteVersion(shortcutId, versionId) {
-    const requestData = {
+    const data = {
         action: 'version_delete',
-        shortcut_id: shortcutId,
-        version_id: versionId,
-        security: shortcutsHubData.versions_security
+        security: shortcutsHubData.security.delete_version,
+        id: shortcutId,
+        version_id: versionId
     };
 
     jQuery.ajax({
         url: shortcutsHubData.ajax_url,
         method: 'POST',
-        data: requestData,
+        data: data,
         success: function(response) {
             if (response.success) {
                 // Refresh the versions list after successful deletion

@@ -25,14 +25,25 @@ function sh_debug_log($message, $data = null) {
     
     if (is_array($data)) {
         // Format source information if available
-        $log_entry = json_encode($data['data'] ?? $data, JSON_PRETTY_PRINT);
+        $log_entry = '';
         $source_line = '';
+        
+        // Handle source info - either from source field or data.source
+        $source_info = null;
         if (isset($data['source'])) {
-            $source = $data['source'];
-            $file = basename($source['file']);
-            $source_line = sprintf("[SOURCE] %s:%d\n", $file, $source['line']);
-            unset($data['source'], $data['debug']);
+            $source_info = $data['source'];
         }
+        
+        if ($source_info && is_array($source_info)) {
+            $file = isset($source_info['file']) ? basename($source_info['file']) : 'unknown';
+            $line = $source_info['line'] ?? 'unknown';
+            $source_line = sprintf("[SOURCE] %s:%s\n", $file, $line);
+        }
+        
+        // Handle data - remove debug flags and source info before logging
+        $log_data = $data;
+        unset($log_data['debug'], $log_data['source']);
+        $log_entry = json_encode($log_data, JSON_PRETTY_PRINT);
         
         $content = sprintf("[DEBUG] %s\n%s%s\n\n", $message, $source_line, $log_entry);
     } else {
@@ -49,58 +60,37 @@ function should_enable_debug() {
     if ($is_checking) {
         return true;
     }
-    
+
     $is_checking = true;
     
-    // Always enable for plugin initialization
-    if (did_action('plugins_loaded') <= 1) {
+    // Get page from either GET params or POST data (for AJAX)
+    $page = isset($_GET['page']) ? $_GET['page'] : 
+           (isset($_POST['page']) ? $_POST['page'] : 'not set');
+           
+    error_log('[Shortcuts Hub Debug] Checking if debug should be enabled');
+    error_log('[Shortcuts Hub Debug] Page: ' . $page);
+
+    // Enable for development
+    if (defined('WP_DEBUG') && WP_DEBUG) {
         $is_checking = false;
-        return true;
-    }
-    
-    // Always enable in Elementor contexts
-    if (
-        // Check if Elementor is active
-        defined('ELEMENTOR_VERSION') ||
-        // Check if we're in any Elementor action
-        did_action('elementor/loaded') ||
-        did_action('elementor/init') ||
-        did_action('elementor/dynamic_tags/register') ||
-        // Check if we're in Elementor's editor
-        (isset($_GET['action']) && $_GET['action'] === 'elementor') ||
-        (isset($_POST['action']) && $_POST['action'] === 'elementor_ajax') ||
-        // Check if we're in preview mode
-        (isset($_GET['elementor-preview']))
-    ) {
-        $is_checking = false;
+        error_log('[Shortcuts Hub Debug] Debug enabled via WP_DEBUG');
         return true;
     }
 
-    // Check if we're in an AJAX request
-    if (defined('DOING_AJAX') && DOING_AJAX && isset($_REQUEST['action'])) {
-        $action = sanitize_text_field($_REQUEST['action']);
-        if (
-            strpos($action, 'sh_') === 0 || 
-            strpos($action, 'shortcut_') === 0 ||
-            strpos($action, 'elementor') === 0
-        ) {
-            $is_checking = false;
-            return true;
-        }
+    // Only check once per request
+    static $should_debug = null;
+    if ($should_debug !== null) {
+        $is_checking = false;
+        return $should_debug;
     }
-    
-    // For non-AJAX requests, check if we're in the admin area
+
+    // Check if we're on a plugin page
     if (is_admin()) {
-        // Enable on plugins page
-        global $pagenow;
-        if ($pagenow === 'plugins.php') {
-            $is_checking = false;
-            return true;
-        }
-
         // Enable on our plugin pages
-        if (isset($_GET['page']) && strpos($_GET['page'], 'shortcuts-hub') === 0) {
+        if (($page && strpos($page, 'shortcuts-hub') === 0) || 
+            (isset($_POST['action']) && strpos($_POST['action'], 'sh_') === 0)) {
             $is_checking = false;
+            error_log('[Shortcuts Hub Debug] Debug enabled on plugin page');
             return true;
         }
     }
@@ -108,10 +98,12 @@ function should_enable_debug() {
     // Enable on single shortcut pages and shortcut archive
     if (is_singular('shortcut') || is_post_type_archive('shortcut')) {
         $is_checking = false;
+        error_log('[Shortcuts Hub Debug] Debug enabled on shortcut page');
         return true;
     }
     
     $is_checking = false;
+    error_log('[Shortcuts Hub Debug] Debug not enabled');
     return false;
 }
 
@@ -128,11 +120,6 @@ function sh_enqueue_debug_script() {
         filemtime(plugin_dir_path(__FILE__) . 'assets/js/sh-debug.js'),
         true
     );
-
-    wp_localize_script('sh-debug', 'shDebugData', array(
-        'ajaxurl' => admin_url('admin-ajax.php'),
-        'security' => wp_create_nonce('shortcuts_hub_nonce')
-    ));
 }
 add_action('wp_enqueue_scripts', 'sh_enqueue_debug_script');
 add_action('admin_enqueue_scripts', 'sh_enqueue_debug_script');
@@ -141,25 +128,51 @@ add_action('admin_enqueue_scripts', 'sh_enqueue_debug_script');
 add_action('wp_ajax_sh_debug_log', 'sh_debug_log_ajax_handler');
 add_action('wp_ajax_nopriv_sh_debug_log', 'sh_debug_log_ajax_handler');
 
+// Add error log handler
+add_action('wp_ajax_sh_error_log', 'sh_error_log_ajax_handler');
+add_action('wp_ajax_nopriv_sh_error_log', 'sh_error_log_ajax_handler');
+
+/**
+ * Handle error logging from JavaScript
+ */
+function sh_error_log_ajax_handler() {
+    $message = isset($_POST['message']) ? sanitize_text_field($_POST['message']) : '';
+    if (!empty($message)) {
+        error_log('[Shortcuts Hub Debug] ' . $message);
+    }
+    wp_send_json_success();
+}
+
 function sh_debug_log_ajax_handler() {
     // Only process if this is explicitly a debug log request
     if (!isset($_POST['action']) || $_POST['action'] !== 'sh_debug_log') {
+        error_log('[Shortcuts Hub Debug] Invalid action: ' . (isset($_POST['action']) ? $_POST['action'] : 'not set'));
         wp_send_json_error('Invalid action');
         return;
     }
 
+    // Log the received security token
+    error_log('[Shortcuts Hub Debug] Received security token: ' . (isset($_POST['security']) ? $_POST['security'] : 'not set'));
+    
     // Verify nonce
-    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce')) {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_debug_log_nonce')) {
+        error_log('[Shortcuts Hub Debug] Nonce verification failed. Received: ' . (isset($_POST['security']) ? $_POST['security'] : 'not set'));
+        error_log('[Shortcuts Hub Debug] POST data: ' . print_r($_POST, true));
         wp_send_json_error('Invalid security token');
         return;
     }
 
     $message = isset($_POST['message']) ? sanitize_text_field($_POST['message']) : '';
-    $data = isset($_POST['data']) ? $_POST['data'] : null;
-    if ($data !== null) {
-        $data = is_string($data) ? json_decode(stripslashes($data), true) : $data;
-    }
     $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'unknown';
+    
+    // Handle data
+    $data = null;
+    if (isset($_POST['data']) && $_POST['data'] !== 'null') {
+        $decoded = json_decode(stripslashes($_POST['data']), true);
+        if (json_last_error() === JSON_ERROR_NONE) {
+            $data = $decoded;
+        }
+    }
 
     // If this is a session start request, ensure we start a new session
     if ($source === 'session-start') {

@@ -254,13 +254,64 @@ jQuery(document).ready(function() {
     });
 
     // Version and edit handlers
-    jQuery(document).on('click', '.version-button', function() {
+    jQuery(document).on('click', '.versions-button', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
         const sb_id = jQuery(this).data('id');
         const urlParams = new URLSearchParams(window.location.search);
+        const oldView = urlParams.get('view');
+        const oldId = urlParams.get('id');
+        
         urlParams.set('view', 'versions');
         urlParams.set('id', sb_id);
-        window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
+        const newUrl = `${window.location.pathname}?${urlParams}`;
+        
+        // DEBUG: Comprehensive log of version view change
+        sh_debug_log('Version View Change', {
+            message: 'Changing view to versions for shortcut',
+            source: {
+                file: 'shortcuts-handlers.js',
+                line: 'versionButtonClick',
+                function: 'version-button-click-handler'
+            },
+            data: {
+                event: {
+                    type: 'click',
+                    target: {
+                        class: this.className,
+                        id: sb_id
+                    }
+                },
+                url: {
+                    old: window.location.href,
+                    new: newUrl,
+                    changes: {
+                        view: {
+                            from: oldView,
+                            to: 'versions'
+                        },
+                        id: {
+                            from: oldId,
+                            to: sb_id
+                        }
+                    }
+                },
+                elements: {
+                    shortcutsView: {
+                        visible: jQuery('#shortcuts-view').is(':visible'),
+                        willBe: false
+                    },
+                    versionsView: {
+                        visible: jQuery('#versions-view').is(':visible'),
+                        willBe: true
+                    }
+                }
+            },
+            debug: true
+        });
 
+        window.history.pushState({}, '', newUrl);
         toggleVersionsView(true, sb_id);
     });
 

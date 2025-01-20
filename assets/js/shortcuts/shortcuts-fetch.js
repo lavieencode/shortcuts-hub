@@ -32,7 +32,7 @@ function fetchShortcutsFromSource(source) {
     };
 
     jQuery.ajax({
-        url: shortcutsHubData.ajax_url,
+        url: window.ajaxurl || shortcutsHubData.ajax_url || '/wp-admin/admin-ajax.php',
         method: 'POST',
         data: data,
         success: function(response) {

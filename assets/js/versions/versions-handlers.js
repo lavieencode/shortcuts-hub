@@ -1,79 +1,44 @@
 jQuery(document).ready(function() {
     // Only proceed if we have the localized data
-    if (typeof shortcutsHubData === 'undefined') {
+    if (typeof window.shortcutsHubData === 'undefined') {
         sh_debug_log('Missing shortcutsHubData', {
             message: 'shortcutsHubData is not defined',
             source: {
                 file: 'versions-handlers.js',
-                line: 25,
+                line: 'document.ready',
                 function: 'document.ready'
             },
+            data: {},
             debug: true
         });
-        console.error('shortcutsHubData is not defined');
         return;
     }
 
-    // DEBUG: Log initialization
+    // DEBUG: Log initialization with full data
     sh_debug_log('Initializing versions handlers', {
         message: 'Starting versions handlers initialization',
         source: {
             file: 'versions-handlers.js',
-            line: 7,
+            line: 'document.ready',
             function: 'document.ready'
         },
         data: {
-            shortcutsHubData: {
-                view: shortcutsHubData.view,
-                shortcutId: shortcutsHubData.shortcutId,
-                initialView: shortcutsHubData.initialView,
-                security: shortcutsHubData.security,
-                versions_security: shortcutsHubData.versions_security
-            }
+            shortcutsHubData: window.shortcutsHubData
         },
-        debug: false
+        debug: true
     });
 
-    // DEBUG: Log view state check
-    sh_debug_log('View state check', {
-        message: 'Checking view state before fetching versions',
-        source: {
-            file: 'versions-handlers.js',
-            line: 40,
-            function: 'document.ready'
-        },
-        data: {
-            initialView: shortcutsHubData.initialView,
-            shortcutId: shortcutsHubData.shortcutId,
-            shouldFetchVersions: shortcutsHubData.initialView === 'versions' && shortcutsHubData.shortcutId
-        },
-        debug: false
-    });
-
-    // Show versions view if needed
-    if (shortcutsHubData.initialView === 'versions' && shortcutsHubData.shortcutId) {
-        jQuery('#shortcuts-view').hide();
-        jQuery('#versions-view').show();
-        
-        // Fetch versions with debug logging
-        sh_debug_log('Fetching versions', {
-            message: 'Fetching versions for shortcut',
-            source: {
-                file: 'versions-handlers.js',
-                line: 65,
-                function: 'document.ready'
-            },
-            data: {
-                shortcutId: shortcutsHubData.shortcutId,
-                security: shortcutsHubData.versions_security
-            },
-            debug: false
-        });
-        
-        // Using fetchVersions from versions-fetch.js
-        fetchVersions(shortcutsHubData.shortcutId);
+    // Handle initial view state
+    if (window.shortcutsHubData.initialView === 'versions' && window.shortcutsHubData.shortcutId) {
+        toggleVersionsView(true, window.shortcutsHubData.shortcutId);
     }
-    
+
+    // Attach event handler for back button
+    jQuery('#back-to-shortcuts').on('click', function() {
+        toggleVersionsView(false);
+    });
+
+    // Attach version-specific handlers
     attachVersionHandlers();
 });
 

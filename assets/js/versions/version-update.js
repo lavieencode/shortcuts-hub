@@ -26,7 +26,7 @@ function updateVersion(action) {
                 id: shortcutId,
                 version_id: versionId,
                 state: { value: newState },
-                security: shortcutsHubData.versions_security
+                security: shortcutsHubData.security.update_version
             },
             success: function(response) {
                 if (response.success) {
@@ -69,10 +69,10 @@ function updateVersion(action) {
             method: 'POST',
             data: {
                 action: 'update_version',
-                id: shortcutId,
+                security: shortcutsHubData.security.update_version,
+                id: versionId,
                 version_id: versionId,
                 version_data: versionData,
-                security: shortcutsHubData.versions_security,
                 _method: 'PATCH'
             },
             success: function(response) {

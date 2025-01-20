@@ -107,12 +107,19 @@ class Shortcuts_Hub {
         // Localize scripts for admin
         add_action('admin_enqueue_scripts', function($hook) {
             if (strpos($hook, 'shortcuts-hub') !== false) {
-                wp_localize_script('shortcuts-hub-versions-handlers', 'shortcutsHubData', array(
+                wp_localize_script('sh-debug', 'shortcutsHubData', array(
+                    'debug' => true,
                     'ajaxurl' => admin_url('admin-ajax.php'),
                     'nonce' => wp_create_nonce('fetch_versions_nonce'),
                     'view' => isset($_GET['view']) ? sanitize_text_field($_GET['view']) : '',
                     'shortcutId' => isset($_GET['id']) ? sanitize_text_field($_GET['id']) : '',
-                    'initialView' => isset($_GET['view']) && $_GET['view'] === 'versions' ? 'versions' : 'shortcuts'
+                    'initialView' => isset($_GET['view']) && $_GET['view'] === 'versions' ? 'versions' : 'shortcuts',
+                    'security' => array(
+                        'debug_log' => wp_create_nonce('shortcuts_hub_debug_log_nonce'),
+                        'fetch_versions' => wp_create_nonce('shortcuts_hub_fetch_versions_nonce'),
+                        'update_version' => wp_create_nonce('shortcuts_hub_update_version_nonce'),
+                        'delete_version' => wp_create_nonce('shortcuts_hub_delete_version_nonce')
+                    )
                 ));
             }
         });
@@ -483,14 +490,13 @@ class Shortcuts_Hub {
 
         // Create security nonces
         $security = array(
-            'toggle_view' => wp_create_nonce('shortcuts_hub_toggle_view_nonce'),
-            // Add other nonces as needed
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'security' => array(
+                'fetch_versions' => wp_create_nonce('shortcuts_hub_fetch_versions_nonce')
+            )
         );
 
         // Localize script
-        wp_localize_script('shortcuts-hub-list', 'shortcutsHubData', array(
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'security' => $security
-        ));
+        wp_localize_script('shortcuts-hub-list', 'shortcutsHubData', $security);
     }
 }

@@ -174,7 +174,7 @@ function renderTableView(shortcuts, container) {
             <td class="actions-count-column">${wp.actions ? wp.actions.length : 0}</td>
             <td class="actions-column">
                 <div class="button-container">
-                    <button class="edit-button" data-tooltip="Edit" data-post_id="${post_id}" data-shortcut='${JSON.stringify({
+                    <button class="action-button edit-button" data-tooltip="Edit" data-post_id="${post_id}" data-shortcut='${JSON.stringify({
                         name: displayName,
                         headline: wp.headline || '',
                         description: wp.description || '',
@@ -184,10 +184,10 @@ function renderTableView(shortcuts, container) {
                         result: wp.result || '',
                         status: wp.state || 'publish'
                     })}'>Edit</button>
-                    <button class="version-button" data-tooltip="Versions" data-id="${sb.sb_id}">Versions</button>
+                    <button class="action-button versions-button" data-tooltip="Versions" data-id="${sb.sb_id}">Versions</button>
                     ${wp.deleted ? 
-                        `<button class="restore-button" data-tooltip="Restore" data-post_id="${post_id}" data-sb_id="${sb.sb_id}">Restore</button>` :
-                        `<button class="delete-button" data-tooltip="Delete" data-post_id="${post_id}" data-sb_id="${sb.sb_id}">Delete</button>`
+                        `<button class="action-button restore-button" data-tooltip="Restore" data-post_id="${post_id}" data-sb_id="${sb.sb_id}">Restore</button>` :
+                        `<button class="action-button delete-button" data-tooltip="Delete" data-post_id="${post_id}" data-sb_id="${sb.sb_id}">Delete</button>`
                     }
                 </div>
             </td>
