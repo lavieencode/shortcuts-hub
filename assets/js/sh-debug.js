@@ -180,17 +180,24 @@ function sendLog(message, data = null, source = null) {
     let logData;
     try {
         // Format source string from source object
-        const sourceStr = source ? `${source.file}:${source.line}` : 'unknown:0';
+        const sourceStr = typeof source === 'object' && source !== null ? 
+            `${source.file}:${source.line}` : 
+            (typeof source === 'string' ? source : 'unknown:0');
         
         // Prepare data object that includes source info
         const debugData = {
             ...data,  // Include any existing data
-            source: source || {  // Always include source info
+            source: typeof source === 'object' && source !== null ? source : {
                 file: 'sh-debug.js',
                 line: 'unknown',
                 function: 'unknown'
             }
         };
+
+        // Ensure data.debug is true for all logs
+        if (typeof debugData === 'object' && debugData !== null) {
+            debugData.debug = true;
+        }
         
         logData = {
             action: 'sh_debug_log',
@@ -198,8 +205,16 @@ function sendLog(message, data = null, source = null) {
             message: message,
             source: sourceStr,
             data: JSON.stringify(debugData),
-            page: getCurrentPage()
+            page: getCurrentPage(),
+            debug: true
         };
+
+        // Log to console for immediate feedback
+        console.log('[DEBUG]', {
+            message: message,
+            source: sourceStr,
+            data: debugData
+        });
     } catch (e) {
         logError('sh_debug_log failed: Error preparing data - ' + e.message, 'sendLog');
         return;

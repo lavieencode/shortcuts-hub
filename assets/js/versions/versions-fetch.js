@@ -46,7 +46,7 @@ function fetchVersions(shortcutId, retries = 0) {
 
     // Make the AJAX request
     jQuery.ajax({
-        url: window.ajaxurl || shortcutsHubData.ajaxurl || '/wp-admin/admin-ajax.php',
+        url: shortcutsHubData.ajaxurl,
         type: 'POST',
         data: {
             action: 'fetch_versions',
@@ -122,7 +122,7 @@ function fetchVersion(shortcutId, version_id, latest = false) {
     }
 
     jQuery.ajax({
-        url: window.ajaxurl || shortcutsHubData.ajaxurl || '/wp-admin/admin-ajax.php',
+        url: shortcutsHubData.ajaxurl,
         method: 'POST',
         data: data,
         success: function(response) {

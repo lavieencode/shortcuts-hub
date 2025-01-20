@@ -14,7 +14,7 @@ function deleteVersion(shortcutId, versionId) {
     };
 
     jQuery.ajax({
-        url: shortcutsHubData.ajax_url,
+        url: shortcutsHubData.ajaxurl,
         method: 'POST',
         data: data,
         success: function(response) {

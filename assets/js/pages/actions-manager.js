@@ -61,11 +61,38 @@ jQuery(document).ready(function($) {
     // Load actions list
     function loadActions() {
         const search = $('#search-actions-input').val();
-        const status = $('#filter-action-status').val() || 'any';
-        const trash = $('#filter-action-trash').val() || '';
+        const status = $('#filter-action-status').val();
+        const trash = $('#filter-action-trash').val();
+
+        // DEBUG: Log AJAX request details
+        sh_debug_log('Actions Manager AJAX Request Details', {
+            'message': 'Detailed debug information for fetch_actions AJAX request',
+            'source': {
+                'file': 'actions-manager.js',
+                'line': 'loadActions',
+                'function': 'loadActions'
+            },
+            'data': {
+                'request': {
+                    'url': shortcutsHubData.ajaxurl,
+                    'method': 'POST',
+                    'action': 'fetch_actions',
+                    'nonce': shortcutsHubData.security.fetch_actions,
+                    'parameters': {
+                        'search': search,
+                        'status': status,
+                        'trash': trash
+                    }
+                },
+                'shortcutsHubData': shortcutsHubData,
+                'window.location': window.location.href,
+                'document.referrer': document.referrer
+            },
+            'debug': true
+        });
 
         $.ajax({
-            url: shortcutsHubData.ajax_url,
+            url: shortcutsHubData.ajaxurl,
             type: 'POST',
             data: {
                 action: 'fetch_actions',
@@ -79,7 +106,7 @@ jQuery(document).ready(function($) {
                     actions = response.data; // Store the raw posts
                     renderActions(actions);
                 } else {
-                    console.error('Failed to fetch actions:', response.data.message);
+                    console.error('Failed to fetch actions:', response.data ? response.data.message : 'Unknown error');
                 }
             },
             error: function(xhr, status, error) {
@@ -426,5 +453,26 @@ jQuery(document).ready(function($) {
         if (!confirm(confirmMessage)) {
             return;
         }
+
+        $.ajax({
+            url: shortcutsHubData.ajax_url,
+            type: 'POST',
+            data: {
+                action: 'delete_action',
+                security: shortcutsHubData.security.delete_action,
+                id: id,
+                force: perm
+            },
+            success: function(response) {
+                if (response.success) {
+                    loadActions();
+                } else {
+                    console.error('Failed to delete action:', response.data.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', error);
+            }
+        });
     }
 });

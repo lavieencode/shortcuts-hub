@@ -66,14 +66,10 @@ function should_enable_debug() {
     // Get page from either GET params or POST data (for AJAX)
     $page = isset($_GET['page']) ? $_GET['page'] : 
            (isset($_POST['page']) ? $_POST['page'] : 'not set');
-           
-    error_log('[Shortcuts Hub Debug] Checking if debug should be enabled');
-    error_log('[Shortcuts Hub Debug] Page: ' . $page);
 
     // Enable for development
     if (defined('WP_DEBUG') && WP_DEBUG) {
         $is_checking = false;
-        error_log('[Shortcuts Hub Debug] Debug enabled via WP_DEBUG');
         return true;
     }
 
@@ -90,7 +86,6 @@ function should_enable_debug() {
         if (($page && strpos($page, 'shortcuts-hub') === 0) || 
             (isset($_POST['action']) && strpos($_POST['action'], 'sh_') === 0)) {
             $is_checking = false;
-            error_log('[Shortcuts Hub Debug] Debug enabled on plugin page');
             return true;
         }
     }
@@ -98,12 +93,10 @@ function should_enable_debug() {
     // Enable on single shortcut pages and shortcut archive
     if (is_singular('shortcut') || is_post_type_archive('shortcut')) {
         $is_checking = false;
-        error_log('[Shortcuts Hub Debug] Debug enabled on shortcut page');
         return true;
     }
     
     $is_checking = false;
-    error_log('[Shortcuts Hub Debug] Debug not enabled');
     return false;
 }
 
@@ -138,7 +131,7 @@ add_action('wp_ajax_nopriv_sh_error_log', 'sh_error_log_ajax_handler');
 function sh_error_log_ajax_handler() {
     $message = isset($_POST['message']) ? sanitize_text_field($_POST['message']) : '';
     if (!empty($message)) {
-        error_log('[Shortcuts Hub Debug] ' . $message);
+        // Removed error_log call
     }
     wp_send_json_success();
 }
@@ -146,18 +139,12 @@ function sh_error_log_ajax_handler() {
 function sh_debug_log_ajax_handler() {
     // Only process if this is explicitly a debug log request
     if (!isset($_POST['action']) || $_POST['action'] !== 'sh_debug_log') {
-        error_log('[Shortcuts Hub Debug] Invalid action: ' . (isset($_POST['action']) ? $_POST['action'] : 'not set'));
         wp_send_json_error('Invalid action');
         return;
     }
 
-    // Log the received security token
-    error_log('[Shortcuts Hub Debug] Received security token: ' . (isset($_POST['security']) ? $_POST['security'] : 'not set'));
-    
     // Verify nonce
     if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_debug_log_nonce')) {
-        error_log('[Shortcuts Hub Debug] Nonce verification failed. Received: ' . (isset($_POST['security']) ? $_POST['security'] : 'not set'));
-        error_log('[Shortcuts Hub Debug] POST data: ' . print_r($_POST, true));
         wp_send_json_error('Invalid security token');
         return;
     }

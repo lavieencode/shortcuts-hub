@@ -1,132 +1,22 @@
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:0
-{
-    "documentReadyState": "loading",
-    "jQueryLoaded": true,
-    "shortcutsHubDataExists": true,
-    "shortcutsHubSecurityExists": true,
-    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737334793",
-    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:245:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:289:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:8"
-}
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:0
-{
-    "documentReadyState": "loading",
-    "jQueryLoaded": true,
-    "shortcutsHubDataExists": true,
-    "shortcutsHubSecurityExists": true,
-    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737338654",
-    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:259:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:302:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:309:8"
-}
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:0
-{
-    "documentReadyState": "loading",
-    "jQueryLoaded": true,
-    "shortcutsHubDataExists": true,
-    "shortcutsHubSecurityExists": true,
-    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737338760",
-    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:273:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:316:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:323:8"
-}
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:0
-{
-    "documentReadyState": "loading",
-    "jQueryLoaded": true,
-    "shortcutsHubDataExists": true,
-    "shortcutsHubSecurityExists": true,
-    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737338854",
-    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:285:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:328:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:335:8"
-}
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:0
-{
-    "documentReadyState": "loading",
-    "jQueryLoaded": true,
-    "shortcutsHubDataExists": true,
-    "shortcutsHubSecurityExists": true,
-    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339017",
-    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
-}
-
-[DEBUG] Debug session started
-
 [DEBUG] Debug initialization state
 [SOURCE] sh-debug.js:unknown
 {
-    "documentReadyState": "loading",
-    "jQueryLoaded": true,
-    "shortcutsHubDataExists": true,
-    "shortcutsHubSecurityExists": true,
-    "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339098",
-    "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737399748",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
 }
 
 [DEBUG] Debug session started
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
 
 [DEBUG] Debug initialization state
 [SOURCE] sh-debug.js:unknown
@@ -137,77 +27,397 @@
         "jQueryLoaded": true,
         "shortcutsHubDataExists": true,
         "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339192",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737399801",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
     }
 }
 
 [DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
 [SOURCE] sh-debug.js:unknown
-{
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339202",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
-    }
-}
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339222",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
-    }
-}
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339202",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
-    }
-}
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737339357",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:295:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:338:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:345:8"
-    }
-}
-
-[DEBUG] Debug session started
 []
 
 [DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400250",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400271",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400280",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400506",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400573",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400765",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
+
+[DEBUG] Actions Manager AJAX Request Details
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Detailed debug information for fetch_actions AJAX request",
+    "data": {
+        "request": {
+            "method": "POST",
+            "action": "fetch_actions",
+            "nonce": "25dcdd9662",
+            "parameters": {
+                "search": "",
+                "status": "",
+                "trash": ""
+            }
+        },
+        "shortcutsHubData": {
+            "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+            "security": {
+                "debug_log": "bbd5f287be",
+                "fetch_versions": "d0f97a073a",
+                "fetch_version": "f402f263ef",
+                "update_version": "b318267075",
+                "delete_version": "21b8f88d97",
+                "create_version": "d1179a1b31",
+                "save_action": "f1f902deec",
+                "delete_action": "bb0da5f4ea",
+                "fetch_actions": "25dcdd9662",
+                "create_action": "3aa3fe2f42",
+                "update_action": "9e7941707e"
+            }
+        },
+        "window.location": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=actions-manager",
+        "document.referrer": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=73"
+    }
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400929",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Actions Manager AJAX Request Details
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Detailed debug information for fetch_actions AJAX request",
+    "data": {
+        "request": {
+            "method": "POST",
+            "action": "fetch_actions",
+            "nonce": "25dcdd9662",
+            "parameters": {
+                "search": "",
+                "status": "",
+                "trash": ""
+            }
+        },
+        "shortcutsHubData": {
+            "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+            "security": {
+                "debug_log": "bbd5f287be",
+                "fetch_versions": "d0f97a073a",
+                "fetch_version": "f402f263ef",
+                "update_version": "b318267075",
+                "delete_version": "21b8f88d97",
+                "create_version": "d1179a1b31",
+                "save_action": "f1f902deec",
+                "delete_action": "bb0da5f4ea",
+                "fetch_actions": "25dcdd9662",
+                "create_action": "3aa3fe2f42",
+                "update_action": "9e7941707e"
+            }
+        },
+        "window.location": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=actions-manager",
+        "document.referrer": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=73"
+    }
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737401412",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
+
+[DEBUG] Actions Manager AJAX Request Details
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Detailed debug information for fetch_actions AJAX request",
+    "data": {
+        "request": {
+            "url": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+            "method": "POST",
+            "action": "fetch_actions",
+            "nonce": "06731f4128",
+            "parameters": {
+                "search": "",
+                "status": "",
+                "trash": ""
+            }
+        },
+        "shortcutsHubData": {
+            "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+            "security": {
+                "debug_log": "bbd5f287be",
+                "fetch_versions": "d0f97a073a",
+                "fetch_version": "f402f263ef",
+                "update_version": "b318267075",
+                "delete_version": "21b8f88d97",
+                "create_version": "d1179a1b31",
+                "save_action": "f1f902deec",
+                "delete_action": "bb0da5f4ea",
+                "fetch_actions": "06731f4128",
+                "create_action": "c8d0bc9425",
+                "update_action": "4d7f619154"
+            }
+        },
+        "window.location": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=actions-manager",
+        "document.referrer": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=73"
+    }
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737401674",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
+}
+
+[DEBUG] Debug session started
+
+[DEBUG] Actions Manager AJAX Request Details
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Detailed debug information for fetch_actions AJAX request",
+    "data": {
+        "request": {
+            "url": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+            "method": "POST",
+            "action": "fetch_actions",
+            "nonce": "06731f4128",
+            "parameters": {
+                "search": "",
+                "status": "",
+                "trash": ""
+            }
+        },
+        "shortcutsHubData": {
+            "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+            "security": {
+                "debug_log": "bbd5f287be",
+                "fetch_versions": "d0f97a073a",
+                "fetch_version": "f402f263ef",
+                "update_version": "b318267075",
+                "delete_version": "21b8f88d97",
+                "create_version": "d1179a1b31",
+                "save_action": "f1f902deec",
+                "delete_action": "bb0da5f4ea",
+                "fetch_actions": "06731f4128",
+                "create_action": "c8d0bc9425",
+                "update_action": "4d7f619154"
+            }
+        },
+        "window.location": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=actions-manager",
+        "document.referrer": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=73"
+    }
+}
+
+[DEBUG] Debug initialization state
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Initializing debug system",
+    "data": {
+        "documentReadyState": "loading",
+        "jQueryLoaded": true,
+        "shortcutsHubDataExists": true,
+        "shortcutsHubSecurityExists": true,
+        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737401879",
+        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    }
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
+
+[DEBUG] Debug session started
+
+[DEBUG] Actions Manager AJAX Request Details
+[SOURCE] sh-debug.js:unknown
+{
+    "message": "Detailed debug information for fetch_actions AJAX request",
+    "data": {
+        "request": {
+            "url": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+            "method": "POST",
+            "action": "fetch_actions",
+            "nonce": "06731f4128",
+            "parameters": {
+                "search": "",
+                "status": "",
+                "trash": ""
+            }
+        },
+        "shortcutsHubData": {
+            "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+            "security": {
+                "debug_log": "bbd5f287be",
+                "fetch_versions": "d0f97a073a",
+                "fetch_version": "f402f263ef",
+                "update_version": "b318267075",
+                "delete_version": "21b8f88d97",
+                "create_version": "d1179a1b31",
+                "save_action": "f1f902deec",
+                "delete_action": "bb0da5f4ea",
+                "fetch_actions": "06731f4128",
+                "create_action": "c8d0bc9425",
+                "update_action": "4d7f619154"
+            }
+        },
+        "window.location": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=actions-manager",
+        "document.referrer": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=73"
+    }
+}
 

@@ -61,7 +61,7 @@ function createVersion(state) {
         message: 'Attempting to create version',
         source: {
             file: 'version-create.js',
-            line: '57',
+            line: 'createVersion',
             function: 'createVersion'
         },
         data: {
@@ -75,13 +75,13 @@ function createVersion(state) {
                 required: required,
                 state: state
             },
-            nonce: shortcutsHubData.nonces ? shortcutsHubData.nonces.create_version : 'nonce not found'
+            security: shortcutsHubData.security ? shortcutsHubData.security.create_version : 'nonce not found'
         },
         debug: true
     });
 
     // Validate nonce
-    if (!shortcutsHubData.nonces || !shortcutsHubData.nonces.create_version) {
+    if (!shortcutsHubData.security || !shortcutsHubData.security.create_version) {
         console.error('Security nonce not found');
         jQuery('#version-feedback-message').text('Error: Security token not found').show();
         return;
@@ -94,11 +94,11 @@ function createVersion(state) {
     }
 
     jQuery.ajax({
-        url: shortcutsHubData.ajax_url,
-        method: 'POST',
+        url: shortcutsHubData.ajaxurl,
+        type: 'POST',
         data: {
             action: 'create_version',
-            security: shortcutsHubData.nonces.create_version,
+            security: shortcutsHubData.security.create_version,
             id: sb_id,
             version: version,
             notes: notes,
@@ -114,7 +114,7 @@ function createVersion(state) {
                 message: 'Received response from create version AJAX call',
                 source: {
                     file: 'version-create.js',
-                    line: '104',
+                    line: 'createVersion.success',
                     function: 'createVersion.success'
                 },
                 data: {
@@ -142,7 +142,7 @@ function createVersion(state) {
                 message: 'Error in create version AJAX call',
                 source: {
                     file: 'version-create.js',
-                    line: '128',
+                    line: 'createVersion.error',
                     function: 'createVersion.error'
                 },
                 data: {

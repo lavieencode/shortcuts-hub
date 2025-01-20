@@ -2,6 +2,50 @@
 /**
  * Asset Management for Shortcuts Hub
  * Handles all script and style enqueuing for the plugin
+ * 
+ * !!! IMPORTANT - LOCALIZATION REQUIREMENTS !!!
+ * The following localization pattern MUST be followed exactly for AJAX functionality to work:
+ * 
+ * 1. Script Dependencies and Order:
+ *    - jQuery MUST be enqueued first
+ *    - sh-debug.js MUST be enqueued second with jQuery dependency
+ *    - All other scripts MUST depend on both jQuery and sh-debug
+ * 
+ * 2. Data Structure:
+ *    shortcutsHubData = {
+ *        debug: true,
+ *        ajaxurl: admin_url('admin-ajax.php'),  // MUST use admin-ajax.php, not admin.php
+ *        initialView: $view,
+ *        shortcutId: $id,  // Required for version management
+ *        security: {
+ *            debug_log: wp_create_nonce('shortcuts_hub_debug_log_nonce'),
+ *            fetch_versions: wp_create_nonce('shortcuts_hub_fetch_versions_nonce'),
+ *            fetch_version: wp_create_nonce('shortcuts_hub_fetch_version_nonce'),
+ *            update_version: wp_create_nonce('shortcuts_hub_update_version_nonce'),
+ *            delete_version: wp_create_nonce('shortcuts_hub_delete_version_nonce'),
+ *            create_version: wp_create_nonce('shortcuts_hub_create_version_nonce')
+ *        }
+ *    }
+ * 
+ * 3. Security Requirements:
+ *    - ALWAYS use 'security' as the nonce parameter name in AJAX calls
+ *    - ALWAYS verify nonces with check_ajax_referer('action_nonce', 'security')
+ *    - NEVER use 'nonce' as a parameter name
+ *    - Nonce actions MUST follow pattern: shortcuts_hub_{action}_nonce
+ * 
+ * 4. AJAX Implementation:
+ *    jQuery.ajax({
+ *        url: shortcutsHubData.ajaxurl,  // MUST use this exact property
+ *        method: 'POST',
+ *        data: {
+ *            action: 'your_action',
+ *            security: shortcutsHubData.security.your_action
+ *        }
+ *    });
+ * 
+ * !!! DO NOT MODIFY THIS PATTERN UNLESS ABSOLUTELY NECESSARY !!!
+ * The above pattern has been tested and verified to work correctly with all version management
+ * functionality. Any deviations may cause AJAX or security issues.
  */
 
 if (!defined('ABSPATH')) {
@@ -32,14 +76,16 @@ function shortcuts_hub_enqueue_core_scripts() {
     // Initialize script data with debug info
     $script_data = array(
         'debug' => true,
-        'ajaxurl' => admin_url('admin-ajax.php'),
+        'ajaxurl' => str_replace('admin.php', 'admin-ajax.php', admin_url('admin-ajax.php')),
         'initialView' => $view,
         'shortcutId' => $view === 'versions' ? $id : '',
         'security' => array(
             'debug_log' => wp_create_nonce('shortcuts_hub_debug_log_nonce'),
             'fetch_versions' => wp_create_nonce('shortcuts_hub_fetch_versions_nonce'),
+            'fetch_version' => wp_create_nonce('shortcuts_hub_fetch_version_nonce'),
             'update_version' => wp_create_nonce('shortcuts_hub_update_version_nonce'),
-            'delete_version' => wp_create_nonce('shortcuts_hub_delete_version_nonce')
+            'delete_version' => wp_create_nonce('shortcuts_hub_delete_version_nonce'),
+            'create_version' => wp_create_nonce('shortcuts_hub_create_version_nonce')
         )
     );
 
@@ -165,12 +211,14 @@ function shortcuts_hub_enqueue_assets($hook) {
         $script_data = array(
             'initialView' => $view,
             'shortcutId' => $view === 'versions' ? $id : '',
-            'ajaxurl' => admin_url('admin-ajax.php'),
+            'ajaxurl' => str_replace('admin.php', 'admin-ajax.php', admin_url('admin-ajax.php')),
             'security' => array(
                 'debug_log' => wp_create_nonce('shortcuts_hub_debug_log_nonce'),
                 'fetch_versions' => wp_create_nonce('shortcuts_hub_fetch_versions_nonce'),
+                'fetch_version' => wp_create_nonce('shortcuts_hub_fetch_version_nonce'),
                 'update_version' => wp_create_nonce('shortcuts_hub_update_version_nonce'),
-                'delete_version' => wp_create_nonce('shortcuts_hub_delete_version_nonce')
+                'delete_version' => wp_create_nonce('shortcuts_hub_delete_version_nonce'),
+                'create_version' => wp_create_nonce('shortcuts_hub_create_version_nonce')
             )
         );
 
@@ -187,9 +235,17 @@ function shortcuts_hub_enqueue_assets($hook) {
         );
 
         wp_enqueue_script(
+            'shortcuts-hub-version-update',
+            plugins_url('../assets/js/versions/version-update.js', __FILE__),
+            array('jquery', 'sh-debug'),
+            SHORTCUTS_HUB_VERSION . '.' . time(),
+            true
+        );
+
+        wp_enqueue_script(
             'shortcuts-hub-versions-handlers',
             plugins_url('../assets/js/versions/versions-handlers.js', __FILE__),
-            array('jquery', 'sh-debug', 'shortcuts-hub-versions-view'),
+            array('jquery', 'sh-debug', 'shortcuts-hub-versions-view', 'shortcuts-hub-version-update'),
             SHORTCUTS_HUB_VERSION . '.' . time(),
             true
         );
@@ -320,14 +376,16 @@ function shortcuts_hub_enqueue_assets($hook) {
             'fetch_shortcuts' => wp_create_nonce('shortcuts_hub_fetch_shortcuts_nonce'),
             'filter_shortcuts' => wp_create_nonce('shortcuts_hub_filter_shortcuts_nonce'),
             'fetch_versions' => wp_create_nonce('shortcuts_hub_fetch_versions_nonce'),
+            'fetch_version' => wp_create_nonce('shortcuts_hub_fetch_version_nonce'),
             'delete_version' => wp_create_nonce('shortcuts_hub_delete_version_nonce'),
             'update_version' => wp_create_nonce('shortcuts_hub_update_version_nonce'),
+            'create_version' => wp_create_nonce('shortcuts_hub_create_version_nonce'),
             'create_shortcut' => wp_create_nonce('shortcuts_hub_nonce')
         );
 
         // Localize script with all required data
         $shortcuts_hub_data = array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
+            'ajaxurl' => str_replace('admin.php', 'admin-ajax.php', admin_url('admin-ajax.php')),
             'security' => $security,
             'site_url' => get_site_url(),
             'isElementorActive' => defined('ELEMENTOR_VERSION'),
@@ -385,7 +443,10 @@ function shortcuts_hub_enqueue_assets($hook) {
         $script_data = array(
             'save_shortcut' => wp_create_nonce('shortcuts_hub_save_shortcut_nonce'),
             'load_actions' => wp_create_nonce('shortcuts_hub_load_actions_nonce'),
-            'fetch_actions' => wp_create_nonce('shortcuts_hub_fetch_actions_nonce')
+            'fetch_actions' => wp_create_nonce('fetch_actions_nonce'),
+            'create_action' => wp_create_nonce('create_action_nonce'),
+            'update_action' => wp_create_nonce('update_action_nonce'),
+            'delete_action' => wp_create_nonce('delete_action_nonce')
         );
 
         // Get existing shortcutsHubData
@@ -406,18 +467,48 @@ function shortcuts_hub_enqueue_assets($hook) {
 
         // Localize script
         wp_localize_script('shortcuts-hub-edit', 'shortcutsHubData', array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
+            'ajaxurl' => str_replace('admin.php', 'admin-ajax.php', admin_url('admin-ajax.php')),
             'security' => $script_data,
             'shortcut_id' => $id,
             'edit_mode' => $screen->id === 'shortcuts-hub_page_edit-shortcut',
             'initialView' => $view
         ));
     } elseif ($screen->id === 'shortcuts-hub_page_actions-manager') {
+        // Styles
+        wp_enqueue_style(
+            'shortcuts-hub-general',
+            plugins_url('../assets/css/general.css', __FILE__),
+            array('shortcuts-hub-fontawesome'),
+            SHORTCUTS_HUB_VERSION . '.' . time()
+        );
+
+        wp_enqueue_style(
+            'shortcuts-hub-icon-selector',
+            plugins_url('../assets/css/core/icon-selector.css', __FILE__),
+            array('shortcuts-hub-general'),
+            SHORTCUTS_HUB_VERSION . '.' . time()
+        );
+
+        wp_enqueue_style(
+            'shortcuts-hub-actions',
+            plugins_url('../assets/css/pages/actions-manager.css', __FILE__),
+            array('shortcuts-hub-general', 'shortcuts-hub-icon-selector'),
+            SHORTCUTS_HUB_VERSION . '.' . time()
+        );
+
         // Scripts
+        wp_enqueue_script(
+            'shortcuts-hub-icon-selector',
+            plugins_url('../assets/js/core/icon-selector.js', __FILE__),
+            array('jquery', 'sh-debug'),
+            SHORTCUTS_HUB_VERSION . '.' . time(),
+            true
+        );
+
         wp_enqueue_script(
             'shortcuts-hub-actions',
             plugins_url('../assets/js/pages/actions-manager.js', __FILE__),
-            array('jquery', 'sh-debug'),
+            array('jquery', 'sh-debug', 'shortcuts-hub-icon-selector'),
             SHORTCUTS_HUB_VERSION . '.' . time(),
             true
         );
@@ -426,9 +517,9 @@ function shortcuts_hub_enqueue_assets($hook) {
         $script_data = array(
             'save_action' => wp_create_nonce('shortcuts_hub_save_action_nonce'),
             'delete_action' => wp_create_nonce('shortcuts_hub_delete_action_nonce'),
-            'fetch_actions' => wp_create_nonce('shortcuts_hub_fetch_actions_nonce'),
-            'create_action' => wp_create_nonce('shortcuts_hub_create_action_nonce'),
-            'update_action' => wp_create_nonce('shortcuts_hub_update_action_nonce')
+            'fetch_actions' => wp_create_nonce('fetch_actions_nonce'),
+            'create_action' => wp_create_nonce('create_action_nonce'),
+            'update_action' => wp_create_nonce('update_action_nonce')
         );
 
         // Get existing shortcutsHubData
@@ -440,7 +531,7 @@ function shortcuts_hub_enqueue_assets($hook) {
             
             // Preserve security tokens
             if (isset($existing_data['security'])) {
-                $script_data['security'] = array_merge(
+                $script_data = array_merge(
                     $existing_data['security'],
                     $script_data
                 );
@@ -452,14 +543,6 @@ function shortcuts_hub_enqueue_assets($hook) {
             'ajaxurl' => admin_url('admin-ajax.php'),
             'security' => $script_data
         ));
-
-        // Styles
-        wp_enqueue_style(
-            'shortcuts-hub-actions',
-            plugins_url('../assets/css/actions/actions-manager.css', __FILE__),
-            array(),
-            SHORTCUTS_HUB_VERSION . '.' . time()
-        );
     } elseif ($screen->id === 'shortcuts-hub_page_settings') {
         // Scripts
         wp_enqueue_script(
@@ -477,7 +560,7 @@ function shortcuts_hub_enqueue_assets($hook) {
 
         // Localize script
         wp_localize_script('shortcuts-hub-settings', 'shortcutsHubData', array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
+            'ajaxurl' => str_replace('admin.php', 'admin-ajax.php', admin_url('admin-ajax.php')),
             'security' => $security
         ));
 

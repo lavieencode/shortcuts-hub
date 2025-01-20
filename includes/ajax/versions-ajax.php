@@ -128,13 +128,27 @@ function fetch_latest_version() {
 
 // Fetch a specific version
 function fetch_version() {
-    if (!isset($_POST['nonce'])) {
-        wp_send_json_error(['message' => 'No nonce provided']);
+    // DEBUG: Log fetch version request
+    sh_debug_log('Fetch Version Request', array(
+        'message' => 'Processing fetch version request',
+        'source' => array(
+            'file' => 'versions-ajax.php',
+            'line' => __LINE__,
+            'function' => 'fetch_version'
+        ),
+        'data' => array(
+            'post_data' => $_POST
+        ),
+        'debug' => true
+    ));
+
+    if (!isset($_POST['security'])) {
+        wp_send_json_error(array('message' => 'No security token provided'));
         return;
     }
 
-    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
-        wp_send_json_error(['message' => 'Invalid nonce']);
+    if (!check_ajax_referer('shortcuts_hub_fetch_version_nonce', 'security', false)) {
+        wp_send_json_error(array('message' => 'Invalid security token'));
         return;
     }
 
@@ -143,7 +157,7 @@ function fetch_version() {
     $latest = isset($_POST['latest']) ? filter_var($_POST['latest'], FILTER_VALIDATE_BOOLEAN) : false;
 
     if (empty($id) || (!$latest && empty($version_id))) {
-        wp_send_json_error(['message' => 'Shortcut ID or version ID is missing']);
+        wp_send_json_error(array('message' => 'Shortcut ID or version ID is missing'));
         return;
     }
 
@@ -156,9 +170,23 @@ function fetch_version() {
     $response = sb_api_call($endpoint, 'GET');
 
     if (is_wp_error($response)) {
-        wp_send_json_error(['message' => 'Error fetching version: ' . $response->get_error_message()]);
+        wp_send_json_error(array('message' => 'Error fetching version: ' . $response->get_error_message()));
         return;
     }
+
+    // DEBUG: Log successful response
+    sh_debug_log('Fetch Version Response', array(
+        'message' => 'Successfully fetched version data',
+        'source' => array(
+            'file' => 'versions-ajax.php',
+            'line' => __LINE__,
+            'function' => 'fetch_version'
+        ),
+        'data' => array(
+            'response' => $response
+        ),
+        'debug' => true
+    ));
 
     wp_send_json_success($response);
 }
@@ -212,33 +240,130 @@ function create_version() {
 
 // Update an existing version
 function update_version() {
+    // DEBUG: Log update version request
+    sh_debug_log('Update Version Request', array(
+        'message' => 'Processing version update request',
+        'source' => array(
+            'file' => 'versions-ajax.php',
+            'line' => __LINE__,
+            'function' => 'update_version'
+        ),
+        'data' => array(
+            'post_data' => $_POST,
+            'raw_input' => file_get_contents('php://input')
+        ),
+        'debug' => true
+    ));
+
     // Verify nonce
     if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_update_version_nonce')) {
-        wp_send_json_error(['message' => 'Invalid security token']);
+        wp_send_json_error(array('message' => 'Invalid security token'));
         return;
     }
 
+    // Get and validate required parameters
     $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
     $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
     $version_data = isset($_POST['version_data']) ? $_POST['version_data'] : array();
 
-    if (empty($id) || empty($version_id) || empty($version_data)) {
-        wp_send_json_error(['message' => 'Shortcut ID, version ID, or version data is missing']);
+    // DEBUG: Log sanitized input
+    sh_debug_log('Update Version Parameters', array(
+        'message' => 'Sanitized update parameters',
+        'source' => array(
+            'file' => 'versions-ajax.php',
+            'line' => __LINE__,
+            'function' => 'update_version'
+        ),
+        'data' => array(
+            'id' => $id,
+            'version_id' => $version_id,
+            'version_data' => $version_data
+        ),
+        'debug' => true
+    ));
+
+    if (empty($id)) {
+        wp_send_json_error(array('message' => 'Missing shortcut ID'));
         return;
     }
 
-    $response = sb_api_call('/shortcuts/' . $id . '/version/' . $version_id, 'PATCH', [], $version_data);
+    if (empty($version_id)) {
+        wp_send_json_error(array('message' => 'Missing version ID'));
+        return;
+    }
+
+    // Validate version data
+    if (!is_array($version_data) || empty($version_data)) {
+        wp_send_json_error(array('message' => 'Invalid or missing version data'));
+        return;
+    }
+
+    // Prepare data for API call
+    $data = array(
+        'version' => isset($version_data['version']) ? sanitize_text_field($version_data['version']) : '',
+        'notes' => isset($version_data['notes']) ? sanitize_text_field($version_data['notes']) : '',
+        'url' => isset($version_data['url']) ? esc_url_raw($version_data['url']) : '',
+        'minimumiOS' => isset($version_data['minimumiOS']) ? sanitize_text_field($version_data['minimumiOS']) : '',
+        'minimumMac' => isset($version_data['minimumMac']) ? sanitize_text_field($version_data['minimumMac']) : '',
+        'required' => isset($version_data['required']) ? filter_var($version_data['required'], FILTER_VALIDATE_BOOLEAN) : false,
+        'state' => isset($version_data['state']) ? intval($version_data['state']) : 1,
+        'deleted' => isset($version_data['deleted']) ? filter_var($version_data['deleted'], FILTER_VALIDATE_BOOLEAN) : false
+    );
+
+    // Set endpoint for update
+    $endpoint = "/shortcuts/{$id}/version/{$version_id}";
+
+    // DEBUG: Log API request details
+    sh_debug_log('Update Version API Request', array(
+        'message' => 'Preparing API request data',
+        'source' => array(
+            'file' => 'versions-ajax.php',
+            'line' => 'update_version',
+            'function' => 'update_version'
+        ),
+        'data' => array(
+            'endpoint' => $endpoint,
+            'method' => 'PATCH',
+            'sanitized_data' => $data,
+            'original_data' => $version_data
+        ),
+        'debug' => true
+    ));
+
+    // Make API call
+    $response = sb_api_call($endpoint, 'PATCH', array(), $data);
+
+    // DEBUG: Log API response
+    sh_debug_log('Update Version API Response', array(
+        'message' => 'Response from API call',
+        'source' => array(
+            'file' => 'versions-ajax.php',
+            'line' => 'update_version',
+            'function' => 'update_version'
+        ),
+        'data' => array(
+            'response' => $response,
+            'is_wp_error' => is_wp_error($response),
+            'error_message' => is_wp_error($response) ? $response->get_error_message() : null,
+            'request_data' => array(
+                'endpoint' => $endpoint,
+                'method' => 'PATCH',
+                'data' => $data
+            )
+        ),
+        'debug' => true
+    ));
 
     if (is_wp_error($response)) {
-        wp_send_json_error(['message' => 'Error updating version: ' . $response->get_error_message()]);
+        wp_send_json_error(array('message' => 'Error updating version: ' . $response->get_error_message()));
         return;
     }
 
     // Ensure we have a properly formatted response
     if (isset($response['version'])) {
-        wp_send_json_success(['version' => $response['version']]);
+        wp_send_json_success(array('version' => $response['version']));
     } else {
-        wp_send_json_error(['message' => 'Invalid response format from API']);
+        wp_send_json_error(array('message' => 'Invalid response format from API'));
     }
 }
 

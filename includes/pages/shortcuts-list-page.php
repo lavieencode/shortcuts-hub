@@ -102,7 +102,7 @@ function shortcuts_hub_render_shortcuts_list_page() {
         <h2 id="version-display"></h2>
         <form id="edit-version-form">
             <input type="hidden" id="id" name="id">
-            <input type="hidden" id="version-id" name="version_id">
+            <input type="hidden" id="edit-version-id" name="version_id">
             <input type="hidden" id="version_state" name="version_state">
             <input type="hidden" id="version_deleted" name="version_deleted">
             <div class="form-group">
@@ -296,7 +296,7 @@ function shortcuts_hub_render_shortcuts_list_page() {
         <h2 id="shortcut-name-display"></h2>
         <form id="add-version-form">
             <input type="hidden" id="id" name="id">
-            <input type="hidden" id="version-id" name="version_id">
+            <input type="hidden" id="add-version-id" name="version_id">
             <input type="hidden" id="version_state" name="version_state">
             <input type="hidden" id="version_deleted" name="version_deleted">
             <div class="form-group">

@@ -6,15 +6,14 @@ if (!defined('ABSPATH')) {
 /**
  * AJAX handler for fetching actions
  */
-function shortcuts_hub_fetch_actions() {
+function fetch_actions() {
     global $wpdb;
-    check_ajax_referer('shortcuts_hub_fetch_actions_nonce', 'security');
-
+    check_ajax_referer('fetch_actions_nonce', 'security');
+    
     $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
-    $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '';
-    $trash = isset($_POST['trash']) ? sanitize_text_field($_POST['trash']) : '';
-
-    // Build query args
+    $status = isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'publish';
+    $trash = isset($_POST['trash']) ? (bool)$_POST['trash'] : false;
+    
     $args = array(
         'post_type' => 'action',
         'posts_per_page' => -1,
@@ -22,7 +21,7 @@ function shortcuts_hub_fetch_actions() {
         'order' => 'ASC',
         'post_status' => isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'any'
     );
-
+    
     // Handle trash filter
     if (!empty($trash)) {
         if ($trash === 'trash') {
@@ -35,15 +34,14 @@ function shortcuts_hub_fetch_actions() {
         }
     }
 
-    // Handle search
+    // Add search if provided
     if (!empty($search)) {
         $args['s'] = $search;
     }
-
-    // Get posts
+    
     $query = new WP_Query($args);
     $actions = array();
-
+    
     if ($query->have_posts()) {
         $action_shortcut_table = $wpdb->prefix . 'shortcuts_hub_action_shortcut';
         
@@ -66,16 +64,16 @@ function shortcuts_hub_fetch_actions() {
         }
         wp_reset_postdata();
     }
-
+    
     wp_send_json_success($actions);
 }
-add_action('wp_ajax_fetch_actions', 'shortcuts_hub_fetch_actions');
+add_action('wp_ajax_fetch_actions', 'fetch_actions');
 
 /**
  * AJAX handler for creating a new action
  */
-function shortcuts_hub_create_action() {
-    check_ajax_referer('shortcuts_hub_create_action_nonce', 'security');
+function create_action() {
+    check_ajax_referer('create_action_nonce', 'security');
 
     $form_data = isset($_POST['formData']) ? $_POST['formData'] : array();
     
@@ -103,13 +101,13 @@ function shortcuts_hub_create_action() {
 
     wp_send_json_success(array('message' => 'Action created successfully.'));
 }
-add_action('wp_ajax_create_action', 'shortcuts_hub_create_action');
+add_action('wp_ajax_create_action', 'create_action');
 
 /**
  * AJAX handler for updating an action
  */
-function shortcuts_hub_update_action() {
-    check_ajax_referer('shortcuts_hub_update_action_nonce', 'security');
+function update_action() {
+    check_ajax_referer('update_action_nonce', 'security');
 
     $form_data = isset($_POST['formData']) ? $_POST['formData'] : array();
     
@@ -141,13 +139,13 @@ function shortcuts_hub_update_action() {
 
     wp_send_json_success(array('message' => 'Action updated successfully.'));
 }
-add_action('wp_ajax_update_action', 'shortcuts_hub_update_action');
+add_action('wp_ajax_update_action', 'update_action');
 
 /**
  * AJAX handler for deleting an action
  */
-function shortcuts_hub_delete_action() {
-    check_ajax_referer('shortcuts_hub_delete_action_nonce', 'security');
+function delete_action() {
+    check_ajax_referer('delete_action_nonce', 'security');
 
     $id = isset($_POST['id']) ? intval($_POST['id']) : 0;
     $force = isset($_POST['force']) ? (bool)$_POST['force'] : false;
@@ -181,4 +179,4 @@ function shortcuts_hub_delete_action() {
         'message' => $force ? 'Action permanently deleted' : 'Action moved to trash'
     ));
 }
-add_action('wp_ajax_delete_action', 'shortcuts_hub_delete_action');
+add_action('wp_ajax_delete_action', 'delete_action');
