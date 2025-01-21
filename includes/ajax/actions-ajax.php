@@ -19,7 +19,7 @@ function fetch_actions() {
         'posts_per_page' => -1,
         'orderby' => 'title',
         'order' => 'ASC',
-        'post_status' => isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'any'
+        'post_status' => $status
     );
     
     // Handle trash filter
@@ -49,18 +49,31 @@ function fetch_actions() {
             $query->the_post();
             $post = get_post();
             
-            // Add icon and color metadata to the post object
-            $post->icon = get_post_meta($post->ID, '_action_icon', true);
-            $post->color = get_post_meta($post->ID, '_action_color', true);
-            
-            // Get the count of associated shortcuts
+            // Get shortcut count
             $shortcut_count = $wpdb->get_var($wpdb->prepare(
                 "SELECT COUNT(*) FROM $action_shortcut_table WHERE action_id = %d",
                 $post->ID
             ));
+
+            // Get icon data and ensure it's valid JSON
+            $icon = get_post_meta($post->ID, 'action_icon', true);
+            if ($icon) {
+                // Try to decode to validate JSON
+                $decoded = json_decode($icon);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    // If not valid JSON, try to fix common issues
+                    $icon = wp_slash($icon); // Ensure proper escaping
+                }
+            }
             
-            $post->shortcut_count = (int) $shortcut_count;
-            $actions[] = $post;
+            $actions[] = array(
+                'ID' => $post->ID,
+                'post_title' => $post->post_title,
+                'post_content' => $post->post_content,
+                'post_status' => $post->post_status,
+                'shortcut_count' => $shortcut_count,
+                'icon' => $icon
+            );
         }
         wp_reset_postdata();
     }
@@ -88,7 +101,7 @@ function create_action() {
         'post_type'    => 'action',
         'post_status'  => sanitize_text_field($form_data['status']),
         'meta_input'   => array(
-            'icon' => isset($form_data['icon']) ? sanitize_text_field($form_data['icon']) : ''
+            'action_icon' => isset($form_data['icon']) ? sanitize_text_field($form_data['icon']) : ''
         )
     );
 
@@ -134,7 +147,21 @@ function update_action() {
 
     // Update icon meta separately to ensure proper escaping
     if (isset($form_data['icon'])) {
-        update_post_meta($post_id, '_action_icon', wp_slash($form_data['icon']));
+        // DEBUG: Log icon update
+        sh_debug_log('Action Icon Update', array(
+            'message' => 'Updating action icon',
+            'source' => array(
+                'file' => 'actions-ajax.php',
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'action_id' => $post_id,
+                'icon_data' => $form_data['icon']
+            ),
+            'debug' => true
+        ));
+        update_post_meta($post_id, 'action_icon', wp_slash($form_data['icon']));
     }
 
     wp_send_json_success(array('message' => 'Action updated successfully.'));

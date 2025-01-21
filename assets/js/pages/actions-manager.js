@@ -64,33 +64,6 @@ jQuery(document).ready(function($) {
         const status = $('#filter-action-status').val();
         const trash = $('#filter-action-trash').val();
 
-        // DEBUG: Log AJAX request details
-        sh_debug_log('Actions Manager AJAX Request Details', {
-            'message': 'Detailed debug information for fetch_actions AJAX request',
-            'source': {
-                'file': 'actions-manager.js',
-                'line': 'loadActions',
-                'function': 'loadActions'
-            },
-            'data': {
-                'request': {
-                    'url': shortcutsHubData.ajaxurl,
-                    'method': 'POST',
-                    'action': 'fetch_actions',
-                    'nonce': shortcutsHubData.security.fetch_actions,
-                    'parameters': {
-                        'search': search,
-                        'status': status,
-                        'trash': trash
-                    }
-                },
-                'shortcutsHubData': shortcutsHubData,
-                'window.location': window.location.href,
-                'document.referrer': document.referrer
-            },
-            'debug': true
-        });
-
         $.ajax({
             url: shortcutsHubData.ajaxurl,
             type: 'POST',
@@ -179,10 +152,19 @@ jQuery(document).ready(function($) {
 
     // Helper function to render action icon
     function renderActionIcon(iconData) {
+        if (!iconData) return '';
+        
         try {
             // Handle double-escaped JSON
-            const unescapedData = iconData.replace(/\\/g, '');
-            const icon = JSON.parse(unescapedData);
+            let icon;
+            try {
+                // First try parsing as is
+                icon = JSON.parse(iconData);
+            } catch (e) {
+                // If that fails, try unescaping first
+                const unescapedData = iconData.replace(/\\/g, '');
+                icon = JSON.parse(unescapedData);
+            }
             
             if (icon.type === 'fontawesome') {
                 return `<i class="${icon.name}"></i>`;
@@ -191,7 +173,20 @@ jQuery(document).ready(function($) {
             }
             return '';
         } catch (e) {
-            console.error('Error parsing icon data:', e);
+            // DEBUG: Log icon parsing error
+            sh_debug_log('Icon Parse Error', {
+                'message': 'Failed to parse icon data',
+                'source': {
+                    'file': 'actions-manager.js',
+                    'line': 'renderActionIcon',
+                    'function': 'renderActionIcon'
+                },
+                'data': {
+                    'iconData': iconData,
+                    'error': e.message
+                },
+                'debug': true
+            });
             return '';
         }
     }
@@ -210,6 +205,8 @@ jQuery(document).ready(function($) {
     $('#add-new-action').click(function() {
         $('#add-action-modal').show().addClass('active');
         $('body').addClass('modal-open');
+        // Show both buttons for new actions
+        $('#add-action-modal .publish-action, #add-action-modal .save-draft').show();
     });
 
     $('.cancel-button').click(function() {
@@ -226,7 +223,7 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         const $form = $(this);
         const $submitButton = $(document.activeElement);
-        const status = $submitButton.data('status');
+        const status = $submitButton.data('status') || 'publish';  // Default to publish if not set
 
         const formData = {
             name: $('#action-name').val(),
@@ -236,7 +233,7 @@ jQuery(document).ready(function($) {
         };
 
         $.ajax({
-            url: shortcutsHubData.ajax_url,
+            url: shortcutsHubData.ajaxurl,
             type: 'POST',
             data: {
                 action: 'create_action',
@@ -294,6 +291,21 @@ jQuery(document).ready(function($) {
         const action = actions.find(a => parseInt(a.ID, 10) === actionId);
         
         if (action) {
+            // DEBUG: Log action data when opening edit modal
+            sh_debug_log('Edit Modal Action Data', {
+                'message': 'Opening edit modal with action data',
+                'source': {
+                    'file': 'actions-manager.js',
+                    'line': 'editActionClickHandler',
+                    'function': 'editActionClickHandler'
+                },
+                'data': {
+                    'action': action,
+                    'status': action.post_status
+                },
+                'debug': true
+            });
+
             const $modal = $('#edit-action-modal');
             
             // Set form values
@@ -303,7 +315,7 @@ jQuery(document).ready(function($) {
             
             // Handle icon data
             try {
-                let iconData = action.icon ? JSON.parse(action.icon) : null;
+                let iconData = action.icon ? JSON.parse(action.icon.replace(/\\/g, '')) : null;
                 if (iconData) {
                     $('#edit-action-icon').val(action.icon);
                     $('#edit-action-icon-type').val(iconData.type);
@@ -375,9 +387,10 @@ jQuery(document).ready(function($) {
         const $form = $(this);
         const $submitButton = $(document.activeElement);
         const status = $submitButton.data('status');
+        const actionId = parseInt($('#edit-action-id').val(), 10);
         
         const formData = {
-            id: $('#edit-action-id').val(),
+            id: actionId,
             name: $('#edit-action-name').val(),
             description: $('#edit-action-description').val(),
             icon: $('#edit-action-icon').val(),
@@ -385,7 +398,7 @@ jQuery(document).ready(function($) {
         };
 
         $.ajax({
-            url: shortcutsHubData.ajax_url,
+            url: shortcutsHubData.ajaxurl,
             type: 'POST',
             data: {
                 action: 'update_action',
@@ -401,11 +414,13 @@ jQuery(document).ready(function($) {
                     $('body').removeClass('modal-open');
                     loadActions();
                 } else {
-                    console.error('Failed to update action:', response.data.message);
+                    console.error('Failed to update action:', response.data ? response.data.message : 'Unknown error');
+                    alert('Failed to update action. Please try again.');
                 }
             },
             error: function(xhr, status, error) {
                 console.error('AJAX error:', error);
+                alert('Failed to update action. Please try again.');
             },
             complete: function() {
                 $form.find('button').prop('disabled', false);
@@ -455,7 +470,7 @@ jQuery(document).ready(function($) {
         }
 
         $.ajax({
-            url: shortcutsHubData.ajax_url,
+            url: shortcutsHubData.ajaxurl,
             type: 'POST',
             data: {
                 action: 'delete_action',
@@ -466,12 +481,15 @@ jQuery(document).ready(function($) {
             success: function(response) {
                 if (response.success) {
                     loadActions();
+                    alert('Action deleted successfully!');
                 } else {
                     console.error('Failed to delete action:', response.data.message);
+                    alert('Failed to delete action. Please try again.');
                 }
             },
             error: function(xhr, status, error) {
                 console.error('AJAX error:', error);
+                alert('Failed to delete action. Please try again.');
             }
         });
     }

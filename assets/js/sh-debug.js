@@ -10,44 +10,15 @@ window.debugQueue = [];
 
 // Main debug function - initially set up to queue calls until properly initialized
 window.sh_debug_log = function(message, data = null, source = null) {
-    // Get caller info
-    let callerSource = {
-        file: 'sh-debug.js',
-        line: 'unknown',
-        function: 'unknown'
-    };
-    
-    try {
-        const stack = new Error().stack;
-        if (stack) {
-            const lines = stack.split('\n');
-            if (lines.length > 2) {
-                const caller = lines[2]; // 0 is Error, 1 is sh_debug_log, 2 is caller
-                // Try different stack trace formats
-                let match = caller.match(/at (\w+) \((.*):(\d+):(\d+)\)/);
-                if (!match) {
-                    match = caller.match(/at (.*):(\d+):(\d+)/);
-                }
-                if (match) {
-                    callerSource = {
-                        file: match[2] ? match[2].split('/').pop() : 'sh-debug.js',
-                        line: match[3] || 'unknown',
-                        function: match[1] || 'unknown'
-                    };
-                }
-            }
-        }
-    } catch (e) {
-        console.warn('Error getting caller info:', e);
-    }
-
-    // Use caller info if no source is provided
-    if (!source) {
+    // Handle source info from caller
+    const callerSource = getStackTrace();
+    if (callerSource && (!source || typeof source === 'string')) {
         source = callerSource;
     }
 
     // Queue the call if we're not ready
     if (!window.shortcutsHubData || !window.shortcutsHubData.security || !window.shortcutsHubData.security.debug_log) {
+        window.debugQueue = window.debugQueue || [];
         window.debugQueue.push({message, data, source});
         return;
     }
@@ -62,54 +33,39 @@ function getCurrentPage() {
 }
 
 function sendLog(message, data = null, source = null) {
-    try {
-        console.log('Debug call trace:', {
-            message: message,
-            data: data,
-            source: source,
-            stack: new Error().stack
-        });
-    } catch (e) {
-        logError('Failed to log debug call trace', 'sendLog');
+    // Validate parameters
+    if (typeof message !== 'string') {
+        error_log('[DEBUG] sh_debug_log failed: message must be a string, received ' + typeof message);
+        return;
+    }
+
+    if (data !== null && typeof data === 'object') {
+        if (data.hasOwnProperty('message') && data.hasOwnProperty('source') && data.hasOwnProperty('data')) {
+            error_log('[DEBUG] sh_debug_log failed: Incorrect format - you are passing a single combined object. Instead use: sh_debug_log(message, data, source)');
+            return;
+        }
     }
 
     // Validate shortcutsHubData
     if (!window.shortcutsHubData) {
-        logError('sh_debug_log failed: shortcutsHubData not found', 'sendLog');
+        error_log('[DEBUG] sh_debug_log failed: shortcutsHubData not found. Make sure the script is properly localized');
         return;
     }
 
     if (!window.shortcutsHubData.ajaxurl) {
-        logError('sh_debug_log failed: ajaxurl not found in shortcutsHubData', 'sendLog');
+        error_log('[DEBUG] sh_debug_log failed: ajaxurl not found in shortcutsHubData. Check enqueue-assets.php localization');
         return;
     }
 
     if (!window.shortcutsHubData.security || !window.shortcutsHubData.security.debug_log) {
-        logError('sh_debug_log failed: debug_log security token not found', 'sendLog');
+        error_log('[DEBUG] sh_debug_log failed: debug_log security token not found. Ensure nonce is created in enqueue-assets.php');
         return;
     }
 
-    // Process source information
-    if (source instanceof Error) {
-        const stackTrace = source.stack;
-        const stackLines = stackTrace ? stackTrace.split('\n') : [];
-        const sourceLine = stackLines.find(line => 
-            line.includes('/plugins/shortcuts-hub/') && 
-            !line.includes('sh-debug.js')
-        );
-        
-        if (sourceLine) {
-            const match = sourceLine.match(/\((.*?)\)/);
-            let sourcePath = match ? match[1] : sourceLine.trim();
-            
-            // Clean up the source path
-            sourcePath = sourcePath.replace(/https?:\/\/[^\/]+\//, '/');  // Remove domain
-            sourcePath = sourcePath.replace(/\?.*?:/, ':');  // Remove query params
-            const fileMatch = sourcePath.match(/[^\/]+\.[^\/]+:\d+:\d+$/);
-            source = fileMatch ? fileMatch[0] : sourcePath;
-        } else {
-            source = null;
-        }
+    // Get source info
+    let sourceInfo = getStackTrace();
+    if (source === 'session-start') {
+        sourceInfo = 'sh-debug.js [session-start]';
     }
 
     // Style console output
@@ -149,8 +105,8 @@ function sendLog(message, data = null, source = null) {
         console.groupCollapsed('%c[DEBUG] ' + message, debugStyle);
         
         // Log source if present
-        if (source) {
-            console.log('%c[SOURCE] %c' + source, sourceTagStyle, fileNameStyle);
+        if (sourceInfo) {
+            console.log('%c[SOURCE] %c' + sourceInfo, sourceTagStyle, fileNameStyle);
         }
         
         if (data) {
@@ -179,62 +135,58 @@ function sendLog(message, data = null, source = null) {
     // Prepare data for sending
     let logData;
     try {
-        // Format source string from source object
-        const sourceStr = typeof source === 'object' && source !== null ? 
-            `${source.file}:${source.line}` : 
-            (typeof source === 'string' ? source : 'unknown:0');
-        
-        // Prepare data object that includes source info
-        const debugData = {
-            ...data,  // Include any existing data
-            source: typeof source === 'object' && source !== null ? source : {
-                file: 'sh-debug.js',
-                line: 'unknown',
-                function: 'unknown'
-            }
+        // Parse source info for PHP
+        const [fileName, functionName] = sourceInfo.split(' [');
+        const sourceData = {
+            file: fileName,
+            function: functionName ? functionName.slice(0, -1) : '',  // Remove trailing ]
+            line: ''  // We're not using line numbers anymore
         };
 
-        // Ensure data.debug is true for all logs
-        if (typeof debugData === 'object' && debugData !== null) {
-            debugData.debug = true;
-        }
+        // Prepare data object
+        const debugData = {
+            ...data,  // Include any existing data
+            debug: true  // Ensure debug is true
+        };
         
         logData = {
             action: 'sh_debug_log',
             security: window.shortcutsHubData.security.debug_log,
             message: message,
-            source: sourceStr,
+            source: JSON.stringify(sourceData),
             data: JSON.stringify(debugData),
             page: getCurrentPage(),
             debug: true
         };
 
-        // Log to console for immediate feedback
-        console.log('[DEBUG]', {
-            message: message,
-            source: sourceStr,
-            data: debugData
+        // Send to PHP for logging
+        jQuery.ajax({
+            url: window.shortcutsHubData.ajaxurl,
+            type: 'POST',
+            data: logData,
+            success: function(response) {
+                if (!response || !response.success) {
+                    error_log('[DEBUG] sh_debug_log failed: Server returned error - ' + 
+                        (response ? JSON.stringify(response) : 'No response'));
+                }
+            },
+            error: function(xhr, status, error) {
+                error_log('[DEBUG] sh_debug_log failed: AJAX error - ' + status + ' - ' + error);
+                console.error('AJAX Request:', {
+                    url: window.shortcutsHubData.ajaxurl,
+                    data: debugData
+                });
+            }
         });
     } catch (e) {
-        logError('sh_debug_log failed: Error preparing data - ' + e.message, 'sendLog');
+        error_log('[DEBUG] sh_debug_log failed: Data serialization error - ' + e.message);
+        console.error('Failed to serialize data:', {
+            source: sourceInfo,
+            data: debugData,
+            error: e
+        });
         return;
     }
-
-    // Send to PHP for logging
-    jQuery.ajax({
-        url: window.shortcutsHubData.ajaxurl,
-        type: 'POST',
-        data: logData,
-        success: function(response) {
-            if (!response || !response.success) {
-                logError('sh_debug_log failed: Server returned error - ' + 
-                    (response ? JSON.stringify(response) : 'No response'), 'sendLog');
-            }
-        },
-        error: function(xhr, status, error) {
-            logError('sh_debug_log failed: AJAX error - ' + status + ' - ' + error, 'sendLog');
-        }
-    });
 }
 
 // Process any queued debug calls
@@ -251,7 +203,21 @@ function processDebugQueue() {
 // Helper function to get stack trace
 function getStackTrace() {
     const error = new Error();
-    return error.stack ? error.stack.split('\n').slice(2).join('\n') : '';
+    if (!error.stack) return '';
+    
+    // Get the first relevant stack frame (skip Error and sh_debug_log frames)
+    const stackFrames = error.stack.split('\n');
+    if (stackFrames.length < 3) return '';
+    
+    const frame = stackFrames[2];
+    
+    // Parse the stack frame
+    // Expected format: "    at functionName (file:///path/to/file.js?ver=1.0.0:lineNumber:column)"
+    const match = frame.match(/at\s+(?:(\w+)\s+)?\(?(?:.*\/)?([^\/]+?)(?:\?[^:]*)?:(\d+):/);
+    if (!match) return '';
+    
+    const [, functionName, fileName, lineNumber] = match;
+    return fileName + ':' + lineNumber + (functionName ? ' [' + functionName + ']' : '');
 }
 
 // Helper function to get script loading state
@@ -294,70 +260,37 @@ function logError(message, functionName) {
 
 // Initialize debug when document is ready and shortcutsHubData is available
 function initDebug() {
+
     if (!window.shortcutsHubData) {
         logError('shortcutsHubData not available for initialization', 'initDebug');
         return;
     }
 
-    // Log initialization state
-    sh_debug_log('Debug initialization state', {
-        message: 'Initializing debug system',
-        source: {
-            file: 'sh-debug.js',
-            line: 'initDebug',
-            function: 'initDebug'
-        },
-        data: getScriptLoadingState(),
-        debug: true
-    });
+    // Ensure debug is enabled
+    window.shortcutsHubData.debug = true;
 
     // Process any debug calls that happened before initialization
     processDebugQueue();
 
-    // Create a promise for session start logging
-    window.sessionLogPromise = new Promise((resolve) => {
-        if (!window.shortcutsHubData.security || !window.shortcutsHubData.security.debug_log) {
-            logError('Missing security nonce for debug logging', 'initDebug');
-            resolve();
-            return;
+    // Log initialization
+    window.sh_debug_log('Debug initialized', {
+        shortcutsHubData: {
+            debug: window.shortcutsHubData.debug,
+            ajaxurl: window.shortcutsHubData.ajaxurl,
+            security: window.shortcutsHubData.security
         }
+    }, 'initDebug');
+}
 
-        // Log session start
-        jQuery.ajax({
-            url: window.shortcutsHubData.ajaxurl,
-            type: 'POST',
-            data: {
-                action: 'sh_debug_log',
-                security: window.shortcutsHubData.security.debug_log,
-                message: 'Debug session started',
-                source: 'session-start',
-                page: getCurrentPage()
-            },
-            success: function(response) {
-                if (!response || !response.success) {
-                    logError('Failed to start debug session:', 'initDebug');
-                }
-                resolve();
-            },
-            error: function(xhr, status, error) {
-                logError('Failed to start debug session:', 'initDebug');
-                resolve();
-            }
-        });
+// Try to initialize immediately if jQuery and shortcutsHubData are available
+if (window.jQuery && window.shortcutsHubData) {
+    initDebug();
+} else {
+    // Otherwise wait for document ready
+    jQuery(document).ready(function() {
+        tryInit();
     });
 }
-
-// Try to initialize, but wait for jQuery and shortcutsHubData
-function tryInit() {
-    if (window.jQuery && window.shortcutsHubData) {
-        initDebug();
-    } else {
-        setTimeout(tryInit, 100);
-    }
-}
-
-// Start initialization process
-tryInit();
 
 // Helper function to log errors to PHP error log
 function error_log(message) {

@@ -26,7 +26,16 @@ function log_download($shortcut_name, $version_data, $download_url) {
     }
     
     $table_name = $wpdb->prefix . 'shortcutshub_downloads';
-    $result = $wpdb->insert($table_name, $data);
+    try {
+        $result = $wpdb->insert($table_name, $data);
+    } catch (Exception $e) {
+        // Log the error
+        sh_debug_log('Download Log Error', array(
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ));
+        return false;
+    }
     
     if ($result === false) {
         sh_debug_log('Download Log Error', array(
@@ -62,7 +71,16 @@ function get_downloads($user_id = null) {
         $user_id
     );
     
-    $results = $wpdb->get_results($query);
+    try {
+        $results = $wpdb->get_results($query);
+    } catch (Exception $e) {
+        // Log the error
+        sh_debug_log('Download History Error', array(
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ));
+        return false;
+    }
     
     if ($wpdb->last_error) {
         sh_debug_log('Download History Error', array(
@@ -86,7 +104,7 @@ function get_downloads($user_id = null) {
 
 // AJAX handler for logging downloads
 function ajax_log_download() {
-    check_ajax_referer('shortcuts_hub_download', 'nonce');
+    check_ajax_referer('download_nonce', 'nonce');
     
     $shortcut_name = isset($_POST['shortcut_name']) ? sanitize_text_field($_POST['shortcut_name']) : '';
     $version_data = isset($_POST['version_data']) ? $_POST['version_data'] : array();

@@ -1,380 +1,1378 @@
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737399748",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
-    }
-}
-
-[DEBUG] Debug session started
-
 [DEBUG] Debug session started
 [SOURCE] sh-debug.js:unknown
 []
 
-[DEBUG] Debug initialization state
+[DEBUG] Debug initialized
 [SOURCE] sh-debug.js:unknown
 {
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737399801",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    "shortcutsHubData": {
+        "debug": true,
+        "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": {
+            "debug_log": "cd8cacc935",
+            "fetch_versions": "c322f4fa27",
+            "fetch_version": "52f3251645",
+            "update_version": "0ba51d5ee4",
+            "delete_version": "7d80355433",
+            "create_version": "634d3a83a8"
+        }
     }
 }
 
-[DEBUG] Debug session started
-[SOURCE] sh-debug.js:unknown
-[]
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
+[DEBUG] Menu Toggle Initialization
+[SOURCE] shortcuts-handlers.js:documentReady
 {
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400250",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
-    }
+    "menuToggleExists": false,
+    "actionMenuExists": false,
+    "events": {
+        "adminMenuEditor:highlightCurrentMenu": [
+            {
+                "type": "adminMenuEditor:highlightCurrentMenu",
+                "origType": "adminMenuEditor:highlightCurrentMenu",
+                "guid": 1,
+                "namespace": ""
+            }
+        ],
+        "adminMenuEditor:menuStylerUiRegister": [
+            {
+                "type": "adminMenuEditor:menuStylerUiRegister",
+                "origType": "adminMenuEditor:menuStylerUiRegister",
+                "guid": 3,
+                "namespace": ""
+            }
+        ],
+        "restoreCollapsedHeadings": [
+            {
+                "type": "restoreCollapsedHeadings",
+                "origType": "restoreCollapsedHeadings",
+                "guid": 4,
+                "namespace": "adminMenuEditor"
+            }
+        ],
+        "click": [
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 5,
+                "selector": ".wpclever_plugins_order_a",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 21,
+                "selector": "[data-type=\"discard\"]",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 23,
+                "selector": ".popup-dash-close",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 24,
+                "selector": ".stm-notice .notice-dismiss",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 25,
+                "selector": ".not-show-again, .stm-dash-btn",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 26,
+                "selector": ".notice-show-again",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 28,
+                "selector": ".notice-dismiss",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 29,
+                "selector": ".notice-dismiss-link",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 41,
+                "selector": ".tec-copy-to-clipboard",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 92,
+                "selector": ".aipower-toggle-switch",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 93,
+                "selector": "#wpcgai_load_draft_settings",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 94,
+                "selector": ".aipower-replicate-tooltip",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 95,
+                "selector": ".bb-onsignal-dismiss-site-notice .notice-dismiss",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 96,
+                "selector": ".bb-zoom-dismiss-site-notice .notice-dismiss",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 97,
+                "selector": ".bb-pro-tabs-list li",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 98,
+                "selector": ".bb-copy-button",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 99,
+                "selector": ".buddyboss_page_bp-settings #bb-pro-reaction-global-notice .notice-dismiss",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 110,
+                "selector": "#wpcvs_upload_image",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 111,
+                "selector": "#wpcvs_remove_image",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 112,
+                "selector": ".registration-restrictions-listing .registration-restrictions-add-rule",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 113,
+                "selector": ".registration-restrictions-listing .registration-restrictions-rule-remove",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 116,
+                "selector": ".registration-restrictions-rule-remove",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 119,
+                "selector": ".bb-dismiss-upgrade-notice",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 121,
+                "selector": ".bb-disable-telemetry-link",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 122,
+                "selector": ".bb-telemetry-notice .notice-dismiss",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 124,
+                "selector": ".bp-step-nav li > a, .bp-step-actions > span",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 126,
+                "selector": ".bb-zoom-setting-tab .bb-zoom-setting-tabs a",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 128,
+                "selector": ".bb-pro-tabs-list li",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 133,
+                "selector": ".bp-zoom-group-show-instructions .save-settings",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 138,
+                "selector": ".bb-box-item-edit--sso",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 139,
+                "selector": ".close-modal, #sso_cancel",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 141,
+                "selector": "#sso_submit",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 146,
+                "selector": ".wfactory-480-process-button",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 147,
+                "selector": ".wbcr-han-panel-restore-notify-link",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 164,
+                "selector": ".wpaicg-instant-embedding-cancel",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 174,
+                "selector": ".wpaicg_woo_content_cancel",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 176,
+                "selector": ".wpaicg_regenerate_save",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 177,
+                "selector": ".wpaicg_regenerate_title",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 178,
+                "selector": ".wpaicg_comment_replier",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 208,
+                "selector": "input[name='ez-toc-settings[headings-padding]']",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 209,
+                "selector": "input[name='ez-toc-settings[show_heading_text]']",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 210,
+                "selector": "input[name='ez-toc-settings[visibility]']",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 220,
+                "selector": "#back-to-shortcuts",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 221,
+                "selector": ".version-header",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 222,
+                "selector": ".edit-version",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 223,
+                "selector": ".delete-version, .restore-version",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 91,
+                "namespace": ""
+            },
+            {
+                "type": "click",
+                "origType": "click",
+                "guid": 198,
+                "namespace": ""
+            }
+        ],
+        "change": [
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 6,
+                "selector": ".access-control-select-box",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 7,
+                "selector": ".access-control-plugin-select-box",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 8,
+                "selector": ".access-control-gamipress-select-box",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 9,
+                "selector": ".access-control-checkbox-list .parent input[type=\"checkbox\"]",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 10,
+                "selector": ".chb",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 11,
+                "selector": ".access-control-threaded-input",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 13,
+                "selector": "input#bp_restrict_group_creation",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 14,
+                "selector": "input#bp_media_profile_media_support, input#bp_media_messages_media_support, input#bp_media_forums_media_support",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 15,
+                "selector": "input#bp_video_profile_video_support, input#bp_video_messages_video_support, input#bp_video_forums_video_support",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 16,
+                "selector": "input#bp_media_profile_document_support, input#bp_media_messages_document_support, input#bp_media_forums_document_support",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 39,
+                "selector": "input[name='ez-toc-settings[no_heading_text]']",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 40,
+                "selector": "select[name='ez-toc-settings[truncate_headings]']",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 104,
+                "selector": ".elementor-widget-template-select",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 105,
+                "selector": ".wpclv-product-search",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 106,
+                "selector": ".wpclv-category-search",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 107,
+                "selector": ".wpclv_display_checkbox",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 108,
+                "selector": ".wpclv-source",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 109,
+                "selector": ".wpclv-terms-select",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 114,
+                "selector": ".registration-restrictions-listing .registration-restrictions-select",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 118,
+                "selector": "#bb-email-restrictions-setting .registration-restrictions-input-select",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 120,
+                "selector": "#bb_advanced_telemetry input[name=\"bb_advanced_telemetry_reporting\"]",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 123,
+                "selector": "#bp-edit-group-zoom",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 127,
+                "selector": "#bb-group-zoom-s2s-account-id, #bb-group-zoom-s2s-client-id, #bb-group-zoom-s2s-client-secret",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 129,
+                "selector": "#s2s-account-id, #s2s-client-id, #s2s-client-secret",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 130,
+                "selector": ".postbox-container #bp-edit-group-zoom",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 131,
+                "selector": "#bb-group-zoom-s2s-secret-token-popup",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 132,
+                "selector": "#bb-group-zoom-s2s-account-id-popup, #bb-group-zoom-s2s-client-id-popup, #bb-group-zoom-s2s-client-secret-popup",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 134,
+                "selector": ".zoom-group-instructions-cloned-input",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 135,
+                "selector": ".zoom-group-instructions-main-input",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 142,
+                "selector": ".sso-enable, .sso-disable",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 143,
+                "selector": "input#bb_enable_sso",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 167,
+                "selector": "#titlePromptTemplates",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 168,
+                "selector": "#DescriptionPromptTemplates",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 169,
+                "selector": "#ShortDescriptionPromptTemplates",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 170,
+                "selector": "#MetaDescriptionPromptTemplates",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 171,
+                "selector": "#TagsPromptTemplates",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 172,
+                "selector": "#FocusKeywordPromptTemplates",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 205,
+                "selector": "select[name='ez-toc-settings[position]']",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 206,
+                "selector": "select[name='ez-toc-settings[toc_loading]']",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 207,
+                "selector": "input[name='ez-toc-settings[sticky_highlight_heading]']",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 208,
+                "selector": "input[name='ez-toc-settings[headings-padding]']",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 209,
+                "selector": "input[name='ez-toc-settings[show_heading_text]']",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "change",
+                "origType": "change",
+                "guid": 210,
+                "selector": "input[name='ez-toc-settings[visibility]']",
+                "needsContext": false,
+                "namespace": ""
+            }
+        ],
+        "adminMenuEditor:acPreviewStart": [
+            {
+                "type": "adminMenuEditor:acPreviewStart",
+                "origType": "adminMenuEditor:acPreviewStart",
+                "guid": 30,
+                "namespace": ""
+            }
+        ],
+        "mouseup": [
+            {
+                "type": "mouseup",
+                "origType": "mouseup",
+                "guid": 38,
+                "namespace": ""
+            }
+        ],
+        "heartbeat-send": [
+            {
+                "type": "heartbeat-send",
+                "origType": "heartbeat-send",
+                "guid": 42,
+                "namespace": ""
+            }
+        ],
+        "heartbeat-tick": [
+            {
+                "type": "heartbeat-tick",
+                "origType": "heartbeat-tick",
+                "guid": 43,
+                "namespace": ""
+            },
+            {
+                "type": "heartbeat-tick",
+                "origType": "heartbeat-tick",
+                "guid": 48,
+                "namespace": "wp-auth-check"
+            }
+        ],
+        "tribe_aggregator_init_notice": [
+            {
+                "type": "tribe_aggregator_init_notice",
+                "origType": "tribe_aggregator_init_notice",
+                "guid": 44,
+                "namespace": ""
+            }
+        ],
+        "visibilitychange": [
+            {
+                "type": "visibilitychange",
+                "origType": "visibilitychange",
+                "guid": 45,
+                "namespace": "wp-heartbeat"
+            }
+        ],
+        "cmb2_add_row": [
+            {
+                "type": "cmb2_add_row",
+                "origType": "cmb2_add_row",
+                "guid": 49,
+                "namespace": ""
+            }
+        ],
+        "widget-added": [
+            {
+                "type": "widget-added",
+                "origType": "widget-added",
+                "guid": 50,
+                "namespace": ""
+            }
+        ],
+        "widget-updated": [
+            {
+                "type": "widget-updated",
+                "origType": "widget-updated",
+                "guid": 50,
+                "namespace": ""
+            }
+        ],
+        "keydown": [
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 53,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 55,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 57,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 59,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 61,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 63,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 65,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 67,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 69,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 71,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 73,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 75,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 77,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 79,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 81,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 83,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 85,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 87,
+                "namespace": ""
+            },
+            {
+                "type": "keydown",
+                "origType": "keydown",
+                "guid": 89,
+                "namespace": ""
+            }
+        ],
+        "ready": [
+            {
+                "type": "ready",
+                "origType": "ready",
+                "guid": 100,
+                "namespace": ""
+            }
+        ],
+        "touch": [
+            {
+                "type": "touch",
+                "origType": "touch",
+                "guid": 110,
+                "selector": "#wpcvs_upload_image",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "touch",
+                "origType": "touch",
+                "guid": 111,
+                "selector": "#wpcvs_remove_image",
+                "needsContext": false,
+                "namespace": ""
+            }
+        ],
+        "focusout": [
+            {
+                "type": "focusout",
+                "origType": "blur",
+                "guid": 115,
+                "selector": ".bb-domain-restrictions-listing .registration-restrictions-domain, .registration-restrictions-tld",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "focusout",
+                "origType": "blur",
+                "guid": 117,
+                "selector": "#bb-email-restrictions-setting .registration-restrictions-domain",
+                "needsContext": false,
+                "namespace": ""
+            }
+        ],
+        "input": [
+            {
+                "type": "input",
+                "origType": "input",
+                "guid": 115,
+                "selector": ".bb-domain-restrictions-listing .registration-restrictions-domain, .registration-restrictions-tld",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "input",
+                "origType": "input",
+                "guid": 117,
+                "selector": "#bb-email-restrictions-setting .registration-restrictions-domain",
+                "needsContext": false,
+                "namespace": ""
+            }
+        ],
+        "keyup": [
+            {
+                "type": "keyup",
+                "origType": "keyup",
+                "guid": 134,
+                "selector": ".zoom-group-instructions-cloned-input",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "keyup",
+                "origType": "keyup",
+                "guid": 135,
+                "selector": ".zoom-group-instructions-main-input",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "keyup",
+                "origType": "keyup",
+                "guid": 140,
+                "selector": ".bb-hello-sso input[type=\"text\"], .bb-hello-sso input[type=\"radio\"]",
+                "needsContext": false,
+                "namespace": ""
+            },
+            {
+                "type": "keyup",
+                "origType": "keyup",
+                "guid": 199,
+                "namespace": ""
+            }
+        ],
+        "submit": [
+            {
+                "type": "submit",
+                "origType": "submit",
+                "guid": 173,
+                "selector": "#wpaicg-woo-content-form",
+                "needsContext": false,
+                "namespace": ""
+            }
+        ],
+        "wp-notice-added": [
+            {
+                "type": "wp-notice-added",
+                "origType": "wp-notice-added",
+                "guid": 185,
+                "namespace": ""
+            }
+        ],
+        "wp-theme-delete-error": [
+            {
+                "type": "wp-theme-delete-error",
+                "origType": "wp-theme-delete-error",
+                "guid": 185,
+                "namespace": ""
+            }
+        ],
+        "wp-theme-install-error": [
+            {
+                "type": "wp-theme-install-error",
+                "origType": "wp-theme-install-error",
+                "guid": 185,
+                "namespace": ""
+            }
+        ],
+        "wp-plugin-delete-error": [
+            {
+                "type": "wp-plugin-delete-error",
+                "origType": "wp-plugin-delete-error",
+                "guid": 185,
+                "namespace": ""
+            }
+        ],
+        "wp-plugin-update-error": [
+            {
+                "type": "wp-plugin-update-error",
+                "origType": "wp-plugin-update-error",
+                "guid": 185,
+                "namespace": ""
+            }
+        ],
+        "wp-plugin-install-error": [
+            {
+                "type": "wp-plugin-install-error",
+                "origType": "wp-plugin-install-error",
+                "guid": 185,
+                "namespace": ""
+            }
+        ],
+        "wp-updates-notice-added": [
+            {
+                "type": "wp-updates-notice-added",
+                "origType": "wp-updates-notice-added",
+                "guid": 185,
+                "namespace": ""
+            }
+        ],
+        "tinymce-editor-init": [
+            {
+                "type": "tinymce-editor-init",
+                "origType": "tinymce-editor-init",
+                "guid": 192,
+                "namespace": "pin-menu"
+            }
+        ],
+        "ajaxComplete": [
+            {
+                "type": "ajaxComplete",
+                "origType": "ajaxComplete",
+                "guid": 193,
+                "namespace": ""
+            }
+        ],
+        "wp-window-resized": [
+            {
+                "type": "wp-window-resized",
+                "origType": "wp-window-resized",
+                "guid": 194,
+                "namespace": "set-menu-state"
+            },
+            {
+                "type": "wp-window-resized",
+                "origType": "wp-window-resized",
+                "guid": 201,
+                "namespace": "wp-responsive"
+            },
+            {
+                "type": "wp-window-resized",
+                "origType": "wp-window-resized",
+                "guid": 203,
+                "namespace": "pin-menu"
+            }
+        ],
+        "wp-collapse-menu": [
+            {
+                "type": "wp-collapse-menu",
+                "origType": "wp-collapse-menu",
+                "guid": 195,
+                "namespace": ""
+            },
+            {
+                "type": "wp-collapse-menu",
+                "origType": "wp-collapse-menu",
+                "guid": 203,
+                "namespace": "pin-menu"
+            }
+        ],
+        "wp-menu-state-set": [
+            {
+                "type": "wp-menu-state-set",
+                "origType": "wp-menu-state-set",
+                "guid": 195,
+                "namespace": ""
+            }
+        ],
+        "wp-responsive-activate": [
+            {
+                "type": "wp-responsive-activate",
+                "origType": "wp-responsive-activate",
+                "guid": 196,
+                "namespace": "wp-responsive"
+            }
+        ],
+        "wp-responsive-deactivate": [
+            {
+                "type": "wp-responsive-deactivate",
+                "origType": "wp-responsive-deactivate",
+                "guid": 197,
+                "namespace": "wp-responsive"
+            }
+        ],
+        "postbox-toggled": [
+            {
+                "type": "postbox-toggled",
+                "origType": "postbox-toggled",
+                "guid": 202,
+                "namespace": ""
+            },
+            {
+                "type": "postbox-toggled",
+                "origType": "postbox-toggled",
+                "guid": 203,
+                "namespace": "pin-menu"
+            }
+        ],
+        "wp-scroll-start": [
+            {
+                "type": "wp-scroll-start",
+                "origType": "wp-scroll-start",
+                "guid": 203,
+                "namespace": "pin-menu"
+            }
+        ],
+        "postboxes-columnchange": [
+            {
+                "type": "postboxes-columnchange",
+                "origType": "postboxes-columnchange",
+                "guid": 203,
+                "namespace": "pin-menu"
+            }
+        ],
+        "wp-pin-menu": [
+            {
+                "type": "wp-pin-menu",
+                "origType": "wp-pin-menu",
+                "guid": 203,
+                "namespace": ""
+            }
+        ]
+    },
+    "page": "shortcuts-list"
 }
 
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-[SOURCE] sh-debug.js:unknown
-[]
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
+[DEBUG] Menu Visibility Change
+[SOURCE] shortcuts-handlers.js:menuToggleClick
 {
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400271",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
-    }
+    "menu": {
+        "element": "<div class=\"action-menu active\" style=\"visibility: visible;\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>",
+        "visibility": "visible",
+        "display": "flex",
+        "isActive": true,
+        "finalState": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": true
+        }
+    },
+    "page": "shortcuts-list"
 }
 
-[DEBUG] Debug session started
-[SOURCE] sh-debug.js:unknown
-[]
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
+[DEBUG] Menu Toggle Click
+[SOURCE] shortcuts-handlers.js:menuToggleClick
 {
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400280",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
-    }
+    "event": {
+        "type": "click",
+        "targetId": "",
+        "targetClass": "fas fa-ellipsis-h"
+    },
+    "menuToggle": {
+        "hasActiveClass": false,
+        "classes": "menu-toggle"
+    },
+    "actionMenu": {
+        "hasActiveClass": false,
+        "currentVisibility": "hidden",
+        "classes": "action-menu"
+    },
+    "page": "shortcuts-list"
 }
 
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-[SOURCE] sh-debug.js:unknown
-[]
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
+[DEBUG] Action Menu Toggle Click
+[SOURCE] shortcuts-handlers.js:menuToggleClick
 {
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400506",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
-    }
-}
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-[SOURCE] sh-debug.js:unknown
-[]
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400573",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
-    }
-}
-
-[DEBUG] Debug session started
-[SOURCE] sh-debug.js:unknown
-[]
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400765",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
-    }
-}
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug session started
-[SOURCE] sh-debug.js:unknown
-[]
-
-[DEBUG] Actions Manager AJAX Request Details
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Detailed debug information for fetch_actions AJAX request",
-    "data": {
-        "request": {
-            "method": "POST",
-            "action": "fetch_actions",
-            "nonce": "25dcdd9662",
-            "parameters": {
-                "search": "",
-                "status": "",
-                "trash": ""
+    "elements": {
+        "menuToggle": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": false,
+            "element": "<button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>"
+        },
+        "actionMenu": {
+            "visibility": "hidden",
+            "display": "flex",
+            "isActive": false,
+            "element": "<div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>"
+        },
+        "menuContainer": {
+            "html": "<div class=\"menu-container\">\n                <button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>\n                <div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>\n            <\/div>"
+        }
+    },
+    "executionContext": {
+        "initialStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            },
+            "actionButtons": {
+                "hasClass": false,
+                "classes": "action-button view-button",
+                "inlineStyle": "none"
             }
         },
-        "shortcutsHubData": {
-            "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
-            "security": {
-                "debug_log": "bbd5f287be",
-                "fetch_versions": "d0f97a073a",
-                "fetch_version": "f402f263ef",
-                "update_version": "b318267075",
-                "delete_version": "21b8f88d97",
-                "create_version": "d1179a1b31",
-                "save_action": "f1f902deec",
-                "delete_action": "bb0da5f4ea",
-                "fetch_actions": "25dcdd9662",
-                "create_action": "3aa3fe2f42",
-                "update_action": "9e7941707e"
+        "currentStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
             }
-        },
-        "window.location": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=actions-manager",
-        "document.referrer": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=73"
-    }
+        }
+    },
+    "page": "shortcuts-list"
 }
 
 [DEBUG] Debug session started
 [SOURCE] sh-debug.js:unknown
 []
 
-[DEBUG] Debug initialization state
+[DEBUG] Debug initialized
 [SOURCE] sh-debug.js:unknown
 {
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737400929",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    "shortcutsHubData": {
+        "debug": true,
+        "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": {
+            "debug_log": "cd8cacc935",
+            "fetch_versions": "c322f4fa27",
+            "fetch_version": "52f3251645",
+            "update_version": "0ba51d5ee4",
+            "delete_version": "7d80355433",
+            "create_version": "634d3a83a8"
+        }
     }
 }
 
-[DEBUG] Debug session started
-
-[DEBUG] Actions Manager AJAX Request Details
+[DEBUG] Debug initialized
 [SOURCE] sh-debug.js:unknown
 {
-    "message": "Detailed debug information for fetch_actions AJAX request",
-    "data": {
-        "request": {
-            "method": "POST",
-            "action": "fetch_actions",
-            "nonce": "25dcdd9662",
-            "parameters": {
-                "search": "",
-                "status": "",
-                "trash": ""
-            }
-        },
-        "shortcutsHubData": {
-            "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
-            "security": {
-                "debug_log": "bbd5f287be",
-                "fetch_versions": "d0f97a073a",
-                "fetch_version": "f402f263ef",
-                "update_version": "b318267075",
-                "delete_version": "21b8f88d97",
-                "create_version": "d1179a1b31",
-                "save_action": "f1f902deec",
-                "delete_action": "bb0da5f4ea",
-                "fetch_actions": "25dcdd9662",
-                "create_action": "3aa3fe2f42",
-                "update_action": "9e7941707e"
-            }
-        },
-        "window.location": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=actions-manager",
-        "document.referrer": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=73"
-    }
-}
-
-[DEBUG] Debug session started
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737401412",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
-    }
-}
-
-[DEBUG] Debug session started
-[SOURCE] sh-debug.js:unknown
-[]
-
-[DEBUG] Actions Manager AJAX Request Details
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Detailed debug information for fetch_actions AJAX request",
-    "data": {
-        "request": {
-            "url": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
-            "method": "POST",
-            "action": "fetch_actions",
-            "nonce": "06731f4128",
-            "parameters": {
-                "search": "",
-                "status": "",
-                "trash": ""
-            }
-        },
-        "shortcutsHubData": {
-            "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
-            "security": {
-                "debug_log": "bbd5f287be",
-                "fetch_versions": "d0f97a073a",
-                "fetch_version": "f402f263ef",
-                "update_version": "b318267075",
-                "delete_version": "21b8f88d97",
-                "create_version": "d1179a1b31",
-                "save_action": "f1f902deec",
-                "delete_action": "bb0da5f4ea",
-                "fetch_actions": "06731f4128",
-                "create_action": "c8d0bc9425",
-                "update_action": "4d7f619154"
-            }
-        },
-        "window.location": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=actions-manager",
-        "document.referrer": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=73"
-    }
-}
-
-[DEBUG] Debug session started
-[SOURCE] sh-debug.js:unknown
-[]
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737401674",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
-    }
-}
-
-[DEBUG] Debug session started
-
-[DEBUG] Actions Manager AJAX Request Details
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Detailed debug information for fetch_actions AJAX request",
-    "data": {
-        "request": {
-            "url": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
-            "method": "POST",
-            "action": "fetch_actions",
-            "nonce": "06731f4128",
-            "parameters": {
-                "search": "",
-                "status": "",
-                "trash": ""
-            }
-        },
-        "shortcutsHubData": {
-            "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
-            "security": {
-                "debug_log": "bbd5f287be",
-                "fetch_versions": "d0f97a073a",
-                "fetch_version": "f402f263ef",
-                "update_version": "b318267075",
-                "delete_version": "21b8f88d97",
-                "create_version": "d1179a1b31",
-                "save_action": "f1f902deec",
-                "delete_action": "bb0da5f4ea",
-                "fetch_actions": "06731f4128",
-                "create_action": "c8d0bc9425",
-                "update_action": "4d7f619154"
-            }
-        },
-        "window.location": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=actions-manager",
-        "document.referrer": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=73"
-    }
-}
-
-[DEBUG] Debug initialization state
-[SOURCE] sh-debug.js:unknown
-{
-    "message": "Initializing debug system",
-    "data": {
-        "documentReadyState": "loading",
-        "jQueryLoaded": true,
-        "shortcutsHubDataExists": true,
-        "shortcutsHubSecurityExists": true,
-        "callingScript": "https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js?ver=1.0.0.1737401879",
-        "stackTrace": "initDebug@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:310:36\ntryInit@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:353:18\nglobal code@https:\/\/debotchery.ai\/wp-content\/plugins\/shortcuts-hub\/assets\/js\/sh-debug.js:360:8"
+    "shortcutsHubData": {
+        "debug": true,
+        "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": {
+            "debug_log": "cd8cacc935",
+            "fetch_versions": "c322f4fa27",
+            "fetch_version": "52f3251645",
+            "update_version": "0ba51d5ee4",
+            "delete_version": "7d80355433",
+            "create_version": "634d3a83a8"
+        }
     }
 }
 
@@ -383,41 +1381,604 @@
 []
 
 [DEBUG] Debug session started
+[SOURCE] sh-debug.js:unknown
+[]
 
-[DEBUG] Actions Manager AJAX Request Details
+[DEBUG] Debug initialized
 [SOURCE] sh-debug.js:unknown
 {
-    "message": "Detailed debug information for fetch_actions AJAX request",
-    "data": {
-        "request": {
-            "url": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
-            "method": "POST",
-            "action": "fetch_actions",
-            "nonce": "06731f4128",
-            "parameters": {
-                "search": "",
-                "status": "",
-                "trash": ""
-            }
-        },
-        "shortcutsHubData": {
-            "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
-            "security": {
-                "debug_log": "bbd5f287be",
-                "fetch_versions": "d0f97a073a",
-                "fetch_version": "f402f263ef",
-                "update_version": "b318267075",
-                "delete_version": "21b8f88d97",
-                "create_version": "d1179a1b31",
-                "save_action": "f1f902deec",
-                "delete_action": "bb0da5f4ea",
-                "fetch_actions": "06731f4128",
-                "create_action": "c8d0bc9425",
-                "update_action": "4d7f619154"
-            }
-        },
-        "window.location": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=actions-manager",
-        "document.referrer": "https:\/\/debotchery.ai\/wp-admin\/admin.php?page=shortcuts-list&view=versions&id=73"
+    "shortcutsHubData": {
+        "debug": true,
+        "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": {
+            "debug_log": "cd8cacc935",
+            "fetch_versions": "c322f4fa27",
+            "fetch_version": "52f3251645",
+            "update_version": "0ba51d5ee4",
+            "delete_version": "7d80355433",
+            "create_version": "634d3a83a8"
+        }
     }
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js?ver=1.0.0.1737435892:66:
+[]
+
+[DEBUG] Debug initialized
+[SOURCE] sh-debug.js?ver=1.0.0.1737435892:66:
+{
+    "shortcutsHubData": {
+        "debug": true,
+        "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": {
+            "debug_log": "cd8cacc935",
+            "fetch_versions": "c322f4fa27",
+            "fetch_version": "52f3251645",
+            "update_version": "0ba51d5ee4",
+            "delete_version": "7d80355433",
+            "create_version": "634d3a83a8"
+        }
+    }
+}
+
+[DEBUG] Menu Visibility Change
+[SOURCE] sh-debug.js?ver=1.0.0.1737435892:66:
+{
+    "menu": {
+        "element": "<div class=\"action-menu active\" style=\"visibility: visible;\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>",
+        "visibility": "visible",
+        "display": "flex",
+        "isActive": true,
+        "finalState": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": true
+        }
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Menu Toggle Click
+[SOURCE] sh-debug.js?ver=1.0.0.1737435892:66:
+{
+    "event": {
+        "type": "click",
+        "targetId": "",
+        "targetClass": "fas fa-ellipsis-h"
+    },
+    "menuToggle": {
+        "hasActiveClass": false,
+        "classes": "menu-toggle"
+    },
+    "actionMenu": {
+        "hasActiveClass": false,
+        "currentVisibility": "hidden",
+        "classes": "action-menu"
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Action Menu Toggle Click
+[SOURCE] sh-debug.js?ver=1.0.0.1737435892:66:
+{
+    "elements": {
+        "menuToggle": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": false,
+            "element": "<button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>"
+        },
+        "actionMenu": {
+            "visibility": "hidden",
+            "display": "flex",
+            "isActive": false,
+            "element": "<div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>"
+        },
+        "menuContainer": {
+            "html": "<div class=\"menu-container\">\n                <button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>\n                <div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>\n            <\/div>"
+        }
+    },
+    "executionContext": {
+        "initialStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            },
+            "actionButtons": {
+                "hasClass": false,
+                "classes": "action-button view-button",
+                "inlineStyle": "none"
+            }
+        },
+        "currentStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            }
+        }
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Debug initialized
+[SOURCE] sh-debug.js:
+{
+    "shortcutsHubData": {
+        "debug": true,
+        "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": {
+            "debug_log": "cd8cacc935",
+            "fetch_versions": "c322f4fa27",
+            "fetch_version": "52f3251645",
+            "update_version": "0ba51d5ee4",
+            "delete_version": "7d80355433",
+            "create_version": "634d3a83a8"
+        }
+    }
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:
+[]
+
+[DEBUG] Menu Toggle Click
+[SOURCE] sh-debug.js:
+{
+    "event": {
+        "type": "click",
+        "targetId": "",
+        "targetClass": "fas fa-ellipsis-h"
+    },
+    "menuToggle": {
+        "hasActiveClass": false,
+        "classes": "menu-toggle"
+    },
+    "actionMenu": {
+        "hasActiveClass": false,
+        "currentVisibility": "hidden",
+        "classes": "action-menu"
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Action Menu Toggle Click
+[SOURCE] sh-debug.js:
+{
+    "elements": {
+        "menuToggle": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": false,
+            "element": "<button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>"
+        },
+        "actionMenu": {
+            "visibility": "hidden",
+            "display": "flex",
+            "isActive": false,
+            "element": "<div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>"
+        },
+        "menuContainer": {
+            "html": "<div class=\"menu-container\">\n                <button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>\n                <div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>\n            <\/div>"
+        }
+    },
+    "executionContext": {
+        "initialStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            },
+            "actionButtons": {
+                "hasClass": false,
+                "classes": "action-button view-button",
+                "inlineStyle": "none"
+            }
+        },
+        "currentStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            }
+        }
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Menu Visibility Change
+[SOURCE] sh-debug.js:
+{
+    "menu": {
+        "element": "<div class=\"action-menu active\" style=\"visibility: visible;\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>",
+        "visibility": "visible",
+        "display": "flex",
+        "isActive": true,
+        "finalState": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": true
+        }
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:66:
+[]
+
+[DEBUG] Debug initialized
+[SOURCE] sh-debug.js:66:
+{
+    "shortcutsHubData": {
+        "debug": true,
+        "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": {
+            "debug_log": "cd8cacc935",
+            "fetch_versions": "c322f4fa27",
+            "fetch_version": "52f3251645",
+            "update_version": "0ba51d5ee4",
+            "delete_version": "7d80355433",
+            "create_version": "634d3a83a8"
+        }
+    }
+}
+
+[DEBUG] Action Menu Toggle Click
+[SOURCE] sh-debug.js:66:
+{
+    "elements": {
+        "menuToggle": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": false,
+            "element": "<button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>"
+        },
+        "actionMenu": {
+            "visibility": "hidden",
+            "display": "flex",
+            "isActive": false,
+            "element": "<div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>"
+        },
+        "menuContainer": {
+            "html": "<div class=\"menu-container\">\n                <button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>\n                <div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>\n            <\/div>"
+        }
+    },
+    "executionContext": {
+        "initialStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            },
+            "actionButtons": {
+                "hasClass": false,
+                "classes": "action-button view-button",
+                "inlineStyle": "none"
+            }
+        },
+        "currentStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            }
+        }
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Menu Visibility Change
+[SOURCE] sh-debug.js:66:
+{
+    "menu": {
+        "element": "<div class=\"action-menu active\" style=\"visibility: visible;\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>",
+        "visibility": "visible",
+        "display": "flex",
+        "isActive": true,
+        "finalState": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": true
+        }
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Menu Toggle Click
+[SOURCE] sh-debug.js:66:
+{
+    "event": {
+        "type": "click",
+        "targetId": "",
+        "targetClass": "fas fa-ellipsis-h"
+    },
+    "menuToggle": {
+        "hasActiveClass": false,
+        "classes": "menu-toggle"
+    },
+    "actionMenu": {
+        "hasActiveClass": false,
+        "currentVisibility": "hidden",
+        "classes": "action-menu"
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Menu Toggle Click
+[SOURCE] sh-debug.js:66:
+{
+    "event": {
+        "type": "click",
+        "targetId": "",
+        "targetClass": "fas fa-ellipsis-h"
+    },
+    "menuToggle": {
+        "hasActiveClass": false,
+        "classes": "menu-toggle"
+    },
+    "actionMenu": {
+        "hasActiveClass": false,
+        "currentVisibility": "hidden",
+        "classes": "action-menu"
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Action Menu Toggle Click
+[SOURCE] sh-debug.js:66:
+{
+    "elements": {
+        "menuToggle": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": false,
+            "element": "<button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>"
+        },
+        "actionMenu": {
+            "visibility": "hidden",
+            "display": "flex",
+            "isActive": false,
+            "element": "<div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>"
+        },
+        "menuContainer": {
+            "html": "<div class=\"menu-container\">\n                <button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>\n                <div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>\n            <\/div>"
+        }
+    },
+    "executionContext": {
+        "initialStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            },
+            "actionButtons": {
+                "hasClass": false,
+                "classes": "action-button view-button",
+                "inlineStyle": "none"
+            }
+        },
+        "currentStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            }
+        }
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Menu Visibility Change
+[SOURCE] sh-debug.js:66:
+{
+    "menu": {
+        "element": "<div class=\"action-menu active\" style=\"visibility: visible;\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>",
+        "visibility": "visible",
+        "display": "flex",
+        "isActive": true,
+        "finalState": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": true
+        }
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:66: [sendLog]
+[]
+
+[DEBUG] Debug initialized
+[SOURCE] sh-debug.js:66: [sendLog]
+{
+    "shortcutsHubData": {
+        "debug": true,
+        "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": {
+            "debug_log": "cd8cacc935",
+            "fetch_versions": "c322f4fa27",
+            "fetch_version": "52f3251645",
+            "update_version": "0ba51d5ee4",
+            "delete_version": "7d80355433",
+            "create_version": "634d3a83a8"
+        }
+    }
+}
+
+[DEBUG] Debug initialized
+[SOURCE] sh-debug.js:66: [sendLog]
+{
+    "shortcutsHubData": {
+        "debug": true,
+        "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": {
+            "debug_log": "cd8cacc935",
+            "fetch_versions": "c322f4fa27",
+            "fetch_version": "52f3251645",
+            "update_version": "0ba51d5ee4",
+            "delete_version": "7d80355433",
+            "create_version": "634d3a83a8"
+        }
+    }
+}
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:66: [sendLog]
+[]
+
+[DEBUG] Debug session started
+[SOURCE] sh-debug.js:66 [sendLog]
+[]
+
+[DEBUG] Debug initialized
+[SOURCE] sh-debug.js:66 [sendLog]
+{
+    "shortcutsHubData": {
+        "debug": true,
+        "ajaxurl": "https:\/\/debotchery.ai\/wp-admin\/admin-ajax.php",
+        "security": {
+            "debug_log": "cd8cacc935",
+            "fetch_versions": "c322f4fa27",
+            "fetch_version": "52f3251645",
+            "update_version": "0ba51d5ee4",
+            "delete_version": "7d80355433",
+            "create_version": "634d3a83a8"
+        }
+    }
+}
+
+[DEBUG] Action Menu Toggle Click
+[SOURCE] sh-debug.js:66 [sendLog]
+{
+    "elements": {
+        "menuToggle": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": false,
+            "element": "<button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>"
+        },
+        "actionMenu": {
+            "visibility": "hidden",
+            "display": "flex",
+            "isActive": false,
+            "element": "<div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>"
+        },
+        "menuContainer": {
+            "html": "<div class=\"menu-container\">\n                <button class=\"menu-toggle\"><i class=\"fas fa-ellipsis-h\"><\/i><\/button>\n                <div class=\"action-menu\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>\n            <\/div>"
+        }
+    },
+    "executionContext": {
+        "initialStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            },
+            "actionButtons": {
+                "hasClass": false,
+                "classes": "action-button view-button",
+                "inlineStyle": "none"
+            }
+        },
+        "currentStates": {
+            "menuToggle": {
+                "hasClass": false,
+                "classes": "menu-toggle",
+                "inlineStyle": "none"
+            },
+            "actionMenu": {
+                "hasClass": false,
+                "classes": "action-menu",
+                "inlineStyle": "none"
+            }
+        }
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Menu Visibility Change
+[SOURCE] sh-debug.js:66 [sendLog]
+{
+    "menu": {
+        "element": "<div class=\"action-menu active\" style=\"visibility: visible;\">\n                    <a href=\"https:\/\/debotchery.ai\/shortcut\/shortcut-2\/\" class=\"action-button view-button\" data-tooltip=\"View\" target=\"_blank\"><i class=\"fas fa-eye\"><\/i><\/a>\n                    <button class=\"action-button edit-button\" data-tooltip=\"Edit\" data-post_id=\"7019\" data-shortcut=\"{&quot;name&quot;:&quot;Shortcut 2&quot;,&quot;headline&quot;:&quot;Head&quot;,&quot;description&quot;:&quot;Desc&quot;,&quot;icon&quot;:{&quot;type&quot;:&quot;fontawesome&quot;,&quot;name&quot;:&quot;&quot;,&quot;url&quot;:null},&quot;color&quot;:&quot;#463c96&quot;,&quot;input&quot;:&quot;&quot;,&quot;result&quot;:&quot;&quot;,&quot;status&quot;:&quot;publish&quot;}\"><i class=\"fas fa-edit\"><\/i><\/button>\n                    <button class=\"action-button versions-button\" data-tooltip=\"Versions\" data-id=\"73\"><i class=\"fas fa-list\"><\/i><\/button>\n                    <button class=\"action-button delete-button\" data-tooltip=\"Delete\" data-post_id=\"7019\" data-sb_id=\"73\"><i class=\"fas fa-trash\"><\/i><\/button>\n                <\/div>",
+        "visibility": "visible",
+        "display": "flex",
+        "isActive": true,
+        "finalState": {
+            "visibility": "visible",
+            "display": "flex",
+            "isActive": true
+        }
+    },
+    "page": "shortcuts-list"
+}
+
+[DEBUG] Menu Toggle Click
+[SOURCE] sh-debug.js:66 [sendLog]
+{
+    "event": {
+        "type": "click",
+        "targetId": "",
+        "targetClass": "fas fa-ellipsis-h"
+    },
+    "menuToggle": {
+        "hasActiveClass": false,
+        "classes": "menu-toggle"
+    },
+    "actionMenu": {
+        "hasActiveClass": false,
+        "currentVisibility": "hidden",
+        "classes": "action-menu"
+    },
+    "page": "shortcuts-list"
 }
 

@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-function shortcuts_hub_render_actions_manager_page() {
+function render_actions_manager_page() {
     ?>
     <div id="actions-manager-page" class="wrap">
         <h1 class="actions-page-title">ACTIONS MANAGER</h1>
@@ -140,7 +140,7 @@ function shortcuts_hub_render_actions_manager_page() {
                         <!-- These buttons will be shown/hidden based on current status -->
                         <button type="submit" class="save-button update-action publish-button" data-status="publish">Update</button>
                         <button type="submit" class="save-button publish-action publish-button" data-status="publish">Publish</button>
-                        <button type="submit" class="save-button save-draft save-draft-button" data-status="draft">Save as Draft</button>
+                        <button type="submit" class="save-button save-draft save-draft-button" data-status="draft">Save Draft</button>
                         <button type="submit" class="save-button revert-draft revert-button" data-status="draft">Revert to Draft</button>
                     </div>
                     <button type="button" class="cancel-button">Cancel</button>

@@ -8,7 +8,7 @@ if (!defined('SHORTCUTS_HUB_PLUGIN_DIR')) {
     define('SHORTCUTS_HUB_PLUGIN_DIR', plugin_dir_path(dirname(dirname(__FILE__))));
 }
 
-function shortcuts_hub_render_shortcuts_list_page() {
+function render_shortcuts_list_page() {
     // Get URL parameters
     $view = isset($_GET['view']) ? sanitize_text_field($_GET['view']) : 'shortcuts';
     $id = isset($_GET['id']) ? sanitize_text_field($_GET['id']) : '';

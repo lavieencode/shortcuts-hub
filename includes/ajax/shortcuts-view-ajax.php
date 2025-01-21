@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 
 function shortcuts_hub_toggle_grid_view() {
     // Verify nonce and user capabilities
-    if (!check_ajax_referer('shortcuts_hub_toggle_view_nonce', 'security', false)) {
+    if (!check_ajax_referer('toggle_view_nonce', 'security', false)) {
         sh_debug_log('Toggle Grid View Security Error', array(
             'message' => 'Security check failed for grid view toggle',
             'source' => array(
@@ -70,7 +70,7 @@ add_action('wp_ajax_toggle_grid_view', 'shortcuts_hub_toggle_grid_view');
 
 function shortcuts_hub_toggle_list_view() {
     // Verify nonce and user capabilities
-    if (!check_ajax_referer('shortcuts_hub_toggle_view_nonce', 'security', false)) {
+    if (!check_ajax_referer('toggle_view_nonce', 'security', false)) {
         sh_debug_log('Toggle List View Security Error', array(
             'message' => 'Security check failed for list view toggle',
             'source' => array(

@@ -3,6 +3,20 @@ function delete_shortcut($shortcut_id) {
     try {
         $db = SB_DB_Manager::get_instance();
         
+        // Log the deletion attempt
+        sh_debug_log('Shortcut Deletion', array(
+            'message' => 'Attempting to delete shortcut',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'shortcut_id' => $shortcut_id
+            ),
+            'debug' => true
+        ));
+
         $result = $db->execute_query(function($pdo) use ($shortcut_id) {
             $stmt = $pdo->prepare("DELETE FROM shortcuts WHERE id = :id");
             $stmt->bindParam(':id', $shortcut_id, PDO::PARAM_INT);

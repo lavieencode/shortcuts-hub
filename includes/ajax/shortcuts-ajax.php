@@ -13,7 +13,7 @@ require_once dirname(dirname(dirname(__FILE__))) . '/sh-debug.php';
 function fetch_shortcuts() {
 
     // Verify nonce regardless of login status
-    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_fetch_shortcuts_nonce')) {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'fetch_shortcuts_nonce')) {
         wp_send_json_error(['message' => 'Invalid security token']);
         return;
     }
@@ -211,7 +211,7 @@ function fetch_shortcuts() {
 }
 
 function fetch_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    check_ajax_referer('nonce', 'security');
     
     $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
     $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'WP';
@@ -289,7 +289,7 @@ function create_shortcut() {
             return;
         }
 
-        if (!wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce')) {
+        if (!wp_verify_nonce($_POST['security'], 'nonce')) {
             send_json_response(['message' => 'Invalid security token'], false);
             return;
         }
@@ -400,7 +400,7 @@ function create_shortcut() {
 
 function update_shortcut() {
     // Security check
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    check_ajax_referer('nonce', 'security');
     if (!current_user_can('edit_posts')) {
         $error_response = ['message' => 'Permission denied'];
         wp_send_json_error($error_response);
@@ -494,7 +494,7 @@ function update_shortcut() {
 }
 
 function toggle_draft() {
-    if (!is_user_logged_in() || !check_ajax_referer('shortcuts_hub_nonce', 'security', false)) {
+    if (!is_user_logged_in() || !check_ajax_referer('nonce', 'security', false)) {
         wp_send_json_error(['message' => 'Invalid security token']);
         return;
     }
@@ -623,7 +623,7 @@ function toggle_draft() {
 }
 
 function delete_shortcut() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+    check_ajax_referer('nonce', 'security');
     
     $post_id = isset($_POST['post_id']) ? intval($_POST['post_id']) : 0;
     $permanent = isset($_POST['permanent']) ? filter_var($_POST['permanent'], FILTER_VALIDATE_BOOLEAN) : false;
@@ -691,7 +691,7 @@ function delete_shortcut() {
 
 function process_download_token() {
     // Verify nonce
-    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_nonce')) {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'nonce')) {
         wp_send_json_error(['message' => 'Invalid security token']);
         return;
     }

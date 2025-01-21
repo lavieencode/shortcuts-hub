@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-function shortcuts_hub_render_edit_shortcut_page() {
+function render_edit_shortcut_page() {
     $post_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
     $name = '';
     $headline = '';

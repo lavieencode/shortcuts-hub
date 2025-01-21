@@ -4,7 +4,7 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-function shortcuts_hub_render_add_shortcut_page() {
+function render_add_shortcut_page() {
     ?>
     <div id="add-shortcut-page" class="wrap">
         <h1><?php esc_html_e('Add New Shortcut', 'shortcuts-hub'); ?></h1>

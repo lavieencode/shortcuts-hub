@@ -25,6 +25,49 @@ function deleteShortcut(postId, sbId, buttonElement, permanent = false, restore 
         type: 'POST',
         data: requestData,
         success: function(response) {
+            // DEBUG: Log complete AJAX request and response details for shortcut deletion
+            sh_debug_log('Shortcut Deletion AJAX Operation', {
+                message: 'Complete AJAX request and response data for shortcut deletion',
+                source: {
+                    file: 'shortcut-delete.js',
+                    line: 'deleteShortcut',
+                    function: 'deleteShortcut.ajaxSuccess'
+                },
+                data: {
+                    request: {
+                        url: shortcutsHubData.ajax_url,
+                        method: 'POST',
+                        data: requestData,
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    },
+                    response: {
+                        raw: response,
+                        success: response.success,
+                        data: response.data,
+                        status: 'success',
+                        statusCode: 200
+                    },
+                    shortcut: {
+                        post_id: postId,
+                        sb_id: sbId,
+                        operation: {
+                            permanent: permanent,
+                            restore: restore,
+                            type: permanent ? 'permanent_delete' : (restore ? 'restore' : 'trash')
+                        }
+                    },
+                    dom: {
+                        buttonElement: buttonElement.outerHTML,
+                        shortcutItem: $shortcutItem[0].outerHTML,
+                        buttonGroup: $btnGroup[0].outerHTML
+                    }
+                },
+                debug: true
+            });
+
             // DEBUG: Log request and response details
             sh_debug_log('Shortcut Deletion Operation', {
                 message: 'Processing shortcut deletion operation',

@@ -115,7 +115,7 @@ class Shortcuts_Hub {
                     'shortcutId' => isset($_GET['id']) ? sanitize_text_field($_GET['id']) : '',
                     'initialView' => isset($_GET['view']) && $_GET['view'] === 'versions' ? 'versions' : 'shortcuts',
                     'security' => array(
-                        'debug_log' => wp_create_nonce('shortcuts_hub_debug_log_nonce'),
+                        'debug_log' => wp_create_nonce('debug_log_nonce'),
                         'fetch_versions' => wp_create_nonce('shortcuts_hub_fetch_versions_nonce'),
                         'update_version' => wp_create_nonce('shortcuts_hub_update_version_nonce'),
                         'delete_version' => wp_create_nonce('shortcuts_hub_delete_version_nonce')
@@ -270,7 +270,7 @@ class Shortcuts_Hub {
             'Shortcuts Hub',
             'manage_options',
             'shortcuts-list', 
-            'shortcuts_hub_render_shortcuts_list_page',
+            'render_shortcuts_list_page',
             'dashicons-admin-generic',
             30
         );
@@ -281,7 +281,7 @@ class Shortcuts_Hub {
             'Shortcuts List',
             'manage_options',
             'shortcuts-list',
-            'shortcuts_hub_render_shortcuts_list_page'
+            'render_shortcuts_list_page'
         );
 
         add_submenu_page(
@@ -290,7 +290,7 @@ class Shortcuts_Hub {
             'Actions Manager',
             'manage_options',
             'actions-manager',
-            'shortcuts_hub_render_actions_manager_page'
+            'render_actions_manager_page'
         );
 
         add_submenu_page(
@@ -299,7 +299,7 @@ class Shortcuts_Hub {
             'Add Shortcut',
             'manage_options',
             'add-shortcut',
-            'shortcuts_hub_render_add_shortcut_page'
+            'render_add_shortcut_page'
         );
 
         add_submenu_page(
@@ -308,7 +308,7 @@ class Shortcuts_Hub {
             'Edit Shortcut',
             'manage_options',
             'edit-shortcut',
-            'shortcuts_hub_render_edit_shortcut_page'
+            'render_edit_shortcut_page'
         );
     }
 

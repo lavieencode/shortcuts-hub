@@ -9,10 +9,10 @@ if (!defined('ABSPATH')) {
 require_once dirname(dirname(__FILE__)) . '/sh-debug.php';
 
 // Add AJAX handler for logging
-function shortcuts_hub_handle_log() {
+function handle_log() {
     try {
         // Verify nonce first
-        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_log')) {
+        if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'log_nonce')) {
             wp_send_json_error('Invalid nonce', 403);
             return;
         }
@@ -33,8 +33,8 @@ function shortcuts_hub_handle_log() {
     }
 }
 
-add_action('wp_ajax_shortcuts_hub_handle_log', 'shortcuts_hub_handle_log');
-add_action('wp_ajax_nopriv_shortcuts_hub_handle_log', 'shortcuts_hub_handle_log');
+add_action('wp_ajax_handle_log', 'handle_log');
+add_action('wp_ajax_nopriv_handle_log', 'handle_log');
 
 // Helper function to determine if form is registration
 function is_registration_form($form_name) {
@@ -42,7 +42,7 @@ function is_registration_form($form_name) {
 }
 
 // Handle form validation for both login and registration
-function shortcuts_hub_validate_login($record, $ajax_handler) {
+function validate_login($record, $ajax_handler) {
     $form_name = $record->get_form_settings('form_name');
     
     // Exit early if it's not one of our forms
@@ -183,7 +183,7 @@ function validate_registration_form($record, $ajax_handler) {
 }
 
 // Handle form processing for both login and registration
-function shortcuts_hub_process_login($record, $ajax_handler) {
+function login_reg_handler($record, $ajax_handler) {
     $form_name = $record->get_form_settings('form_name');
     
     // Get form fields
@@ -214,7 +214,7 @@ function shortcuts_hub_process_login($record, $ajax_handler) {
     // If we have a download token, process it
     if (!empty($download_token)) {
         // Get the download data from the token
-        $download_data = get_transient('sh_download_' . $download_token);
+        $download_data = get_transient('download_' . $download_token);
         if ($download_data) {
             $response_data['download_data'] = $download_data;
         }
@@ -270,12 +270,12 @@ function process_registration($record, $ajax_handler) {
 }
 
 // Add hooks
-add_action('elementor_pro/forms/validation', 'shortcuts_hub_validate_login', 10, 2);
-add_action('elementor_pro/forms/new_record', 'shortcuts_hub_process_login', 10, 2);
+add_action('elementor_pro/forms/validation', 'validate_login', 10, 2);
+add_action('elementor_pro/forms/new_record', 'login_reg_handler', 10, 2);
 
 // Handle AJAX logout
-function shortcuts_hub_handle_ajax_logout() {
-    check_ajax_referer('shortcuts_hub_ajax_logout', 'security');
+function handle_ajax_logout() {
+    check_ajax_referer('ajax_logout', 'security');
     
     // Get the redirect URL before logout
     $redirect_url = isset($_POST['redirect_url']) ? esc_url_raw($_POST['redirect_url']) : '';
@@ -288,10 +288,10 @@ function shortcuts_hub_handle_ajax_logout() {
         wp_send_json_success();
     }
 }
-add_action('wp_ajax_shortcuts_hub_ajax_logout', 'shortcuts_hub_handle_ajax_logout');
+add_action('wp_ajax_handle_ajax_logout', 'handle_ajax_logout');
 
-function shortcuts_hub_handle_login() {
-    check_ajax_referer('shortcuts_hub_nonce', 'security');
+function handle_login() {
+    check_ajax_referer('login_nonce', 'security');
 
     $username_email = isset($_POST['username_email']) ? sanitize_text_field($_POST['username_email']) : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
@@ -376,10 +376,10 @@ function shortcuts_hub_handle_login() {
     
     // Store the URLs for this user
     if (!empty($return_url)) {
-        update_user_meta($user->ID, 'shortcuts_hub_return_url', $return_url);
+        update_user_meta($user->ID, 'return_url', $return_url);
     }
     if (!empty($download_url)) {
-        update_user_meta($user->ID, 'shortcuts_hub_download_url', $download_url);
+        update_user_meta($user->ID, 'download_url', $download_url);
     }
     
     // Use return URL if provided, otherwise fallback to admin URL
@@ -392,12 +392,12 @@ function shortcuts_hub_handle_login() {
     ));
 }
 
-add_action('wp_ajax_nopriv_shortcuts_hub_login', 'shortcuts_hub_handle_login');
-add_action('wp_ajax_shortcuts_hub_login', 'shortcuts_hub_handle_login');
+add_action('wp_ajax_nopriv_handle_login', 'handle_login');
+add_action('wp_ajax_handle_login', 'handle_login');
 
 // Handle storing pending downloads
-function shortcuts_hub_store_pending_download() {
-    check_ajax_referer('shortcuts_hub_ajax', 'security');
+function store_pending_download() {
+    check_ajax_referer('ajax', 'security');
     
     // Get and validate the data
     $shortcut_data = isset($_POST['shortcut_data']) ? json_decode(stripslashes($_POST['shortcut_data']), true) : null;
@@ -414,12 +414,12 @@ function shortcuts_hub_store_pending_download() {
     }
     
     // Store the data in session
-    $_SESSION['shortcuts_hub_pending_download'] = $shortcut_data;
-    $_SESSION['shortcuts_hub_redirect_url'] = $redirect_url;
+    $_SESSION['pending_download'] = $shortcut_data;
+    $_SESSION['redirect_url'] = $redirect_url;
     
     wp_send_json_success(array(
         'message' => 'Data stored successfully',
         'stored_url' => $redirect_url
     ));
 }
-add_action('wp_ajax_nopriv_shortcuts_hub_store_pending_download', 'shortcuts_hub_store_pending_download');
+add_action('wp_ajax_nopriv_store_pending_download', 'store_pending_download');

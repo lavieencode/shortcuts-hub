@@ -35,9 +35,24 @@ function sh_debug_log($message, $data = null) {
         }
         
         if ($source_info && is_array($source_info)) {
+            // Parse the source info from JavaScript
             $file = isset($source_info['file']) ? basename($source_info['file']) : 'unknown';
-            $line = $source_info['line'] ?? 'unknown';
-            $source_line = sprintf("[SOURCE] %s:%s\n", $file, $line);
+            
+            // The file might contain a line number already (e.g. "file.js:66")
+            if (strpos($file, ':') !== false) {
+                list($file, $line) = explode(':', $file);
+            } else {
+                $line = $source_info['line'] ?? '';
+            }
+            
+            $function = $source_info['function'] ?? '';
+            
+            // Format source line to match JavaScript output
+            if ($function) {
+                $source_line = sprintf("[SOURCE] %s:%s [%s]\n", $file, $line, $function);
+            } else {
+                $source_line = sprintf("[SOURCE] %s:%s\n", $file, $line);
+            }
         }
         
         // Handle data - remove debug flags and source info before logging
@@ -45,12 +60,28 @@ function sh_debug_log($message, $data = null) {
         unset($log_data['debug'], $log_data['source']);
         $log_entry = json_encode($log_data, JSON_PRETTY_PRINT);
         
+        // If this is a session start, add the header
+        if (isset($source_info['header'])) {
+            $asterisks = str_repeat('*', 116);
+            $log_entry = $asterisks . "\n" . str_pad($source_info['header'], 116, ' ', STR_PAD_BOTH) . "\n" . $asterisks . "\n\n" . $log_entry;
+        }
+        
         $content = sprintf("[DEBUG] %s\n%s%s\n\n", $message, $source_line, $log_entry);
     } else {
         $content = sprintf("[DEBUG] %s\n\n", $message);
     }
 
-    file_put_contents($debug_file, $content, FILE_APPEND);
+    // Try to write to our debug log file
+    $write_success = @file_put_contents($debug_file, $content, FILE_APPEND);
+    
+    // Log success or failure to WordPress debug log if WP_DEBUG is enabled
+    if (defined('WP_DEBUG') && WP_DEBUG) {
+        if ($write_success !== false) {
+            error_log(sprintf('[DEBUG] Successfully wrote log to %s: %s', basename($debug_file), $message));
+        } else {
+            error_log(sprintf('[DEBUG] Failed to write log to %s: %s', basename($debug_file), $message));
+        }
+    }
 }
 
 function should_enable_debug() {
@@ -137,38 +168,48 @@ function sh_error_log_ajax_handler() {
 }
 
 function sh_debug_log_ajax_handler() {
-    // Only process if this is explicitly a debug log request
-    if (!isset($_POST['action']) || $_POST['action'] !== 'sh_debug_log') {
-        wp_send_json_error('Invalid action');
-        return;
-    }
-
-    // Verify nonce
-    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_debug_log_nonce')) {
-        wp_send_json_error('Invalid security token');
-        return;
-    }
+    check_ajax_referer('debug_log_nonce', 'security');
 
     $message = isset($_POST['message']) ? sanitize_text_field($_POST['message']) : '';
-    $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'unknown';
-    
-    // Handle data
-    $data = null;
-    if (isset($_POST['data']) && $_POST['data'] !== 'null') {
-        $decoded = json_decode(stripslashes($_POST['data']), true);
-        if (json_last_error() === JSON_ERROR_NONE) {
-            $data = $decoded;
+    $data = isset($_POST['data']) ? json_decode(stripslashes($_POST['data']), true) : null;
+    $source = isset($_POST['source']) ? json_decode(stripslashes($_POST['source']), true) : null;
+
+    if (empty($message)) {
+        error_log('[DEBUG] sh_debug_log_ajax_handler failed: No message provided in POST data');
+        wp_send_json_error('No message provided');
+        return;
+    }
+
+    // Validate data format
+    if (is_array($data) && isset($data['message']) && isset($data['source']) && isset($data['data'])) {
+        error_log('[DEBUG] sh_debug_log_ajax_handler failed: Incorrect data format - received combined object instead of separate message, data, source parameters');
+        wp_send_json_error('Invalid data format');
+        return;
+    }
+
+    // Validate source format
+    if ($source !== null) {
+        if (!is_array($source)) {
+            error_log('[DEBUG] sh_debug_log_ajax_handler failed: Source must be an object with file and function');
+            wp_send_json_error('Invalid source format');
+            return;
+        }
+
+        if (!isset($source['file']) || !isset($source['line'])) {
+            error_log('[DEBUG] sh_debug_log_ajax_handler failed: Source must contain file and line');
+            wp_send_json_error('Invalid source data');
+            return;
         }
     }
 
-    // If this is a session start request, ensure we start a new session
-    if ($source === 'session-start') {
-        delete_transient('sh_debug_session_started');
-    }
+    // Call the debug logging function
+    sh_debug_log($message, array_merge(
+        (array)$data,
+        array(
+            'source' => $source,
+            'debug' => true
+        )
+    ));
 
-    // Only log if there's actually a message
-    if (!empty($message)) {
-        sh_debug_log($message, $data);
-    }
     wp_send_json_success();
 }

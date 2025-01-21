@@ -10,14 +10,10 @@ function shortcuts_hub_include_files() {
         return;
     }
 
-    if (!defined('SHORTCUTS_HUB_PATH')) {
-        return;
-    }
-
     // Core functionality files
-    require_once SHORTCUTS_HUB_PATH . 'core/registration-flow.php';
-    require_once SHORTCUTS_HUB_PATH . 'core/login-flow.php';
-    require_once SHORTCUTS_HUB_PATH . 'core/user-role.php';
+    require_once plugin_dir_path(dirname(__FILE__)) . 'core/registration-flow.php';
+    require_once plugin_dir_path(dirname(__FILE__)) . 'core/login-flow.php';
+    require_once plugin_dir_path(dirname(__FILE__)) . 'core/user-role.php';
 
     // Only include debug file on admin pages
     if (is_admin()) {
@@ -37,7 +33,7 @@ function shortcuts_hub_include_files() {
                 'edit-shortcut'
             );
             if (in_array($page, $admin_pages)) {
-                require_once SHORTCUTS_HUB_PATH . 'sh-debug.php';
+                require_once plugin_dir_path(dirname(__FILE__)) . 'sh-debug.php';
             }
         }
     }
@@ -108,7 +104,7 @@ function shortcuts_hub_enqueue_scripts() {
     // Localize login redirect script
     wp_localize_script('shortcuts-hub-login-redirect', 'shortcutsHubAjax', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('shortcuts_hub_nonce')
+        'nonce' => wp_create_nonce('login_redirect_nonce')
     ));
     
     // Enqueue logout handler script for logged-in users
@@ -122,7 +118,7 @@ function shortcuts_hub_enqueue_scripts() {
         );
         wp_localize_script('shortcuts-hub-logout-handler', 'shortcutsHubLogout', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'nonce' => wp_create_nonce('shortcuts_hub_ajax_logout')
+            'nonce' => wp_create_nonce('ajax_logout_nonce')
         ));
     }
     
@@ -133,7 +129,7 @@ function shortcuts_hub_enqueue_scripts() {
     }
     
     // Basic data for all pages
-    $nonce = wp_create_nonce('shortcuts_hub_nonce');  // Changed to match AJAX handler
+    $nonce = wp_create_nonce('core_nonce');  
     
     $shortcuts_hub_data = array(
         'ajax_url' => admin_url('admin-ajax.php'),

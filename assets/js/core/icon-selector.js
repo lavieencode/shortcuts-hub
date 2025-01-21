@@ -431,7 +431,7 @@
                 'message': 'Setting new icon data',
                 'source': {
                     'file': 'icon-selector.js',
-                    'line': __LINE__,
+                    'line': 'setIcon',
                     'function': 'setIcon'
                 },
                 'data': {

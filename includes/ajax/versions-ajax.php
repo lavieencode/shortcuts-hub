@@ -22,8 +22,8 @@ add_action('wp_ajax_version_delete', 'version_delete');
 function fetch_versions() {
     // Verify nonce
     $nonce = isset($_POST['security']) ? $_POST['security'] : '';
-    $nonce_action = 'shortcuts_hub_fetch_versions_nonce';
-    $verified = check_ajax_referer('shortcuts_hub_fetch_versions_nonce', 'security', false);
+    $nonce_action = 'fetch_versions_nonce';
+    $verified = check_ajax_referer('fetch_versions_nonce', 'security', false);
 
     if (!$verified) {
         wp_send_json_error(array('message' => 'Invalid security token'));
@@ -95,7 +95,7 @@ function fetch_latest_version() {
             return;
         }
 
-        if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+        if (!wp_verify_nonce($_POST['nonce'], 'fetch_latest_version_nonce')) {
             wp_send_json_error(['message' => 'Invalid nonce']);
             return;
         }
@@ -147,7 +147,7 @@ function fetch_version() {
         return;
     }
 
-    if (!check_ajax_referer('shortcuts_hub_fetch_version_nonce', 'security', false)) {
+    if (!check_ajax_referer('fetch_version_nonce', 'security', false)) {
         wp_send_json_error(array('message' => 'Invalid security token'));
         return;
     }
@@ -198,7 +198,7 @@ function create_version() {
         return;
     }
 
-    if (!wp_verify_nonce($_POST['security'], 'shortcuts_hub_create_version_nonce')) {
+    if (!wp_verify_nonce($_POST['security'], 'create_version_nonce')) {
         wp_send_json_error(array('message' => 'Invalid security token'));
         return;
     }
@@ -256,7 +256,7 @@ function update_version() {
     ));
 
     // Verify nonce
-    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'shortcuts_hub_update_version_nonce')) {
+    if (!isset($_POST['security']) || !wp_verify_nonce($_POST['security'], 'update_version_nonce')) {
         wp_send_json_error(array('message' => 'Invalid security token'));
         return;
     }
@@ -374,7 +374,7 @@ function version_toggle_delete() {
         return;
     }
 
-    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+    if (!wp_verify_nonce($_POST['nonce'], 'version_toggle_delete_nonce')) {
         wp_send_json_error(['message' => 'Invalid nonce']);
         return;
     }
@@ -405,7 +405,7 @@ function version_toggle_draft() {
         return;
     }
 
-    if (!wp_verify_nonce($_POST['nonce'], 'shortcuts_hub_nonce')) {
+    if (!wp_verify_nonce($_POST['nonce'], 'version_toggle_draft_nonce')) {
         wp_send_json_error(['message' => 'Invalid nonce']);
         return;
     }
@@ -433,7 +433,7 @@ function version_toggle_draft() {
 function version_delete() {
     // Verify nonce and log the verification
     $nonce = isset($_POST['security']) ? $_POST['security'] : '';
-    $nonce_action = 'shortcuts_hub_versions_nonce';
+    $nonce_action = 'version_delete_nonce';
     $nonce_verified = wp_verify_nonce($nonce, $nonce_action);
 
     if (!$nonce_verified) {
