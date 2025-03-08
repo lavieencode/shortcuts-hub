@@ -263,38 +263,20 @@ jQuery(document).ready(function() {
         });
     }
 
-    jQuery(document).on('click', '.menu-toggle', function(e) {
-        e.stopPropagation();
-        const menuContainer = jQuery(this).closest('.menu-container');
-        const actionMenu = menuContainer.find('.action-menu');
-        
-        jQuery(this).toggleClass('active');
-        actionMenu.toggleClass('active');
-        
-        if (actionMenu.hasClass('active')) {
-            actionMenu.css({
-                'opacity': '1',
-                'visibility': 'visible'
-            });
-        } else {
-            actionMenu.css({
-                'opacity': '0',
-                'visibility': 'hidden'
-            });
-        }
-    });
-
+    // Handle clicks outside menu containers
     jQuery(document).on('click', function(e) {
         if (!jQuery(e.target).closest('.menu-container').length) {
             jQuery('.action-menu').removeClass('active');
+            jQuery('.menu-toggle').removeClass('active');
         }
     });
 
-    jQuery(document).on('click', '.action-menu', function(e) {
+    // Prevent action menu clicks from bubbling
+    jQuery(document).on('click', '#shortcuts-view .action-menu', function(e) {
         e.stopPropagation();
     });
 
-    jQuery(document).on('click', '.delete-button', function(e) {
+    jQuery('#shortcuts-view').on('click', '.delete-button', function(e) {
         e.preventDefault();
         const button = jQuery(this);
         const postId = button.data('post_id');

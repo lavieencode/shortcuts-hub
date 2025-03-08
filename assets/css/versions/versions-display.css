@@ -6,13 +6,6 @@
     display: block;
 }
 
-#versions-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 0;
-}
-
 .versions-page-title {
     margin-bottom: 10px !important;
 }
@@ -23,11 +16,12 @@
     align-items: center;
     height: 50px !important;
     margin-bottom: 50px !important;
+    position: relative;
 }
 
 #back-to-shortcuts {
     position: absolute;
-    top: 0;
+    top: -10px;
     right: 0;
     width: 160px;
     height: 50px;
@@ -46,7 +40,6 @@
 /* Common styles for all filter inputs and selects */
 #search-versions-input,
 #filter-version-status,
-#filter-version-deleted,
 #filter-required-update,
 .version-filters {
     background-color: #252525;
@@ -97,17 +90,141 @@
     cursor: pointer;
 }
 
-.delete-button {
-    background-color: #e46e6e;
+/* Versions table styles */
+.versions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.versions-table th,
+.versions-table td {
+    padding: 12px;
+    text-align: left;
+    color: #cacaca;
+}
+
+.versions-table th {
+    color: #909cfe;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 15px;
+}
+
+.versions-table td {
+    font-size: 15px;
+    padding: 16px 12px;
+}
+
+.versions-table .version-column span {
+    color: #252525;
+    text-decoration: none;
+    background-color: #909cfe;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 800;
+}
+
+.versions-table td:last-child {
+    text-align: right;
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.status-badge.draft {
+    background-color: #A2A2A2;
     color: #252525;
 }
 
-/* Modal styles */
-body.modal-open {
-    overflow: hidden;
-    pointer-events: none;
+.status-badge.published {
+    background-color: #909cfe;
+    color: #252525;
 }
 
-#edit-version-modal {
-    pointer-events: auto;
+.status-badge.deleted {
+    background-color: #FF6B6B;
+    color: #252525;
+}
+
+/* Action buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+}
+
+#versions-view .action-button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #909cfe !important;
+    background: transparent !important;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #252525;
+    transition: opacity 0.2s ease;
+}
+
+#versions-view .delete-button {
+    color: #FF6B6B !important;
+}
+
+#versions-view .action-button i {
+    font-size: 14px;
+}
+
+/* Header layout styles */
+.versions-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.versions-header-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Trash view styles */
+#versions-trash-view.active {
+    border: 1px solid #909cfe !important;
+    color: #909cfe !important;
+}
+
+.versions-page-title.trash {
+    color: #909CFE;
+}
+
+.shortcut-name-trash {
+    font-size: 30px;
+    font-weight: normal;
+    color: #CACACA;
+    margin-top: 10px;
+}
+
+#versions-trash-view {
+    position: absolute;
+    top: -10px;
+    right: 180px;
+    width: 160px;
+    height: 50px;
+    color: #909CFE !important;
+    background-color: #252525;
+    border: 2px solid;
+}
+
+#versions-view .delete-permanent-button {
+    color: #FF6B6B !important;
 }

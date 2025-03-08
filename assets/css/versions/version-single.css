@@ -3,75 +3,40 @@
     margin-bottom: 20px;
     overflow: hidden;
     max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .version-header {
     background-color: #373737;
-    padding: 15px;
+    padding: 12px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: relative;
+    border-bottom: 1px solid #373737;
 }
 
 .version-header h3 {
-    font-size: 22px;
-    color: #909CFE !important;
+    color: #909cfe;
     margin: 0;
     flex-grow: 1;
 }
 
 .version-body {
-    padding: 15px;
+    padding: 12px;
     display: none;
+    border-bottom: 1px solid #373737;
 }
 
 .version-body p {
-    font-size: 15px;
     margin-top: 0;
     line-height: 1.2em;
+    color: #cacaca;
 }
 
 .version-body p strong {
-    color: #909CFE;
+    color: #909cfe;
     font-weight: bold;
-}
-
-.caret {
-    color: #cacaca;
-    font-size: 17px;
-    transition: transform 0.3s ease;
-    margin-left: auto;
-}
-
-#versions-container h3 span{
-    color:#545454;
-    margin-left:3px;
-   }
-
-.caret.expanded {
-    transform: rotate(90deg);
-}
-
-.version-body .delete-button {
-    background-color: #e46e6e;
-    color: #373737;
-    border: 2px solid #e46e6e;
-}
-
-.version-body .restore-button {
-    background-color: transparent;
-    color: #e46e6e;
-    border: 2px solid #e46e6e;
-}
-
-.badge.deleted-badge {
-    background-color: #e46e6e;
-    color: #252525;
-}
-
-.badge.draft-badge {
-    background-color: #787878;
-    color: #252525;
 }

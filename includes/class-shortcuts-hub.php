@@ -241,23 +241,69 @@ class Shortcuts_Hub {
      * Actions can be associated with multiple shortcuts and vice versa
      */
     public function register_actions_post_type() {
+        $labels = array(
+            'name'                  => __('Actions', 'shortcuts-hub'),
+            'singular_name'         => __('Action', 'shortcuts-hub'),
+            'menu_name'            => __('Actions', 'shortcuts-hub'),
+            'name_admin_bar'       => __('Action', 'shortcuts-hub'),
+            'add_new'              => __('Add New', 'shortcuts-hub'),
+            'add_new_item'         => __('Add New Action', 'shortcuts-hub'),
+            'new_item'             => __('New Action', 'shortcuts-hub'),
+            'edit_item'            => __('Edit Action', 'shortcuts-hub'),
+            'view_item'            => __('View Action', 'shortcuts-hub'),
+            'all_items'            => __('All Actions', 'shortcuts-hub'),
+            'search_items'         => __('Search Actions', 'shortcuts-hub'),
+            'parent_item_colon'    => __('Parent Actions:', 'shortcuts-hub'),
+            'not_found'            => __('No actions found.', 'shortcuts-hub'),
+            'not_found_in_trash'   => __('No actions found in Trash.', 'shortcuts-hub')
+        );
+
         $args = array(
-            'labels' => array(
-                'name' => __('Actions', 'shortcuts-hub'),
-                'singular_name' => __('Action', 'shortcuts-hub'),
+            'labels'              => $labels,
+            'public'              => true,
+            'publicly_queryable'  => true,
+            'show_ui'            => true,
+            'show_in_menu'       => false,
+            'show_in_nav_menus'  => true,
+            'show_in_admin_bar'  => true,
+            'show_in_rest'       => true,
+            'query_var'          => true,
+            'rewrite'            => array(
+                'slug' => 'actions',
+                'with_front' => false,
+                'feeds' => true
             ),
-            'public' => false,
-            'show_ui' => true,
-            'show_in_menu' => false,
-            'capability_type' => 'post',
-            'hierarchical' => false,
-            'rewrite' => false,
-            'supports' => array('title', 'editor', 'custom-fields'),
-            'has_archive' => false,
-            'show_in_rest' => true
+            'capability_type'    => 'post',
+            'has_archive'        => 'actions',
+            'hierarchical'       => false,
+            'exclude_from_search' => false,
+            'supports'           => array('title', 'editor', 'custom-fields', 'excerpt')
         );
 
         register_post_type('action', $args);
+
+        // Register meta fields
+        register_post_meta('action', 'input', array(
+            'type' => 'string',
+            'description' => 'Input data for the action',
+            'single' => true,
+            'show_in_rest' => true,
+            'sanitize_callback' => 'sanitize_text_field',
+            'auth_callback' => function() {
+                return current_user_can('edit_posts');
+            }
+        ));
+
+        register_post_meta('action', 'result', array(
+            'type' => 'string',
+            'description' => 'Result data from the action',
+            'single' => true,
+            'show_in_rest' => true,
+            'sanitize_callback' => 'sanitize_text_field',
+            'auth_callback' => function() {
+                return current_user_can('edit_posts');
+            }
+        ));
     }
 
     /**

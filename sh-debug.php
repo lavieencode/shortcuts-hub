@@ -24,35 +24,19 @@ function sh_debug_log($message, $data = null) {
     $debug_file = dirname(__FILE__) . '/sh-debug.log';
     
     if (is_array($data)) {
-        // Format source information if available
-        $log_entry = '';
-        $source_line = '';
-        
-        // Handle source info - either from source field or data.source
-        $source_info = null;
-        if (isset($data['source'])) {
-            $source_info = $data['source'];
-        }
-        
-        if ($source_info && is_array($source_info)) {
-            // Parse the source info from JavaScript
-            $file = isset($source_info['file']) ? basename($source_info['file']) : 'unknown';
+        // Format source information if provided
+        $source_info = '';
+        if (!empty($data['source']) && is_array($data['source'])) {
+            $file = isset($data['source']['file']) ? $data['source']['file'] : '';
+            $line = isset($data['source']['line']) ? $data['source']['line'] : '';
+            $function = isset($data['source']['function']) ? $data['source']['function'] : '';
             
-            // The file might contain a line number already (e.g. "file.js:66")
-            if (strpos($file, ':') !== false) {
-                list($file, $line) = explode(':', $file);
-            } else {
-                $line = $source_info['line'] ?? '';
-            }
-            
-            $function = $source_info['function'] ?? '';
-            
-            // Format source line to match JavaScript output
-            if ($function) {
-                $source_line = sprintf("[SOURCE] %s:%s [%s]\n", $file, $line, $function);
-            } else {
-                $source_line = sprintf("[SOURCE] %s:%s\n", $file, $line);
-            }
+            $source_info = sprintf(
+                '[SOURCE] %s%s%s',
+                $file,
+                $line ? ":$line" : '',  // Only add line number if it exists
+                $function ? " [$function]" : ''
+            );
         }
         
         // Handle data - remove debug flags and source info before logging
@@ -61,25 +45,62 @@ function sh_debug_log($message, $data = null) {
         $log_entry = json_encode($log_data, JSON_PRETTY_PRINT);
         
         // If this is a session start, add the header
-        if (isset($source_info['header'])) {
+        if (isset($data['source']['header'])) {
             $asterisks = str_repeat('*', 116);
-            $log_entry = $asterisks . "\n" . str_pad($source_info['header'], 116, ' ', STR_PAD_BOTH) . "\n" . $asterisks . "\n\n" . $log_entry;
+            $log_entry = $asterisks . "\n" . str_pad($data['source']['header'], 116, ' ', STR_PAD_BOTH) . "\n" . $asterisks . "\n\n" . $log_entry;
         }
         
-        $content = sprintf("[DEBUG] %s\n%s%s\n\n", $message, $source_line, $log_entry);
+        $content = sprintf("[DEBUG] %s\n%s\n%s\n\n", $message, $source_info, $log_entry);
     } else {
         $content = sprintf("[DEBUG] %s\n\n", $message);
     }
 
     // Try to write to our debug log file
-    $write_success = @file_put_contents($debug_file, $content, FILE_APPEND);
+    $write_success = false;
+    $error_message = '';
+    
+    // Check if file exists and is writable, or if we can create it
+    if (file_exists($debug_file)) {
+        if (!is_writable($debug_file)) {
+            $error_message = sprintf('File exists but is not writable. Current permissions: %s, Owner: %s, Group: %s', 
+                substr(sprintf('%o', fileperms($debug_file)), -4),
+                posix_getpwuid(fileowner($debug_file))['name'],
+                posix_getgrgid(filegroup($debug_file))['name']
+            );
+        }
+    } else {
+        // Try to create the file
+        $create_result = @file_put_contents($debug_file, '');
+        if ($create_result === false) {
+            $error_message = sprintf('Cannot create file. Directory permissions: %s, Owner: %s, Group: %s', 
+                substr(sprintf('%o', fileperms(dirname($debug_file))), -4),
+                posix_getpwuid(fileowner(dirname($debug_file)))['name'],
+                posix_getgrgid(filegroup(dirname($debug_file)))['name']
+            );
+        }
+    }
+    
+    // If no error so far, try to write
+    if (empty($error_message)) {
+        $write_success = @file_put_contents($debug_file, $content, FILE_APPEND);
+        if ($write_success === false) {
+            $error_message = sprintf('Write failed. File permissions: %s, Owner: %s, Group: %s', 
+                substr(sprintf('%o', fileperms($debug_file)), -4),
+                posix_getpwuid(fileowner($debug_file))['name'],
+                posix_getgrgid(filegroup($debug_file))['name']
+            );
+        }
+    }
     
     // Log success or failure to WordPress debug log if WP_DEBUG is enabled
     if (defined('WP_DEBUG') && WP_DEBUG) {
         if ($write_success !== false) {
             error_log(sprintf('[DEBUG] Successfully wrote log to %s: %s', basename($debug_file), $message));
         } else {
-            error_log(sprintf('[DEBUG] Failed to write log to %s: %s', basename($debug_file), $message));
+            $error_reason = file_exists($debug_file) ? 
+                sprintf('Permissions: %s Owner: %s', substr(sprintf('%o', fileperms($debug_file)), -4), posix_getpwuid(fileowner($debug_file))['name']) :
+                sprintf('Directory permissions: %s Owner: %s', substr(sprintf('%o', fileperms(dirname($debug_file))), -4), posix_getpwuid(fileowner(dirname($debug_file)))['name']);
+            error_log(sprintf('[DEBUG] Failed to write log to %s: %s (%s)', basename($debug_file), $message, $error_reason));
         }
     }
 }
@@ -180,36 +201,18 @@ function sh_debug_log_ajax_handler() {
         return;
     }
 
-    // Validate data format
-    if (is_array($data) && isset($data['message']) && isset($data['source']) && isset($data['data'])) {
-        error_log('[DEBUG] sh_debug_log_ajax_handler failed: Incorrect data format - received combined object instead of separate message, data, source parameters');
-        wp_send_json_error('Invalid data format');
-        return;
+    // We no longer need to validate the data format here since the JavaScript side now handles both formats
+
+    // Call the debug logging function with the correct format
+    // Add source information to the data array to match the PHP function signature
+    $log_data = is_array($data) ? $data : array();
+    
+    // If we have source information, add it to the data array
+    if (!empty($source) && is_array($source)) {
+        $log_data['source'] = $source;
     }
-
-    // Validate source format
-    if ($source !== null) {
-        if (!is_array($source)) {
-            error_log('[DEBUG] sh_debug_log_ajax_handler failed: Source must be an object with file and function');
-            wp_send_json_error('Invalid source format');
-            return;
-        }
-
-        if (!isset($source['file']) || !isset($source['line'])) {
-            error_log('[DEBUG] sh_debug_log_ajax_handler failed: Source must contain file and line');
-            wp_send_json_error('Invalid source data');
-            return;
-        }
-    }
-
-    // Call the debug logging function
-    sh_debug_log($message, array_merge(
-        (array)$data,
-        array(
-            'source' => $source,
-            'debug' => true
-        )
-    ));
+    
+    sh_debug_log($message, $log_data);
 
     wp_send_json_success();
 }

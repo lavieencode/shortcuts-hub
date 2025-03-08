@@ -67,8 +67,13 @@ function render_shortcuts_list_page() {
         </div>
 
         <div id="versions-view" style="display: <?php echo $show_versions ? 'block' : 'none'; ?>">
-            <h1 class="versions-page-title">VERSIONS</h1>
-            <button id="back-to-shortcuts">Back to Shortcuts</button>
+            <div class="versions-header">
+                <h1 class="versions-page-title">VERSIONS</h1>
+                <div class="versions-header-buttons">
+                    <button id="back-to-shortcuts">Back to Shortcuts</button>
+                    <button id="versions-trash-view">Trash</button>
+                </div>
+            </div>
             <h2 id="shortcut-name-display"></h2>
 
             <div id="versions-header-bar">
@@ -78,11 +83,6 @@ function render_shortcuts_list_page() {
                         <option value="any">Any</option>
                         <option value="0">Published</option>
                         <option value="1">Draft</option>
-                    </select>
-                    <select id="filter-version-deleted" class="version-filters">
-                        <option value="any">Any</option>
-                        <option value="true">Deleted</option>
-                        <option value="false">Not Deleted</option>
                     </select>
                     <select id="filter-required-update" class="version-filters">
                         <option value="any">Any</option>

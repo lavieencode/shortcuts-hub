@@ -30,7 +30,6 @@ function fetchVersions(shortcutId, retries = 0) {
 
     // Prevent parallel requests
     if (isFetching) {
-        console.log('Already fetching versions');
         return;
     }
 
@@ -48,6 +47,9 @@ function fetchVersions(shortcutId, retries = 0) {
     jQuery.ajax({
         url: shortcutsHubData.ajaxurl,
         type: 'POST',
+        headers: {
+            'X-SH-Action': 'fetch_versions'
+        },
         data: {
             action: 'fetch_versions',
             security: shortcutsHubData.security.fetch_versions,
@@ -59,22 +61,12 @@ function fetchVersions(shortcutId, retries = 0) {
         },
         success: function(response) {
             if (response.success && response.data) {
-                const shortcut = response.data.shortcut;
-                const versions = response.data.versions;
-
-                // Update shortcut name
-                if (shortcut && shortcut.name) {
-                    jQuery('#shortcut-name').text(shortcut.name);
-                    sessionStorage.setItem('shortcutName', shortcut.name);
-                }
-
                 // Update versions list
-                if (versions) {
-                    if (versions.length === 0) {
-                        jQuery('#versions-container').html('<p class="no-versions">No versions to show</p>');
-                    } else {
-                        renderVersions(versions);
-                    }
+                if (typeof window.renderVersions === 'function') {
+                    window.renderVersions(response.data);
+                } else {
+                    console.error('renderVersions function not available');
+                    jQuery('#versions-container').html('<p class="error">Error: Unable to render versions</p>');
                 }
 
                 isFetching = false;

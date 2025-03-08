@@ -74,12 +74,503 @@
 /* ACTIONS CONTAINER */
 .actions-container {
     margin-top: 20px;
+    overflow-x: auto;
+    position: relative;
 }
 
-@media (max-width: 1200px) {
+/* ACTIONS LOADING SPINNER */
+.actions-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-color: transparent;
+    padding: 0;
 }
 
-@media (max-width: 768px) {
+.actions-loading .spinner {
+    border: 4px solid rgba(200, 200, 200, 0.3);
+    border-radius: 50%;
+    border-top: 4px solid #909CFE;
+    width: 40px;
+    height: 40px;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.actions-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    min-width: 800px;
+    margin-top: -4px;
+    table-layout: fixed;
+    word-break: normal;
+}
+
+.actions-table td {
+    white-space: nowrap;
+    padding: 12px 15px;
+    vertical-align: middle;
+    font-size: 15px;
+}
+
+.actions-table td.action-description-column {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.actions-table .action-name-column {
+    width: 30%;
+}
+
+.actions-table .action-description-column {
+    width: 35%;
+    max-width: 400px;
+}
+
+.actions-table .action-status-column {
+    width: 10%;
+    text-align: center;
+}
+
+.actions-table td.action-status-column {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.actions-table .action-shortcuts-column {
+    width: 10%;
+    text-align: center;
+}
+
+.actions-table td.action-shortcuts-column {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.actions-table .action-actions-column {
+    width: 15%;
+    text-align: center;
+}
+
+.actions-table td.action-actions-column {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.actions-table .icon-column {
+    width: 60px;
+    text-align: center;
+}
+
+.actions-table .name-column {
+    width: 400px;
+    padding-left: 0 !important;
+}
+
+.actions-table .description-column {
+    max-width: 600px;
+    width: 600px;
+    padding-left: 10px;
+}
+
+.actions-table .actions-column {
+    width: auto;
+    text-align: left;
+    padding-left: 0;
+}
+
+.actions-table td.actions-column {
+    padding-left: 0;
+}
+
+.actions-table button {
+    background: none;
+    border: none;
+    color: #909CFE;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    display: inline-block;
+}
+
+.actions-table button:hover {
+    background-color: #252525;
+}
+
+.actions-table button i {
+    font-size: 16px;
+}
+
+/* ACTION ICON */
+.action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: #909CFE;
+    font-size: 16px;
+    margin-right: 5px;
+}
+
+.action-icon i {
+    display: block;
+}
+
+.action-icon img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    max-width: none;
+}
+
+/* ACTION DETAILS */
+.action-name-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #373737;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-right: 15px;
+}
+
+.action-name-text {
+    font-weight: 600;
+    color: #CACACA;
+    font-size: 15px;
+}
+
+.action-name {
+    font-weight: 600;
+    color: #CACACA;
+}
+
+.action-description {
+    color: #CACACA;
+    padding-left: 15px; /* Add space between name and description */
+    font-size: 15px;
+}
+
+/* TABLE BUTTONS */
+
+/* NO ITEMS MESSAGE */
+.no-items {
+    text-align: left;
+    color: #CACACA;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+/* STATUS COLUMN */
+.status-column {
+    width: 100px;
+    text-align: center;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 15px;
+    font-weight: 700 !important;
+    text-transform: uppercase;
+    min-width: 80px;
+    text-align: center;
+}
+
+.status-published {
+    background-color: #909CFE;
+    color: #252525;
+}
+
+.status-draft {
+    background-color: #868686;
+    color: #252525;
+}
+
+/* Modal Button Container */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* Status Badge Styles */
+.status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-published {
+    background-color: #909cfe;
+    color: #252525;
+}
+
+.status-draft {
+    background-color: #aaaaaa;
+    color: #252525
+}
+
+/* Hide buttons by default */
+.edit-action-modal .save-button {
+    display: none;
+}
+
+/* Show appropriate buttons based on status */
+.edit-action-modal[data-status="publish"] .update-action,
+.edit-action-modal[data-status="publish"] .revert-draft {
+    display: inline-block;
+}
+
+.edit-action-modal[data-status="draft"] .publish-action,
+.edit-action-modal[data-status="draft"] .save-draft {
+    display: inline-block;
+}
+
+/* SHORTCUTS COUNT COLUMN */
+.actions-table .shortcuts-column {
+    width: 100px;
+    text-align: center;
+}
+
+.actions-table .shortcut-count {
+    display: inline-block;
+    min-width: 30px;
+    padding: 4px 10px;
+    background-color: #909CFE;
+    color: #252525;
+    font-weight: 600;
+    border-radius: 12px;
+    font-size: 15px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+/* SHORTCUTS SELECTOR STYLES */
+.shortcuts-selector-container {
+    margin-top: 0 !important;
+    border: 1px solid #373737;
+    background-color: #252525;
+    border-radius: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 300px; /* Fixed height for better layout */
+}
+
+.shortcuts-search-container {
+    padding: 0;
+    background-color: #252525;
+    border-bottom: 1px solid #373737;
+    position: relative;
+    flex-shrink: 0; /* Don't allow search to shrink */
+    height: 45px;
+    display: flex;
+    align-items: center; /* Center items vertically */
+}
+
+#wpbody .shortcuts-search-container input[type="text"] {
+    width: 100% !important;
+    padding: 0 10px 0 40px !important;
+    border: none !important;
+    background-color: #252525 !important;
+    color: #CACACA !important;
+    font-size: 13px !important;
+    box-sizing: border-box !important;
+    height: 36px !important;
+    line-height: 36px !important;
+    margin: 0 !important;
+    margin-bottom: 0 !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23909CFE' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: 15px center !important;
+    display: block !important;
+}
+
+.shortcuts-search-container::before {
+    display: none;
+}
+
+.shortcuts-list-container {
+    flex-grow: 1; /* Take up remaining space */
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #252525;
+}
+
+.shortcuts-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.shortcuts-list li {
+    padding: 8px 10px;
+    margin-bottom: 5px;
+    background-color: #373737;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.shortcuts-list li:hover {
+    background-color: #444444;
+}
+
+.shortcuts-list li.selected {
+    background-color: #909CFE;
+    color: #252525;
+    font-weight: 600;
+}
+
+.shortcuts-list li[data-associated="true"]:not(.selected) {
+    /* Removed blue border */
+}
+
+.shortcuts-list li .shortcut-checkbox {
+    margin-right: 10px;
+    color: #666;
+}
+
+.shortcuts-list li.selected .shortcut-checkbox {
+    color: #252525;
+}
+
+.shortcuts-list li .shortcut-checkbox i {
+    font-size: 16px;
+}
+
+.shortcuts-list li .shortcut-title {
+    flex-grow: 1;
+    font-size: 14px;
+}
+
+.shortcuts-list-empty {
+    padding: 15px;
+    text-align: center;
+    color: #909090;
+    font-style: italic;
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 40px; /* Increased from 20px to 40px to avoid WordPress admin bar */
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 4px;
+    color: #fff;
+    font-weight: 500;
+    max-width: 300px;
+    z-index: 9999;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+.notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.notification.success {
+    background-color: #4CAF50;
+}
+
+.notification.error {
+    background-color: #F44336;
+}
+
+.notification.info {
+    background-color: #2196F3;
+}
+
+/* Action Shortcuts Display */
+.action-shortcuts {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    height: 100%;
+    text-align: center;
+}
+
+.action-shortcut {
+    display: inline-block;
+    padding: 2px 8px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #333;
+}
+
+.no-shortcuts {
+    color: #999;
+    font-style: italic;
+    font-size: 12px;
+}
+
+/* ACTION BUTTONS WITH ICONS */
+.action-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+}
+
+.edit-action, .delete-action, .view-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    margin: 0 5px;
+}
+
+.edit-action {
+    color: #909CFE;
+}
+
+.view-action {
+    color: #4CAF50;
+}
+
+.actions-table .delete-action i, .delete-action i {
+    color: #ff6b6b !important;
+}
+
+.edit-action:hover, .delete-action:hover, .view-action:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* MODAL STYLES */
@@ -121,7 +612,7 @@
 }
 
 .modal .form-group {
-    margin-bottom: 30px;
+    margin-bottom: 15px;
 }
 
 .modal .form-group label {
@@ -136,6 +627,7 @@
     padding-top: 5px;
     padding-right: 10px;
     padding-left: 10px;
+    margin-top: 0;
 }
 
 #edit-action-modal .form-group input,
@@ -153,6 +645,16 @@
     border-radius: 0;
     border: none !important;
     font-size: 15px;
+}
+
+#edit-action-modal .form-group .shortcuts-selector-container,
+#add-action-modal .form-group .shortcuts-selector-container {
+    display: block;
+    background-color: #252525 !important;
+    width: 100%;
+    margin-bottom: 15px;
+    border-radius: 0;
+    border: none !important;
 }
 
 /* ICON SELECTOR STYLES */
@@ -221,7 +723,73 @@
     display: none;
 }
 
+/* Button styles */
+.save-button {
+    background-color: #909CFE;
+    color: #252525;
+}
+
+.save-button:hover {
+    background-color: #7a87f8;
+}
+
+.save-button.save-draft,
+.save-button.revert-draft {
+    background-color: #666;
+    color: #fff;
+}
+
+.save-button.save-draft:hover,
+.save-button.revert-draft:hover {
+    background-color: #555;
+}
+
+.cancel-button {
+    background-color: transparent;
+    color: #252525;
+}
+
+.cancel-button:hover {
+    background-color: rgba(202, 202, 202, 0.1);
+}
+
 /* MODAL BACKDROP */
+/* Shortcuts Loading Indicator */
+.shortcuts-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    color: #888;
+    font-size: 14px;
+    position: relative;
+    opacity: 0.7;
+}
+
+.shortcuts-loading::after {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-left: 8px;
+    border: 1px solid #888;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: shortcuts-loading-spin 1s linear infinite;
+}
+
+@keyframes shortcuts-loading-spin {
+    to { transform: rotate(360deg); }
+}
+
+.shortcuts-list-empty {
+    padding: 10px;
+    text-align: center;
+    color: #888;
+    font-size: 14px;
+    opacity: 0.7;
+}
+
 body.modal-open::after {
     content: '';
     position: fixed;
@@ -243,21 +811,15 @@ body.modal-open::after {
 }
 
 /* ACTIONS TABLE */
-.actions-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 4px;
-    margin-top: -4px;
-}
-
 .actions-table thead th {
     color: #909CFE;
     font-weight: 700;
     text-align: left;
     padding: 12px 15px;
-    font-size: 16px;
+    font-size: 15px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
+    vertical-align: middle;
 }
 
 .actions-table tbody tr {
@@ -269,6 +831,7 @@ body.modal-open::after {
     padding: 8px 15px;
     color: #CACACA;
     vertical-align: middle;
+    font-size: 15px;
 }
 
 .actions-table .icon-column {
@@ -317,148 +880,44 @@ body.modal-open::after {
     font-size: 16px;
 }
 
-.actions-table .delete-action {
-    color: #ff6b6b;
+@media (max-width: 1200px) {
+    .actions-table {
+        min-width: 700px;
+    }
+    
+    .actions-table .action-name-column {
+        width: 25%;
+    }
+    
+    .actions-table .action-description-column {
+        width: 30%;
+    }
+    
+    .actions-table .action-status-column {
+        width: 15%;
+    }
+    
+    .actions-table .action-shortcuts-column {
+        width: 15%;
+    }
+    
+    .actions-table .action-actions-column {
+        width: 15%;
+    }
 }
 
-/* ACTION ICON */
-.action-icon {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+@media (max-width: 768px) {
+    .actions-container {
+        overflow-x: auto;
+    }
+    
+    .actions-table {
+        min-width: 600px;
+    }
 }
 
-.action-icon i {
-    font-size: 16px;
-    color: #909CFE;
-}
-
-.action-icon img {
-    max-width: 20px;
-    max-height: 20px;
-}
-
-/* ACTION DETAILS */
-.action-name-container {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    background-color: #373737;
-    padding: 10px 0;
-    padding-left: 20px;
-    margin-right: 30px !important;
-    border-radius: 8px;
+.action-buttons-container {
+    display: inline-block;
+    text-align: center;
     width: 100%;
-    max-width: 350px !important;
-}
-
-.action-name {
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    color: #CACACA;
-}
-
-.action-description {
-    font-size: 16px !important;
-    line-height: 1.4;
-    color: #CACACA;
-    max-width: 600px;
-}
-
-/* TABLE BUTTONS */
-
-/* NO ITEMS MESSAGE */
-.no-items {
-    text-align: left;
-    color: #CACACA;
-    border-radius: 4px;
-    margin-top: 20px;
-}
-
-/* STATUS COLUMN */
-.status-column {
-    width: 100px;
-    text-align: center;
-}
-
-.status-badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    font-weight: 500;
-    text-transform: uppercase;
-}
-
-.status-published {
-    background-color: #909CFE;
-    color: #252525;
-}
-
-.status-draft {
-    background-color: #868686;
-    color: #252525;
-}
-
-/* Modal Button Container */
-.button-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-}
-
-/* Status Badge Styles */
-.status-badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 3px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.status-published {
-    background-color: #909cfe;
-    color: #252525;
-}
-
-.status-draft {
-    background-color: #aaaaaa;
-    color: #252525
-}
-
-/* Hide buttons by default */
-.edit-action-modal .save-button {
-    display: none;
-}
-
-/* Show appropriate buttons based on status */
-.edit-action-modal[data-status="publish"] .update-action,
-.edit-action-modal[data-status="publish"] .revert-draft {
-    display: inline-block;
-}
-
-.edit-action-modal[data-status="draft"] .publish-action,
-.edit-action-modal[data-status="draft"] .save-draft {
-    display: inline-block;
-}
-
-/* SHORTCUTS COUNT COLUMN */
-.actions-table .shortcuts-column {
-    width: 100px;
-    text-align: center;
-}
-
-.actions-table .shortcut-count {
-    display: inline-block;
-    min-width: 30px;
-    padding: 2px 8px;
-    background-color: #909CFE;
-    color: #252525;
-    font-weight: 600;
-    border-radius: 12px;
-    font-size: 13px;
 }

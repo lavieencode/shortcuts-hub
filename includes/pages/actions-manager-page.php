@@ -20,10 +20,28 @@ function render_actions_manager_page() {
                 <option value="active">Not In Trash</option>
                 <option value="trash">In Trash</option>
             </select>
-            <button class="reset-filters" id="reset-action-filters">Reset filters</button>
+            <button class="reset-filters" id="reset-action-filters">Reset</button>
             <button class="add-action" id="add-new-action">+</button>
         </div>
-        <div id="actions-container" class="actions-container"></div>
+        <div id="actions-container" class="actions-container">
+            <div id="actions-loading" class="actions-loading">
+                <div class="spinner"></div>
+            </div>
+            <table class="actions-table">
+                <thead>
+                    <tr>
+                        <th class="action-name-column">Name</th>
+                        <th class="action-description-column">Description</th>
+                        <th class="action-status-column">Status</th>
+                        <th class="action-shortcuts-column">Shortcuts</th>
+                        <th class="action-actions-column">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="actions-list">
+                    <!-- Actions will be loaded here via JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Add Action Modal -->
@@ -39,6 +57,16 @@ function render_actions_manager_page() {
                 <div class="form-group">
                     <label for="action-description">Description</label>
                     <textarea id="action-description" name="description" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="action-input">Input</label>
+                    <input type="text" id="action-input" name="input" placeholder="Input required for this action">
+                </div>
+                
+                <div class="form-group">
+                    <label for="action-result">Result</label>
+                    <input type="text" id="action-result" name="result" placeholder="Result of this action">
                 </div>
                 
                 <div class="form-group">
@@ -75,6 +103,18 @@ function render_actions_manager_page() {
                     <input type="hidden" id="action-icon" name="icon" value="">
                 </div>
 
+                <div class="form-group">
+                    <label for="action-shortcuts">Associated Shortcuts</label>
+                    <div class="shortcuts-selector-container">
+                        <div class="shortcuts-search-container">
+                            <input type="text" id="shortcuts-search" placeholder="Search shortcuts...">
+                        </div>
+                        <div class="shortcuts-list-container">
+                            <ul id="shortcuts-list" class="shortcuts-list"></ul>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="button-container">
                     <div class="primary-buttons">
                         <button type="submit" class="save-button publish-action" data-status="publish">Publish</button>
@@ -99,6 +139,16 @@ function render_actions_manager_page() {
                 <div class="form-group">
                     <label for="edit-action-description">Description</label>
                     <textarea id="edit-action-description" name="description" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-action-input">Input</label>
+                    <input type="text" id="edit-action-input" name="input" placeholder="Input required for this action">
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-action-result">Result</label>
+                    <input type="text" id="edit-action-result" name="result" placeholder="Result of this action">
                 </div>
                 
                 <div class="form-group">
@@ -135,13 +185,27 @@ function render_actions_manager_page() {
                     <input type="hidden" id="edit-action-icon" name="icon" value="">
                 </div>
 
+                <div class="form-group">
+                    <label for="edit-action-shortcuts">Associated Shortcuts</label>
+                    <div class="shortcuts-selector-container">
+                        <div class="shortcuts-search-container">
+                            <input type="text" id="edit-shortcuts-search" placeholder="Search shortcuts...">
+                        </div>
+                        <div class="shortcuts-list-container">
+                            <ul id="edit-shortcuts-list" class="shortcuts-list"></ul>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="button-container">
                     <div class="primary-buttons">
-                        <!-- These buttons will be shown/hidden based on current status -->
-                        <button type="submit" class="save-button update-action publish-button" data-status="publish">Update</button>
-                        <button type="submit" class="save-button publish-action publish-button" data-status="publish">Publish</button>
-                        <button type="submit" class="save-button save-draft save-draft-button" data-status="draft">Save Draft</button>
-                        <button type="submit" class="save-button revert-draft revert-button" data-status="draft">Revert to Draft</button>
+                        <!-- For draft state: Show Publish and Save Draft -->
+                        <button type="submit" class="save-button publish-action" data-status="publish">Publish</button>
+                        <button type="submit" class="save-button save-draft" data-status="draft">Save Draft</button>
+                        
+                        <!-- For published state: Show Update and Revert to Draft -->
+                        <button type="submit" class="save-button update-action" data-status="publish">Update</button>
+                        <button type="submit" class="save-button revert-draft" data-status="draft">Revert to Draft</button>
                     </div>
                     <button type="button" class="cancel-button">Cancel</button>
                 </div>

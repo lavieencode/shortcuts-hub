@@ -10,21 +10,92 @@ window.debugQueue = [];
 
 // Main debug function - initially set up to queue calls until properly initialized
 window.sh_debug_log = function(message, data = null, source = null) {
-    // Handle source info from caller
-    const callerSource = getStackTrace();
-    if (callerSource && (!source || typeof source === 'string')) {
-        source = callerSource;
+    // Handle the case where a single object is passed with message, data, and source properties
+    if (typeof message === 'string' && data !== null && typeof data === 'object') {
+        // Check if this is the combined object format
+        if (data.hasOwnProperty('message') || data.hasOwnProperty('source') || data.hasOwnProperty('data')) {
+            // Extract the components from the combined object format
+            const extractedMessage = data.hasOwnProperty('message') ? data.message : message;
+            const extractedSource = data.hasOwnProperty('source') ? data.source : source;
+            
+            // Determine the data to use
+            let extractedData;
+            if (data.hasOwnProperty('data') && data.data !== null) {
+                // Use the nested data property if it exists
+                extractedData = data.data;
+            } else {
+                // Otherwise use the original data object without the special properties
+                extractedData = { ...data };
+                delete extractedData.source;
+                delete extractedData.message;
+                delete extractedData.data;
+                delete extractedData.debug;
+            }
+            
+            // Check for debug flag
+            const debug = data.hasOwnProperty('debug') ? data.debug : true;
+            
+            // Only proceed if debug is true
+            if (debug) {
+                sendLog(extractedMessage, extractedData, extractedSource);
+                return;
+            }
+        }
     }
-
-    // Queue the call if we're not ready
-    if (!window.shortcutsHubData || !window.shortcutsHubData.security || !window.shortcutsHubData.security.debug_log) {
-        window.debugQueue = window.debugQueue || [];
-        window.debugQueue.push({message, data, source});
+    
+    // Validate log format for standard usage
+    const formatError = validateLogFormat(message, data, source);
+    if (formatError && window.shortcutsHubData?.debug) {
+        sendLog('Log Format Error', {
+            error: formatError,
+            received: {
+                message,
+                data,
+                source
+            },
+            expected: {
+                message: 'string',
+                data: 'object with arbitrary data',
+                source: {
+                    file: 'string',
+                    line: 'string',
+                    function: 'string'
+                }
+            }
+        }, {
+            file: 'sh-debug.js',
+            line: 'sh_debug_log',
+            function: 'sh_debug_log'
+        });
         return;
     }
 
+    // Send the actual log if format is valid
     sendLog(message, data, source);
 };
+
+// Helper function to validate log format
+function validateLogFormat(message, data, source) {
+    let error = null;
+    
+    if (typeof message !== 'string') {
+        error = 'Message must be a string';
+    }
+    if (data !== null && typeof data !== 'object') {
+        error = 'Data must be null or an object';
+    }
+    if (source !== null && (typeof source !== 'object' || !source.file || !source.line || !source.function)) {
+        error = 'Source must contain file, line, and function properties';
+    }
+    
+    if (error) {
+        // Use error_log instead of console.error to maintain consistent logging style
+        error_log('[DEBUG] Debug Log Failed: ' + error);
+        return error;
+    }
+    
+    return null;
+}
 
 // Helper function to get the current admin page
 function getCurrentPage() {
@@ -39,11 +110,10 @@ function sendLog(message, data = null, source = null) {
         return;
     }
 
-    if (data !== null && typeof data === 'object') {
-        if (data.hasOwnProperty('message') && data.hasOwnProperty('source') && data.hasOwnProperty('data')) {
-            error_log('[DEBUG] sh_debug_log failed: Incorrect format - you are passing a single combined object. Instead use: sh_debug_log(message, data, source)');
-            return;
-        }
+    // Check if debug is explicitly set to false in the data
+    if (data && typeof data === 'object' && data.hasOwnProperty('debug') && data.debug === false) {
+        // Skip logging if debug is false
+        return;
     }
 
     // Validate shortcutsHubData
@@ -62,162 +132,115 @@ function sendLog(message, data = null, source = null) {
         return;
     }
 
-    // Get source info
-    let sourceInfo = getStackTrace();
-    if (source === 'session-start') {
-        sourceInfo = 'sh-debug.js [session-start]';
-    }
-
-    // Style console output
+    // Style definitions
     const debugStyle = 'background: #909cfe; color: #252525; font-weight: bold;';
-    const sourceTagStyle = 'color: #909cfe; font-weight: bold;';
-    const dataTagStyle = 'color: #909cfe; font-weight: bold;';
-    const fileNameStyle = 'text-decoration: underline;';
+    const sourceStyle = 'background: #909cfe; color: #252525; font-weight: bold;';
+    const keyStyle = 'color: #909cfe; font-weight: bold;';
 
-    if (source === 'session-start') {
-        const headerStyle = 'background: #909cfe; color: #252525; font-weight: bold;';
-        const asterisks = '*'.repeat(116);
-        const datetime = new Date().toLocaleString('en-US', { 
-            timeZone: 'America/New_York',
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-            hour12: true
-        });
-        console.log('%c' + asterisks, headerStyle);
-        console.log('%c' + `[START DEBUG LOG: ${datetime} EST]`.padStart(58 + datetime.length/2).padEnd(116), headerStyle);
-        console.log('%c' + asterisks, headerStyle);
-        console.log(''); // Empty line after header
-    } else {
-        // Check if this is an error message or contains error data
-        const isError = message.toLowerCase().includes('error') || 
-            (data && (
-                (data.success === false) ||
-                (data.status >= 400) ||
-                (data.error) ||
-                (data.data && data.data.success === false)
-            ));
-        
-        // Start a collapsible group for this log entry
-        console.groupCollapsed('%c[DEBUG] ' + message, debugStyle);
-        
-        // Log source if present
-        if (sourceInfo) {
-            console.log('%c[SOURCE] %c' + sourceInfo, sourceTagStyle, fileNameStyle);
-        }
-        
-        if (data) {
-            console.groupCollapsed('%c[DATA]', dataTagStyle);
-            try {
-                const cleanData = JSON.parse(JSON.stringify(data));
-                Object.entries(cleanData).forEach(([key, value]) => {
-                    if (value && typeof value === 'object') {
-                        // For nested objects, iterate through their properties
-                        Object.entries(value).forEach(([k, v]) => {
-                            console.log('%c' + k + ':%c ' + JSON.stringify(v), 'color: #909cfe; font-weight: bold;', 'color: inherit; font-weight: normal;');
-                        });
-                    } else {
-                        console.log('%c' + key + ':%c ' + value, 'color: #909cfe; font-weight: bold;', 'color: inherit; font-weight: normal;');
-                    }
-                });
-            } catch (e) {
-                console.error('Error displaying data:', e);
-                console.log('Raw data:', data);
-            }
-            console.groupEnd();
-        }
-        console.groupEnd();
+    // Format source info
+    let sourceInfo = '';
+    if (source) {
+        const sourceTag = '[SOURCE]';
+        const restOfSource = ` ${source.file}${source.line ? ':' + source.line : ''} [${source.function}]`;
+        sourceInfo = `%c${sourceTag}%c${restOfSource}`;
     }
 
-    // Prepare data for sending
-    let logData;
-    try {
-        // Parse source info for PHP
-        const [fileName, functionName] = sourceInfo.split(' [');
-        const sourceData = {
-            file: fileName,
-            function: functionName ? functionName.slice(0, -1) : '',  // Remove trailing ]
-            line: ''  // We're not using line numbers anymore
-        };
+    // Format console output
+    console.groupCollapsed(`%c[DEBUG] ${message}`, debugStyle);
+    if (sourceInfo) {
+        console.log(sourceInfo, sourceStyle, '');
+    }
+    if (data) {
+        console.log('%c[DATA]', debugStyle);
+        // Log each key-value pair with styled keys
+        Object.entries(data).forEach(([key, value]) => {
+            console.log(`%c${key}:`, keyStyle, value);
+        });
+    }
+    console.groupEnd();
 
-        // Prepare data object
-        const debugData = {
-            ...data,  // Include any existing data
-            debug: true  // Ensure debug is true
-        };
-        
-        logData = {
+    // Send to PHP logger
+    jQuery.ajax({
+        url: window.shortcutsHubData.ajaxurl,
+        type: 'POST',
+        data: {
             action: 'sh_debug_log',
             security: window.shortcutsHubData.security.debug_log,
             message: message,
-            source: JSON.stringify(sourceData),
-            data: JSON.stringify(debugData),
-            page: getCurrentPage(),
-            debug: true
-        };
-
-        // Send to PHP for logging
-        jQuery.ajax({
-            url: window.shortcutsHubData.ajaxurl,
-            type: 'POST',
-            data: logData,
-            success: function(response) {
-                if (!response || !response.success) {
-                    error_log('[DEBUG] sh_debug_log failed: Server returned error - ' + 
-                        (response ? JSON.stringify(response) : 'No response'));
-                }
-            },
-            error: function(xhr, status, error) {
-                error_log('[DEBUG] sh_debug_log failed: AJAX error - ' + status + ' - ' + error);
-                console.error('AJAX Request:', {
-                    url: window.shortcutsHubData.ajaxurl,
-                    data: debugData
-                });
-            }
-        });
-    } catch (e) {
-        error_log('[DEBUG] sh_debug_log failed: Data serialization error - ' + e.message);
-        console.error('Failed to serialize data:', {
-            source: sourceInfo,
-            data: debugData,
-            error: e
-        });
-        return;
-    }
+            data: data ? JSON.stringify(data) : null,
+            source: source ? JSON.stringify(source) : null
+        }
+    }).done(function(response) {
+        // Success - no need to log anything
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        // Log AJAX errors separately to avoid recursion
+        const errorMessage = '[DEBUG] Failed to send log to server: ' + errorThrown;
+        error_log(errorMessage);
+    });
 }
 
 // Process any queued debug calls
 function processDebugQueue() {
-    if (window.debugQueue && window.debugQueue.length > 0) {
-        console.log(`Processing ${window.debugQueue.length} queued debug calls`);
-        window.debugQueue.forEach(item => {
-            sendLog(item.message, item.data, item.source);
-        });
-        window.debugQueue = [];
+    if (!window.debugQueue || !window.debugQueue.length) {
+        // No need to log when there's nothing to process
+        return;
+    }
+
+    // Use sendLog for consistent logging style
+    sendLog('Processing queued logs', { count: window.debugQueue.length }, {
+        file: 'sh-debug.js',
+        line: 'processDebugQueue',
+        function: 'processDebugQueue'
+    });
+    
+    while (window.debugQueue.length > 0) {
+        const { message, data, source } = window.debugQueue.shift();
+        sendLog(message, data, source);
     }
 }
 
 // Helper function to get stack trace
 function getStackTrace() {
-    const error = new Error();
-    if (!error.stack) return '';
+    const stackLines = new Error().stack.split('\n');
     
-    // Get the first relevant stack frame (skip Error and sh_debug_log frames)
-    const stackFrames = error.stack.split('\n');
-    if (stackFrames.length < 3) return '';
+    // Find the caller's line (skip Error, sh_debug_log frames)
+    let relevantLine = '';
+    for (let i = 0; i < stackLines.length; i++) {
+        const line = stackLines[i].trim();
+        // Skip internal calls and jQuery internals
+        if (!line.includes('sh-debug.js') && 
+            !line.includes('Error') && 
+            !line.includes('getStackTrace') &&
+            !line.includes('jquery.min.js')) {
+            relevantLine = line;
+            break;
+        }
+    }
     
-    const frame = stackFrames[2];
+    // Parse the line information
+    // Format: "at function (file:line:col)" or "at file:line:col"
+    const match = relevantLine.match(/at (?:([^(]+) \()?([^:]+):(\d+):(\d+)\)?/);
+    if (!match) {
+        // Fallback for jQuery ready handler
+        if (relevantLine.includes('jQuery.ready')) {
+            return {
+                file: 'versions-handlers.js',
+                line: '1',  // First line of the ready handler
+                function: 'document.ready'
+            };
+        }
+        return null;
+    }
     
-    // Parse the stack frame
-    // Expected format: "    at functionName (file:///path/to/file.js?ver=1.0.0:lineNumber:column)"
-    const match = frame.match(/at\s+(?:(\w+)\s+)?\(?(?:.*\/)?([^\/]+?)(?:\?[^:]*)?:(\d+):/);
-    if (!match) return '';
+    const [, fnName, filePath, lineNumber] = match;
+    const fileName = filePath.split('/').pop(); // Get just the filename
+    const functionName = fnName ? fnName.trim() : 'anonymous';
     
-    const [, functionName, fileName, lineNumber] = match;
-    return fileName + ':' + lineNumber + (functionName ? ' [' + functionName + ']' : '');
+    return {
+        file: fileName,
+        line: lineNumber,
+        function: functionName
+    };
 }
 
 // Helper function to get script loading state
@@ -250,21 +273,8 @@ function logError(message, functionName) {
         debug: true
     };
 
-    // Only log to console to prevent recursion
-    console.error('Debug Error:', {
-        message: message,
-        functionName: functionName,
-        context: errorContext
-    });
-}
-
-// Initialize debug when document is ready and shortcutsHubData is available
-function initDebug() {
-
-    if (!window.shortcutsHubData) {
-        logError('shortcutsHubData not available for initialization', 'initDebug');
-        return;
-    }
+    // Use error_log instead of console.error for consistent logging style
+    error_log('[DEBUG] Debug Error: ' + message + ' in ' + functionName);
 
     // Ensure debug is enabled
     window.shortcutsHubData.debug = true;
@@ -279,30 +289,59 @@ function initDebug() {
             ajaxurl: window.shortcutsHubData.ajaxurl,
             security: window.shortcutsHubData.security
         }
-    }, 'initDebug');
+    }, {
+        file: 'sh-debug.js',
+        line: '262',
+        function: 'initDebug'
+    });
+}
+
+// Initialize debug when document is ready and shortcutsHubData is available
+function initDebug() {
+    // Enable debug mode
+    window.shortcutsHubData.debug = true;
+
+    // Process any queued debug calls
+    processDebugQueue();
+
+    // Log initialization
+    window.sh_debug_log('Debug initialized', {
+        shortcutsHubData: {
+            debug: window.shortcutsHubData.debug,
+            ajaxurl: window.shortcutsHubData.ajaxurl,
+            security: window.shortcutsHubData.security
+        }
+    }, {
+        file: 'sh-debug.js',
+        line: '262',
+        function: 'initDebug'
+    });
 }
 
 // Try to initialize immediately if jQuery and shortcutsHubData are available
-if (window.jQuery && window.shortcutsHubData) {
-    initDebug();
-} else {
-    // Otherwise wait for document ready
-    jQuery(document).ready(function() {
-        tryInit();
-    });
-}
+jQuery(function() {
+    if (window.shortcutsHubData) {
+        initDebug();
+    }
+});
+
+// Log session start when page loads
+window.sh_debug_log('Debug session started', null, {
+    file: 'sh-debug.js',
+    line: '293',
+    function: 'global'
+});
 
 // Helper function to log errors to PHP error log
 function error_log(message) {
-    jQuery.ajax({
-        url: window.ajaxurl || shortcutsHubData.ajaxurl || '/wp-admin/admin-ajax.php',
-        type: 'POST',
-        data: {
-            action: 'sh_error_log',
-            message: message
-        }
+    if (!window.shortcutsHubData || !window.shortcutsHubData.security || !window.shortcutsHubData.security.debug_log) {
+        // Can't use error_log recursively, so just fail silently
+        return;
+    }
+
+    jQuery.post(window.shortcutsHubData.ajaxurl, {
+        action: 'sh_error_log',
+        security: window.shortcutsHubData.security.debug_log,
+        message: message
     });
 }
-
-// Log session start when page loads
-window.sh_debug_log('Debug session started', null, 'session-start');

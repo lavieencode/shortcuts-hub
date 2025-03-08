@@ -68,6 +68,7 @@
     width: 24px;
     height: 24px;
     object-fit: contain;
+    max-width: none;
 }
 
 .icon-reset {
@@ -150,6 +151,7 @@
     gap: 10px;
     padding: 15px;
     justify-content: start;
+    align-content: start;
     height: 200px;
     overflow-y: auto;
     overflow-x: hidden;
@@ -167,11 +169,14 @@
     background-color: #2c2c2c;
     cursor: pointer;
     transition: all 0.2s ease;
-    position: static;
+    position: relative; /* Changed from static to relative for proper positioning */
     width: 32px;
     height: 32px;
     border-radius: 3px;
     box-sizing: border-box;
+    overflow: hidden; /* Ensure content doesn't overflow */
+    min-width: 32px; /* Ensure minimum width */
+    min-height: 32px; /* Ensure minimum height */
 }
 
 .icon-option:hover {
@@ -180,6 +185,7 @@
 
 .icon-option.selected {
     background-color: #505050;
+    box-shadow: 0 0 0 2px #909CFE; /* Highlight selected icon */
 }
 
 .icon-option i {
@@ -188,6 +194,8 @@
     width: auto;
     height: auto;
     display: block;
+    text-align: center; /* Center icon */
+    line-height: 1; /* Proper line height */
 }
 
 .icon-option .icon-name {

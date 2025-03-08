@@ -1,4 +1,34 @@
 jQuery(document).ready(function() {
+    // DEBUG: Set up mutation observer for all action menus
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const element = mutation.target;
+                window.sh_debug_log('Action Menu Class Changed', {
+                    element: {
+                        id: element.id,
+                        oldClasses: mutation.oldValue,
+                        newClasses: element.className,
+                        html: element.outerHTML
+                    },
+                    stack: new Error().stack // This will show us where the change came from
+                }, {
+                    file: 'shortcuts-handlers.js',
+                    line: 'mutationObserver',
+                    function: 'mutationObserver'
+                });
+            }
+        });
+    });
+
+    // Observe all action menus
+    jQuery('.action-menu').each(function() {
+        observer.observe(this, {
+            attributes: true,
+            attributeOldValue: true,
+            attributeFilter: ['class']
+        });
+    });
 
     // First unbind any existing handlers to prevent duplicates
     jQuery(document).off('click', '.menu-toggle');
@@ -13,6 +43,26 @@ jQuery(document).ready(function() {
         const menuContainer = jQuery(menuToggle.closest('.menu-container'));
         const actionMenu = menuContainer.find('.action-menu');
         const actionButtons = actionMenu.find('.action-button');
+
+        // DEBUG: Log element selection
+        window.sh_debug_log('Element Selection Check', {
+            menuToggle: {
+                exists: menuToggle.length > 0,
+                element: menuToggle[0].outerHTML
+            },
+            menuContainer: {
+                exists: menuContainer.length > 0,
+                element: menuContainer[0].outerHTML
+            },
+            actionMenu: {
+                exists: actionMenu.length > 0,
+                element: actionMenu.length > 0 ? actionMenu[0].outerHTML : 'Not found'
+            }
+        }, {
+            file: 'shortcuts-handlers.js',
+            line: 'menuToggleClick',
+            function: 'menuToggleClick'
+        });
 
         // DEBUG: Track menu toggle click and state
         window.sh_debug_log('Menu Toggle Click', {
@@ -61,48 +111,63 @@ jQuery(document).ready(function() {
             } : null
         };
         
+        // Close any other open menus
         jQuery('.menu-container').not(menuContainer).each(function() {
             const container = jQuery(this);
-            container.find('.menu-toggle').removeClass('active').removeAttr('style');
-            container.find('.action-menu').removeClass('active').removeAttr('style');
+            container.find('.menu-toggle').removeClass('active');
+            container.find('.action-menu').removeClass('active');
         });
 
-        const menuToggleStyles = window.getComputedStyle(menuToggle[0]);
-        const actionMenuStyles = window.getComputedStyle(actionMenu[0]);
-        
-        // DEBUG: Log menu toggle state and execution context
-        window.sh_debug_log('Action Menu Toggle Click', {
-            elements: {
-                menuToggle: {
-                    visibility: menuToggleStyles.visibility,
-                    display: menuToggleStyles.display,
-                    isActive: menuToggle.hasClass('active'),
-                    element: menuToggle[0].outerHTML
-                },
-                actionMenu: {
-                    visibility: actionMenuStyles.visibility,
-                    display: actionMenuStyles.display,
-                    isActive: actionMenu.hasClass('active'),
-                    element: actionMenu[0].outerHTML
-                },
-                menuContainer: {
-                    html: menuContainer[0].outerHTML
-                }
+        // DEBUG: Log before toggle
+        window.sh_debug_log('Before Toggle', {
+            menuToggle: {
+                hasClass: menuToggle.hasClass('active'),
+                allClasses: menuToggle.attr('class')
             },
-            executionContext: {
-                initialStates: initialStates,
-                currentStates: {
-                    menuToggle: {
-                        hasClass: menuToggle.hasClass('active'),
-                        classes: menuToggle.attr('class'),
-                        inlineStyle: menuToggle.attr('style') || 'none'
-                    },
-                    actionMenu: {
-                        hasClass: actionMenu.hasClass('active'),
-                        classes: actionMenu.attr('class'),
-                        inlineStyle: actionMenu.attr('style') || 'none'
-                    }
-                }
+            actionMenu: {
+                hasClass: actionMenu.hasClass('active'),
+                allClasses: actionMenu.attr('class')
+            }
+        }, {
+            file: 'shortcuts-handlers.js',
+            line: 'menuToggleClick',
+            function: 'menuToggleClick'
+        });
+
+        // Try explicit class addition/removal instead of toggle
+        const isActive = menuToggle.hasClass('active');
+        if (isActive) {
+            menuToggle.removeClass('active');
+            actionMenu.removeClass('active');
+        } else {
+            menuToggle.addClass('active');
+            actionMenu.addClass('active');
+        }
+
+        // DEBUG: Log after toggle
+        window.sh_debug_log('After Toggle', {
+            menuToggle: {
+                hasClass: menuToggle.hasClass('active'),
+                allClasses: menuToggle.attr('class')
+            },
+            actionMenu: {
+                hasClass: actionMenu.hasClass('active'),
+                allClasses: actionMenu.attr('class'),
+                element: actionMenu[0].outerHTML
+            }
+        }, {
+            file: 'shortcuts-handlers.js',
+            line: 'menuToggleClick',
+            function: 'menuToggleClick'
+        });
+
+        // DEBUG: Log immediate visibility state after setting
+        window.sh_debug_log('Immediate Visibility State', {
+            menu: {
+                hasActiveClass: actionMenu.hasClass('active'),
+                visibilityProperty: actionMenu.css('visibility'),
+                computedVisibility: window.getComputedStyle(actionMenu[0]).visibility,
+                element: actionMenu[0].outerHTML
             },
             debug: true,
             page: 'shortcuts-list'
@@ -111,13 +176,6 @@ jQuery(document).ready(function() {
             line: 'menuToggleClick',
             function: 'menuToggleClick'
         });
-        
-        menuToggle.toggleClass('active');
-        actionMenu.toggleClass('active');
-        
-        // Force visibility based on active state
-        const newVisibility = actionMenu.hasClass('active') ? 'visible' : 'hidden';
-        actionMenu.css('visibility', newVisibility);
 
         // DEBUG: Log menu visibility change
         window.sh_debug_log('Menu Visibility Change', {
@@ -156,24 +214,44 @@ jQuery(document).ready(function() {
         }
     });
 
-    jQuery(document).on('click', '.versions-button', function(e) {
+    // Handle versions button click
+    jQuery('#shortcuts-container').on('click', '.versions-button', function(e) {
         e.preventDefault();
-        e.stopPropagation();
+        const shortcutId = jQuery(this).data('id');
         
-        const sb_id = jQuery(this).data('id');
-        const urlParams = new URLSearchParams(window.location.search);
-        const oldView = urlParams.get('view');
-        const oldId = urlParams.get('id');
-        
-        urlParams.set('view', 'versions');
-        urlParams.set('id', sb_id);
-        const newUrl = `${window.location.pathname}?${urlParams}`;
-        
-        window.history.pushState({}, '', newUrl);
-        toggleVersionsView(true, sb_id);
+        // DEBUG: Log versions button click
+        if (typeof window.sh_debug_log === 'function') {
+            window.sh_debug_log('Versions button clicked', 
+                {
+                    debug: true,
+                    message: 'User clicked versions button',
+                    button_data: shortcutId,
+                    url_params: {
+                        page: 'shortcuts-list',
+                        view: 'versions',
+                        sb_id: shortcutId
+                    }
+                },
+                {
+                    file: 'shortcuts-handlers.js',
+                    line: 'versionsButtonClick',
+                    function: 'versionsButtonClick'
+                }
+            );
+        }
+
+        // Update URL with proper parameters
+        const params = new URLSearchParams(window.location.search);
+        params.set('page', 'shortcuts-list');
+        params.set('view', 'versions');
+        params.set('sb_id', shortcutId);
+        window.history.replaceState({}, '', `${window.location.pathname}?${params.toString()}`);
+
+        // Toggle versions view
+        toggleVersionsView(true, shortcutId);
     });
 
-    jQuery(document).on('click', '.edit-button', function(e) {
+    jQuery('#shortcuts-view').on('click', '.edit-button', function(e) {
         e.preventDefault();
         e.stopPropagation();
         
@@ -228,7 +306,7 @@ jQuery(document).ready(function() {
         }, 0);
     });
 
-    jQuery(document).on('click', '.delete-button', function(e) {
+    jQuery('#shortcuts-view').on('click', '.delete-button', function(e) {
         e.preventDefault();
         const $button = jQuery(this);
         const post_id = $button.data('post_id');
@@ -239,7 +317,7 @@ jQuery(document).ready(function() {
         handleShortcutStateChange(post_id, sb_id, this, true);
     });
 
-    jQuery(document).on('click', '.restore-button', function(e) {
+    jQuery('#shortcuts-view').on('click', '.restore-button', function(e) {
         e.preventDefault();
         const $button = jQuery(this);
         const postId = $button.data('post_id');
@@ -248,7 +326,7 @@ jQuery(document).ready(function() {
         deleteShortcut(postId, sbId, this, false, true);
     });
 
-    jQuery(document).on('click', '.delete-permanently', function(e) {
+    jQuery('#shortcuts-view').on('click', '.delete-permanently', function(e) {
         e.preventDefault();
         e.stopPropagation();
         const post_id = jQuery(this).data('post_id');
@@ -259,7 +337,7 @@ jQuery(document).ready(function() {
         }
     });
 
-    jQuery(document).on('click', '.delete-dropdown-toggle', function(e) {
+    jQuery('#shortcuts-view').on('click', '.delete-dropdown-toggle', function(e) {
         e.preventDefault();
         e.stopPropagation();
         const dropdown = jQuery(this).siblings('.delete-dropdown-content');
@@ -274,7 +352,7 @@ jQuery(document).ready(function() {
         }
     });
 
-    jQuery(document).on('click', '.synced-text', function() {
+    jQuery('#shortcuts-view').on('click', '.synced-text', function() {
         const id = jQuery(this).data('id');
 
         openEditModal(id);

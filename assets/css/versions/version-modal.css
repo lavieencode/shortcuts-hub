@@ -1,4 +1,9 @@
 /* Modal for Editing or Adding Version */
+body.modal-open {
+    overflow: hidden;
+    pointer-events: none;
+}
+
 #edit-version-modal, #add-version-modal {
     display: block !important;
     visibility: hidden;
@@ -110,8 +115,4 @@
     font-size: 14px;
     margin-top: 10px;
     font-weight: bold;
-}
-
-#version-display {
-    color: #CACACA;
 }

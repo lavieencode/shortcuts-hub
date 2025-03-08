@@ -1,119 +1,177 @@
-jQuery(document).ready(function() {
-    // Only proceed if we have the localized data
-    if (typeof window.shortcutsHubData === 'undefined') {
-        sh_debug_log('Missing shortcutsHubData', {
-            message: 'shortcutsHubData is not defined',
-            source: {
-                file: 'versions-handlers.js',
-                line: 'document.ready',
-                function: 'document.ready'
-            },
-            data: {},
-            debug: true
-        });
-        return;
-    }
+// Expose initialization function globally
+window.initializeVersionsView = function(shortcutId) {
+    // Store state in global data
+    window.shortcutsHubData = window.shortcutsHubData || {};
+    const urlParams = new URLSearchParams(window.location.search);
+    window.shortcutsHubData.isTrashView = urlParams.get('state') === 'trash';
+    window.shortcutsHubData.shortcutId = shortcutId;
 
-    // DEBUG: Log initialization with full data
-    sh_debug_log('Initializing versions handlers', {
-        message: 'Starting versions handlers initialization',
-        source: {
+    // DEBUG: Log versions view initialization
+    sh_debug_log('Initializing versions view', {
+        debug: true,
+        message: 'Initializing versions view with shortcut ID',
+        shortcut_id: shortcutId,
+        global_data: {
+            isTrashView: window.shortcutsHubData.isTrashView,
+            shortcutId: window.shortcutsHubData.shortcutId
+        }
+    });
+    
+    // Fetch the versions data
+    if (typeof window.fetchVersions === 'function') {
+        window.fetchVersions(shortcutId);
+    }
+};
+
+jQuery(document).ready(function() {
+    // Initialize debug logging first
+    if (typeof window.sh_debug_log === 'function') {
+        window.sh_debug_log('Debug session started', [], {
             file: 'versions-handlers.js',
             line: 'document.ready',
             function: 'document.ready'
-        },
-        data: {
-            shortcutsHubData: window.shortcutsHubData
-        },
-        debug: true
-    });
-
-    // Handle initial view state
-    if (window.shortcutsHubData.initialView === 'versions' && window.shortcutsHubData.shortcutId) {
-        toggleVersionsView(true, window.shortcutsHubData.shortcutId);
+        });
     }
 
-    // Attach event handler for back button
-    jQuery('#back-to-shortcuts').on('click', function() {
-        toggleVersionsView(false);
-    });
-
-    // Attach version-specific handlers
+    checkUrlParameters();
     attachVersionHandlers();
 });
 
+function checkUrlParameters() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const view = urlParams.get('view');
+    const shortcutId = urlParams.get('sb_id');
+    const state = urlParams.get('state');
+
+    if (view === 'versions' && shortcutId) {
+        // Set view state in global data
+        window.shortcutsHubData = window.shortcutsHubData || {};
+        window.shortcutsHubData.isTrashView = state === 'trash';
+        window.shortcutsHubData.shortcutId = shortcutId;
+
+        // DEBUG: Log versions initialization
+        if (typeof window.sh_debug_log === 'function') {
+            window.sh_debug_log('Initializing versions view', {
+                debug: true,
+                message: 'Initializing versions view with shortcut ID',
+                shortcut_id: shortcutId,
+                global_data: {
+                    isTrashView: window.shortcutsHubData.isTrashView,
+                    shortcutId: window.shortcutsHubData.shortcutId
+                }
+            }, {
+                file: 'versions-handlers.js',
+                line: 'checkUrlParameters',
+                function: 'checkUrlParameters'
+            });
+        }
+
+        // Use the existing fetchVersions from versions-fetch.js
+        if (typeof window.fetchVersions === 'function') {
+            window.fetchVersions(shortcutId);
+        } else {
+            console.error('fetchVersions function not available');
+        }
+    }
+}
+
+function attachVersionHandlers() {
+    // Back to shortcuts button handler
+    jQuery('#versions-view').on('click', '#back-to-shortcuts', function(e) {
+        e.preventDefault();
+        window.location.href = '?page=shortcuts-list';
+    });
+
+    // Version edit button handler
+    jQuery(document).on('click', '.version-edit-button', function(e) {
+        e.preventDefault();
+        const versionId = jQuery(this).data('version-id');
+        const shortcutId = window.shortcutsHubData.shortcutId;
+        
+        if (versionId && shortcutId) {
+            window.location.href = `?page=edit-version&version_id=${versionId}&shortcut_id=${shortcutId}`;
+        }
+    });
+
+    // Version delete button handler
+    jQuery(document).on('click', '.version-delete-button', function(e) {
+        e.preventDefault();
+        const versionId = jQuery(this).data('version-id');
+        if (versionId && typeof window.deleteVersion === 'function') {
+            window.deleteVersion(versionId);
+        }
+    });
+
+    // Trash view toggle handler
+    jQuery(document).on('click', '#versions-trash-view', function(e) {
+        e.preventDefault();
+        window.shortcutsHubData.isTrashView = true;
+        if (typeof window.fetchVersions === 'function') {
+            window.fetchVersions(window.shortcutsHubData.shortcutId);
+        }
+    });
+
+    // Active view toggle handler
+    jQuery(document).on('click', '#versions-active-view', function(e) {
+        e.preventDefault();
+        window.shortcutsHubData.isTrashView = false;
+        if (typeof window.fetchVersions === 'function') {
+            window.fetchVersions(window.shortcutsHubData.shortcutId);
+        }
+    });
+}
+
 function displayVersions(data) {
-    const versionsContainer = jQuery('#versions-container');
+    const versionsContainer = jQuery('#versions-list');
     versionsContainer.empty();
 
-    if (!data.versions || data.versions.length === 0) {
-        versionsContainer.append('<div class="no-versions">No versions found</div>');
+    // DEBUG: Log versions data being rendered
+    if (typeof window.sh_debug_log === 'function') {
+        window.sh_debug_log('Rendering versions data', {
+            debug: true,
+            message: 'Rendering versions data to container',
+            data: data
+        }, {
+            file: 'versions-handlers.js',
+            line: 'displayVersions',
+            function: 'displayVersions'
+        });
+    }
+
+    if (!data || !data.versions || !Array.isArray(data.versions)) {
+        versionsContainer.html('<p>No versions found.</p>');
         return;
     }
 
-    data.versions.forEach(function(version) {
+    data.versions.forEach(version => {
         const versionHtml = `
-            <div class="version-item" data-shortcut-id="${version.shortcut_id}" data-version-id="${version.id}">
+            <div class="version-item" data-version-id="${version.id}">
                 <div class="version-header">
-                    <span class="caret">&#9654;</span>
-                    <span class="version-title">${version.title}</span>
-                    <span class="version-date">${version.created_at}</span>
-                    <span class="version-status">${version.state.label}</span>
+                    <h3>Version ${version.version}</h3>
+                    <div class="version-status">
+                        <span class="status-label ${version.state.value === 0 ? 'published' : 'draft'}">${version.state.label}</span>
+                        ${version.deleted ? '<span class="status-label deleted">Deleted</span>' : ''}
+                        ${version.required ? '<span class="status-label required">Required Update</span>' : ''}
+                        ${version.prerelease ? '<span class="status-label prerelease">Pre-release</span>' : ''}
+                    </div>
                 </div>
-                <div class="version-body" style="display: none;">
-                    <div class="version-content">
-                        <p>${version.description}</p>
-                        <div class="version-actions">
-                            <button class="edit-version" data-version='${JSON.stringify(version)}'>Edit</button>
-                            ${version.deleted ? 
-                                `<button class="restore-version">Restore</button>` : 
-                                `<button class="delete-version">Delete</button>`
-                            }
-                        </div>
+                <div class="version-details">
+                    <p class="version-notes">${version.notes}</p>
+                    <div class="version-requirements">
+                        <span>Minimum iOS: ${version.minimumiOS}</span>
+                        <span>Minimum macOS: ${version.minimumMac}</span>
+                    </div>
+                    <div class="version-meta">
+                        <span>Created by: ${version.creator.name}</span>
+                        ${version.released ? `<span>Released: ${version.released}</span>` : '<span>Not yet released</span>'}
+                    </div>
+                    <div class="version-actions">
+                        <button class="button version-edit-button" data-version-id="${version.id}">Edit</button>
+                        <button class="button version-delete-button" data-version-id="${version.id}">Delete</button>
                     </div>
                 </div>
             </div>
         `;
         versionsContainer.append(versionHtml);
-    });
-}
-
-function attachVersionHandlers() {
-    // Back to shortcuts button handler
-    jQuery(document).on('click', '#back-to-shortcuts', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        urlParams.delete('view');
-        urlParams.delete('id');
-        window.history.pushState({}, '', `${window.location.pathname}?${urlParams}`);
-        
-        toggleVersionsView(false);
-    });
-
-    jQuery(document).on('click', '.version-header', function() {
-        const versionBody = jQuery(this).next('.version-body');
-        versionBody.toggle();
-
-        const caret = jQuery(this).find('.caret');
-        caret.html(versionBody.is(':visible') ? '&#9660;' : '&#9654;');
-    });
-
-    jQuery(document).on('click', '.edit-version', function(event) {
-        const button = jQuery(event.target);
-        const versionData = button.data('version');
-
-        if (versionData) {
-            populateVersionEditModal({ version: versionData });
-            jQuery('body').addClass('modal-open');
-            jQuery('#edit-version-modal').addClass('active').show();
-        } else {
-            console.error('Version data not found on button');
-        }
-    });
-
-    jQuery(document).on('click', '.delete-version, .restore-version', function() {
-        const shortcutId = jQuery(this).closest('.version-item').data('shortcut-id');
-        const versionId = jQuery(this).closest('.version-item').data('version-id');
-        const isRestore = jQuery(this).hasClass('restore-version');
-        toggleVersionDelete(shortcutId, versionId, isRestore);
     });
 }

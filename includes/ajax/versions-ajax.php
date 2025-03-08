@@ -14,9 +14,7 @@ add_action('wp_ajax_nopriv_fetch_latest_version', 'fetch_latest_version');
 add_action('wp_ajax_fetch_version', 'fetch_version');
 add_action('wp_ajax_create_version', 'create_version');
 add_action('wp_ajax_update_version', 'update_version');
-add_action('wp_ajax_version_toggle_delete', 'version_toggle_delete');
-add_action('wp_ajax_version_toggle_draft', 'version_toggle_draft');
-add_action('wp_ajax_version_delete', 'version_delete');
+add_action('wp_ajax_delete_version', 'delete_version');
 
 // Fetch all versions with filtering options
 function fetch_versions() {
@@ -367,99 +365,116 @@ function update_version() {
     }
 }
 
-// Toggle delete/restore a version
-function version_toggle_delete() {
-    if (!isset($_POST['nonce'])) {
-        wp_send_json_error(['message' => 'No nonce provided']);
-        return;
-    }
-
-    if (!wp_verify_nonce($_POST['nonce'], 'version_toggle_delete_nonce')) {
-        wp_send_json_error(['message' => 'Invalid nonce']);
-        return;
-    }
-
-    $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
-    $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
-    $is_restore = isset($_POST['is_restore']) ? filter_var($_POST['is_restore'], FILTER_VALIDATE_BOOLEAN) : false;
-
-    if (empty($id) || empty($version_id)) {
-        wp_send_json_error(['message' => 'Shortcut ID or version ID is missing']);
-        return;
-    }
-
-    $response = sb_api_call('/shortcuts/' . $id . '/version/' . $version_id, 'PATCH', [], ['deleted' => !$is_restore]);
-
-    if (is_wp_error($response)) {
-        wp_send_json_error(['message' => 'Error toggling delete for version: ' . $response->get_error_message()]);
-        return;
-    }
-
-    wp_send_json_success(['message' => 'Version toggled successfully']);
-}
-
-// Toggle version state (publish/draft)
-function version_toggle_draft() {
-    if (!isset($_POST['nonce'])) {
-        wp_send_json_error(['message' => 'No nonce provided']);
-        return;
-    }
-
-    if (!wp_verify_nonce($_POST['nonce'], 'version_toggle_draft_nonce')) {
-        wp_send_json_error(['message' => 'Invalid nonce']);
-        return;
-    }
-
-    $id = isset($_POST['id']) ? sanitize_text_field($_POST['id']) : '';
-    $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
-    $new_state = isset($_POST['state']['value']) ? intval($_POST['state']['value']) : null;
-
-    if (empty($id) || empty($version_id) || $new_state === null) {
-        wp_send_json_error(['message' => 'Shortcut ID, version ID, or new state is missing']);
-        return;
-    }
-
-    $response = sb_api_call('/shortcuts/' . $id . '/version/' . $version_id, 'PATCH', [], ['state' => $new_state]);
-
-    if (is_wp_error($response)) {
-        wp_send_json_error(['message' => 'Error toggling version state: ' . $response->get_error_message()]);
-        return;
-    }
-
-    wp_send_json_success(['message' => 'Version state toggled successfully']);
-}
-
-// Permanently delete a version
-function version_delete() {
+// Delete or toggle delete state of a version
+function delete_version() {
     // Verify nonce and log the verification
     $nonce = isset($_POST['security']) ? $_POST['security'] : '';
-    $nonce_action = 'version_delete_nonce';
+    $nonce_action = 'delete_version_nonce';
     $nonce_verified = wp_verify_nonce($nonce, $nonce_action);
 
     if (!$nonce_verified) {
-        wp_send_json_error(array('message' => 'Invalid security token'));
+        // DEBUG: Log nonce verification failure
+        sh_debug_log('Version Delete Nonce Error', 'Nonce verification failed for version delete', array(
+            'file' => 'versions-ajax.php',
+            'line' => __FUNCTION__,
+            'function' => __FUNCTION__
+        ), array(
+            'nonce' => $nonce,
+            'nonce_action' => $nonce_action
+        ));
+        wp_send_json_error(array('message' => 'Security check failed'));
         return;
     }
 
-    // Get and sanitize parameters
+    // Get and validate required parameters
     $shortcut_id = isset($_POST['shortcut_id']) ? sanitize_text_field($_POST['shortcut_id']) : '';
-    $version_id = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
+    $version_number = isset($_POST['version_id']) ? sanitize_text_field($_POST['version_id']) : '';
+    $delete_type = isset($_POST['delete_type']) ? sanitize_text_field($_POST['delete_type']) : 'toggle';
+    $source = isset($_POST['source']) ? sanitize_text_field($_POST['source']) : 'switchblade';
+    $is_restore = isset($_POST['is_restore']) ? filter_var($_POST['is_restore'], FILTER_VALIDATE_BOOLEAN) : false;
 
-    if (empty($shortcut_id) || empty($version_id)) {
+    // DEBUG: Log received parameters
+    sh_debug_log('Version Delete Parameters', 'Parameters received for version delete', array(
+        'file' => 'versions-ajax.php',
+        'line' => __FUNCTION__,
+        'function' => __FUNCTION__
+    ), array(
+        'shortcut_id' => $shortcut_id,
+        'version_number' => $version_number,
+        'delete_type' => $delete_type,
+        'source' => $source,
+        'is_restore' => $is_restore,
+        'raw_post' => $_POST
+    ));
+
+    // Validate required parameters
+    if (empty($shortcut_id) || empty($version_number)) {
+        // DEBUG: Log missing parameters
+        sh_debug_log('Version Delete Parameter Error', 'Missing required parameters for version delete', array(
+            'file' => 'versions-ajax.php',
+            'line' => __FUNCTION__,
+            'function' => __FUNCTION__
+        ), array(
+            'shortcut_id' => $shortcut_id,
+            'version_number' => $version_number,
+            'raw_post' => $_POST
+        ));
         wp_send_json_error(array('message' => 'Missing required parameters'));
         return;
     }
 
-    // Construct the endpoint
-    $endpoint = "/shortcuts/{$shortcut_id}/version/{$version_id}";
+    // Handle different deletion types
+    switch ($delete_type) {
+        case 'permanent':
+            // Handle Switchblade permanent deletion
+            $endpoint = "/shortcuts/{$shortcut_id}/version/{$version_number}";
+            $response = sb_api_call($endpoint, 'DELETE');
+            
+            // DEBUG: Log API response for permanent deletion
+            sh_debug_log('Version Delete API Response', 'Response from permanent delete API call', array(
+                'file' => 'versions-ajax.php',
+                'line' => __FUNCTION__,
+                'function' => __FUNCTION__
+            ), array(
+                'endpoint' => $endpoint,
+                'method' => 'DELETE',
+                'response' => $response
+            ));
+            
+            if (is_wp_error($response)) {
+                wp_send_json_error(array('message' => 'Error permanently deleting version: ' . $response->get_error_message()));
+                return;
+            }
+            break;
 
-    // Make the API call
-    $response = sb_api_call($endpoint, 'DELETE');
+        case 'toggle':
+            // Handle Switchblade toggle
+            $endpoint = "/shortcuts/{$shortcut_id}/version/{$version_number}";
+            $response = sb_api_call($endpoint, 'PATCH', [], ['deleted' => !$is_restore]);
+            
+            // DEBUG: Log API response for toggle
+            sh_debug_log('Version Delete API Response', 'Response from toggle delete API call', array(
+                'file' => 'versions-ajax.php',
+                'line' => __FUNCTION__,
+                'function' => __FUNCTION__
+            ), array(
+                'endpoint' => $endpoint,
+                'method' => 'PATCH',
+                'params' => ['deleted' => !$is_restore],
+                'response' => $response,
+                'raw_response' => is_wp_error($response) ? $response->get_error_message() : $response
+            ));
+            
+            if (is_wp_error($response)) {
+                wp_send_json_error(array('message' => 'Error toggling version state: ' . $response->get_error_message()));
+                return;
+            }
+            break;
 
-    if (is_wp_error($response)) {
-        wp_send_json_error(array('message' => 'Error deleting version: ' . $response->get_error_message()));
-        return;
+        default:
+            wp_send_json_error(array('message' => 'Invalid delete type specified'));
+            return;
     }
 
-    wp_send_json_success(array('message' => 'Version deleted successfully'));
+    wp_send_json_success(array('message' => 'Version operation completed successfully'));
 }

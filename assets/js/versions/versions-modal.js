@@ -252,105 +252,44 @@ function getShortcutId() {
 }
 
 function handleVersionEditModal(id, versionId, latest = false) {
-    sh_debug_log('Opening Version Edit Modal', {
-        message: 'Starting to fetch version data',
+    const editButton = jQuery(`.edit-button[data-shortcut-id="${id}"][data-version-id="${versionId}"]`);
+    const versionData = editButton.data('version');
+
+    if (!versionData) {
+        sh_debug_log('Version Edit Modal Error', {
+            message: 'No version data found in button',
+            source: {
+                file: 'versions-modal.js',
+                line: 'handleVersionEditModal',
+                function: 'handleVersionEditModal'
+            },
+            data: {
+                button_data: {
+                    shortcut_id: id,
+                    version_id: versionId,
+                    version_data: versionData
+                }
+            },
+            debug: true
+        });
+        return;
+    }
+
+    sh_debug_log('Version Edit Modal Data', {
+        message: 'Using stored version data from button',
         source: {
             file: 'versions-modal.js',
             line: 'handleVersionEditModal',
             function: 'handleVersionEditModal'
         },
         data: {
-            shortcut_id: id,
-            version_id: versionId,
-            latest: latest
+            version_data: versionData
         },
         debug: true
     });
 
-    jQuery.ajax({
-        url: shortcutsHubData.ajaxurl,
-        method: 'POST',
-        data: {
-            action: 'fetch_version',
-            security: shortcutsHubData.security.fetch_version,
-            id: id,
-            version_id: versionId,
-            latest: latest
-        },
-        success: function(response) {
-            sh_debug_log('Version Data Fetched', {
-                message: 'Successfully fetched version data',
-                source: {
-                    file: 'versions-modal.js',
-                    line: 'handleVersionEditModal',
-                    function: 'handleVersionEditModal'
-                },
-                data: {
-                    response: response,
-                    version_id: versionId
-                },
-                debug: true
-            });
-
-            if (response.success && response.data) {
-                populateVersionEditModal(response.data).then(() => {
-                    const version = response.data.version;
-                    
-                    // Set the hidden fields with version ID, state and deleted status
-                    jQuery('#edit-version-id').val(version.id);  // Set version ID from response
-
-                    sh_debug_log('Version ID Set', {
-                        message: 'Setting version ID in form',
-                        source: {
-                            file: 'versions-modal.js',
-                            line: 'handleVersionEditModal',
-                            function: 'handleVersionEditModal'
-                        },
-                        data: {
-                            version_id_from_response: version.id,
-                            version_id_in_form: jQuery('#edit-version-id').val(),
-                            form_field_exists: jQuery('#edit-version-id').length > 0
-                        },
-                        debug: true
-                    });
-
-                    jQuery('#version_state').val(version.state.value);
-                    jQuery('#version_deleted').val(version.deleted ? 'true' : 'false');
-
-                    // Ensure the state button text is set correctly based on the version state
-                    const publishButton = jQuery('#edit-version-modal .publish-button');
-                    const revertButton = jQuery('#edit-version-modal .revert-button');
-                    const stateButton = jQuery('#edit-version-modal .state-button');
-                    const updateButton = jQuery('.update-button');
-
-                    if (version.state && version.state.value === 0) { // Published
-                        publishButton.hide();
-                        revertButton.show();
-                        stateButton.text('Revert to Draft').show();
-                        updateButton.text('Update').removeClass('save-draft-button publish-button switch-to-draft-button');
-                    } else if (version.state && version.state.value === 1) { // Draft
-                        publishButton.show();
-                        revertButton.hide();
-                        stateButton.text('Publish').show();
-                        updateButton.text('Save Draft').addClass('save-draft-button').removeClass('publish-button switch-to-draft-button');
-                    } else {
-                        stateButton.text('Unknown State').show();
-                        console.error('Unexpected version state:', version.state);
-                    }
-
-                    // Show the modal after setting the state button text
-                    jQuery('#edit-version-modal').addClass('active').show();
-                    jQuery('body').addClass('modal-open');
-                });
-            } else {
-                console.error('Error loading version data:', response.data ? response.data.message : 'No data');
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error('AJAX error:', status, error);
-            console.error('Response Text:', xhr.responseText);
-        }
-    });
+    // Show and populate modal immediately with stored data
+    populateVersionEditModal({ version: versionData });
 }
 
 function populateVersionEditModal(data) {

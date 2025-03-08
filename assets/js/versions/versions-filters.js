@@ -13,7 +13,7 @@ function debounce(func, wait) {
 
 jQuery(document).ready(function() {
     const urlParams = new URLSearchParams(window.location.search);
-    const shortcutId = urlParams.get('id');
+    const shortcutId = urlParams.get('sb_id');
     const view = urlParams.get('view');
 
     if (view !== 'versions') {

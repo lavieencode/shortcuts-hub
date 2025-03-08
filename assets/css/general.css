@@ -64,7 +64,7 @@ label {
     max-width: 500px;
     box-sizing: border-box;
     font-size: 15px;
-    border-radius: 0;
+    border-radius: 4px !important;
     display: block;
 }
 
@@ -116,7 +116,7 @@ button {
     font-weight: 600;
     font-size: 15px;
     border: none;
-    border-radius: 0 !important;
+    border-radius: 4px !important;
     cursor: pointer;
     width: auto;
     padding-left: 15px;
