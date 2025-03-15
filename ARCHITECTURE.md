@@ -3,6 +3,194 @@
 ## Overview
 Shortcuts Hub is a WordPress plugin that manages and displays shortcuts in an organized and user-friendly manner. It integrates with Elementor for dynamic content display and provides a robust shortcut management system.
 
+## Quick Reference Q&A
+
+### Where is the plugin initialized?
+**Answer:** The plugin is initialized in `shortcuts-hub.php` (main entry point) which loads `class-shortcuts-hub.php` (main plugin class). The initialization happens during the WordPress `plugins_loaded` hook.
+
+### Which databases does the plugin create and how are they managed?
+**Answer:** The plugin creates and manages several database tables in the WordPress database:
+1. **Shortcut Downloads Table (`wp_shortcutshub_downloads`)**: Created by the `create_downloads_table()` function in `database.php`, this table tracks user download history including shortcut_id, shortcut_name, version, download_date, post_url, and post_id. The table is created during plugin activation through the `maybe_create_tables()` method in `class-shortcuts-hub.php` which calls `create_downloads_table()`. It is also checked on each page load to ensure it exists. The My Account widget (`my-account-widget.php`) queries this table directly to show users their download history.
+2. **Shortcut-Action Relationships Table (`wp_shortcuts_hub_action_shortcut`)**: Created in `class-shortcuts-hub.php` during plugin activation (in the `maybe_create_tables()` method), this table stores connections between shortcuts and their associated actions with columns for action_id, shortcut_id, and created_at timestamp.
+3. **Custom Post Type Storage**: Shortcuts are stored as a custom post type in the WordPress database with associated meta fields for name, headline, description, color, icon, input, result, and external reference ID. The custom post type is registered in `class-shortcuts-hub.php`.
+
+Additionally, the plugin connects to the external Switchblade database through `class-sb-db-manager.php`, which uses a singleton pattern to prevent exceeding max connections to the Switchblade server.
+
+### Where is user authentication handled?
+**Answer:** Authentication is handled in `auth.php` (for Switchblade API) and `login-flow.php` (for WordPress users). Token management, refresh logic, and rate limiting are implemented in these files.
+
+### How are assets loaded?
+**Answer:** Assets are managed through `enqueue-assets.php` (comprehensive asset management) and `enqueue-core.php` (core file inclusion). These files handle script and style enqueuing for both admin and frontend contexts.
+
+### Where is the shortcut data stored?
+**Answer:** Shortcuts are stored as a custom post type with meta fields for name, headline, description, color, icon, input, result, and external reference ID. The post type is registered in `class-shortcuts-hub.php`.
+
+### How does the plugin integrate with Elementor?
+**Answer:** Elementor integration is handled in the `includes/elementor` directory. It provides dynamic tags (in `dynamic-tags` subdirectory) and widgets (in `widgets` subdirectory) for displaying shortcut data in Elementor templates.
+
+### Where is the download functionality implemented?
+**Answer:** Download functionality is implemented in the Download Button widget (`download-button-widget.php`) and tracked through functions in `database.php`. The download flow is managed through `login-flow.php` when users need to authenticate.
+
+### How are user roles and permissions managed?
+**Answer:** User roles and permissions are defined in `user-role.php` in the core directory. This file creates custom user roles with appropriate capabilities for Shortcuts Hub users.
+
+### Where is debugging functionality located?
+**Answer:** Debugging is handled by `sh-debug.php` in the core directory. It provides logging to both console and file, with context-aware debug output control.
+
+### How does the plugin communicate with external services?
+**Answer:** External API communication is managed through `sb-api.php` in the includes directory. It handles requests to the Switchblade API with proper error handling and authentication.
+
+### How is user registration and login handled?
+**Answer:** User registration and login are handled through `registration-flow.php` and `login-flow.php` in the core directory. The flow works as follows:
+1. Registration: User submits an Elementor form → `registration-flow.php` processes the submission → creates user account → assigns appropriate role from `user-role.php` → logs user in automatically
+2. Login: User submits login credentials → `login-flow.php` validates credentials → sets authentication cookie → checks for pending downloads → redirects user appropriately
+3. Download after login: If a user clicks download while logged out → download info is stored in session → after login, `login-redirect.js` triggers the download in a popup window
+
+## Core Files and Their Responsibilities
+
+```
+shortcuts-hub/
+├── ARCHITECTURE.md             # Architecture documentation
+├── PROTOCOL.md                 # Protocol documentation
+├── ACTIONPLAN.md               # Action plan documentation
+├── shortcuts-hub.php           # Main plugin file
+├── assets/
+│   ├── css/                    # Stylesheets
+│   │   ├── admin.css           # Admin styles
+│   │   └── frontend.css        # Frontend styles
+│   ├── js/                     # JavaScript files
+│   │   ├── admin/              # Admin scripts
+│   │   │   ├── edit-shortcut.js
+│   │   │   └── icon-selector.js
+│   │   └── frontend/           # Frontend scripts
+│   │       ├── download-button.js
+│   │       └── login-redirect.js
+│   └── images/                 # Image assets
+├── includes/                   # Core functionality
+│   ├── class-shortcuts-hub.php # Main plugin class
+│   ├── sb-api.php              # Switchblade API integration
+│   ├── auth.php                # Authentication handling
+│   ├── settings.php            # Plugin settings
+│   ├── enqueue-assets.php      # Asset management
+│   ├── security.php            # Security functions
+│   └── elementor/              # Elementor integration
+│       ├── elementor-manager.php
+│       ├── dynamic-tags/       # Dynamic tag classes
+│       │   ├── icon-tag.php
+│       │   └── name-tag.php
+│       └── widgets/            # Widget classes
+│           ├── download-button-widget.php
+│           └── my-account-widget.php
+└── core/                       # Core functionality
+    ├── class-sb-db-manager.php # Database connection manager
+    ├── database.php            # Database functions
+    ├── enqueue-core.php        # Core asset loading
+    ├── login-flow.php          # Login process handling
+    ├── registration-flow.php   # Registration process handling
+    ├── sh-debug.php            # Debugging functionality
+    └── user-role.php           # User role management
+```
+
+### Main Plugin Files
+1. **shortcuts-hub.php**
+   - Main plugin entry point
+   - Defines constants (SHORTCUTS_HUB_FILE, SHORTCUTS_HUB_PATH, SHORTCUTS_HUB_VERSION)
+   - Includes the main class file
+   - Registers activation and deactivation hooks
+   - Initializes the plugin during 'plugins_loaded' hook
+   - Registers Elementor integration
+   - Sets up plugin settings and admin pages
+   - Registers shutdown hook for database connection cleanup
+
+2. **class-shortcuts-hub.php** (in includes directory)
+   - Main plugin class using singleton pattern
+   - Handles plugin initialization
+   - Loads dependencies
+   - Registers post types
+   - Sets up admin menus
+   - Initializes AJAX handlers
+   - Manages core WordPress hooks
+   - Handles database table creation
+
+### Database Management
+3. **class-sb-db-manager.php** (in core directory)
+   - Manages database connections to Switchblade server
+   - Implements singleton pattern to prevent exceeding max_connections
+   - Handles connection pooling and timeout management
+   - Provides methods for executing queries with proper connection management
+   - Includes error handling and reconnection logic
+
+4. **database.php** (in core directory)
+   - Contains functions for logging shortcut downloads
+   - Provides functionality to retrieve user download history
+   - Includes AJAX handler for logging downloads
+   - Interacts with the WordPress database to store download information
+
+### Debug and Logging
+5. **sh-debug.php**
+   - Provides debugging functionality
+   - Implements logging to both console and file
+   - Controls debug output based on context
+   - Includes AJAX handlers for JavaScript logging
+   - Enqueues debug scripts
+
+### API Integration
+6. **sb-api.php** (in includes directory)
+   - Handles communication with the Switchblade API
+   - Manages API requests with proper error handling
+   - Handles token refresh for authentication
+   - Provides a unified interface for making API calls
+
+7. **auth.php** (in includes directory)
+   - Manages authentication with the Switchblade API
+   - Handles token retrieval and refresh
+   - Implements rate limiting for failed login attempts
+   - Stores tokens in WordPress transients
+
+### Settings Management
+8. **settings.php** (in includes directory)
+   - Manages plugin settings
+   - Provides functions to retrieve and update settings
+   - Registers settings in WordPress
+   - Handles settings sanitization
+   - Creates settings admin page
+
+### Asset Management
+9. **enqueue-assets.php** (in includes directory)
+   - Comprehensive asset management
+   - Handles script and style enqueuing
+   - Implements proper localization for AJAX functionality
+   - Provides page-specific asset loading
+   - Includes detailed documentation for asset management patterns
+
+10. **enqueue-core.php** (in core directory)
+    - Handles core file inclusion
+    - Manages script enqueuing for both admin and frontend
+    - Controls conditional loading of scripts
+    - Provides data localization for JavaScript
+
+### User Management
+11. **registration-flow.php** (in core directory)
+    - Handles user registration through Elementor forms
+    - Manages user role assignment
+    - Processes download tokens during registration
+    - Handles redirects after registration
+
+12. **login-flow.php** (in core directory)
+    - Manages user login process
+    - Handles form validation for login and registration
+    - Processes download tokens during login
+    - Implements AJAX logout functionality
+    - Manages session storage for pending downloads
+
+13. **user-role.php** (in core directory)
+    - Defines and creates custom user roles
+    - Sets up appropriate capabilities for Shortcuts Hub users
+
+### Security
+14. **security.php** (in includes directory)
+    - Currently empty, likely intended for security-related functionality
+
 ## Core Components
 
 ### 1. Shortcut Management
@@ -136,6 +324,8 @@ Shortcuts Hub is a WordPress plugin that manages and displays shortcuts in an or
   - Automatic token refresh
   - Error handling and logging
   - Secure credential management
+
+
 
 ### 10. My Account Widget Implementation Details
 
@@ -288,691 +478,3 @@ Shortcuts Hub is a WordPress plugin that manages and displays shortcuts in an or
    - **Issue**: Inconsistent tab/content alignment
    - **Solution**: CSS Grid with fixed navigation width
    - **Why it Works**: Provides stable, responsive layout
-
-#### Best Practices
-1. **Icon Data**:
-   - Always store in JSON format
-   - Include type identifier
-   - Validate structure before save
-   - Handle legacy data gracefully
-
-2. **Error Handling**:
-   - Validate data at each step
-   - Provide meaningful fallbacks
-   - Log important operations
-   - Clear user feedback
-
-3. **AJAX Security**:
-   - Use WordPress nonces for all AJAX requests
-   - Nonce parameter should be named 'security' in both PHP and JavaScript
-   - Access via $_POST['security'] in PHP handlers
-   - Send via shortcutsHubData.security in JavaScript
-   - Always verify for logged-in users using wp_verify_nonce()
-
-4. **Performance**:
-   - Cache expensive operations
-   - Minimize DOM operations
-   - Optimize media uploads
-   - Use WordPress core functions
-
-## WooCommerce My Account Widget Integration Notes
-
-### Endpoint Registration
-
-#### What Works
-1. Registering the endpoint with WordPress and WooCommerce:
-```php
-// In shortcuts-hub.php
-add_rewrite_endpoint('shortcuts', EP_ROOT | EP_PAGES);
-
-add_filter('woocommerce_get_query_vars', function($vars) {
-    $vars['shortcuts'] = 'shortcuts';
-    return $vars;
-});
-```
-
-2. Adding the menu item to WooCommerce account menu:
-```php
-add_filter('woocommerce_account_menu_items', function($items) {
-    $logout = false;
-    if (isset($items['customer-logout'])) {
-        $logout = $items['customer-logout'];
-        unset($items['customer-logout']);
-    }
-    
-    $items['shortcuts'] = esc_html__('Shortcuts', 'shortcuts-hub');
-    
-    if ($logout) {
-        $items['customer-logout'] = $logout;
-    }
-    
-    return $items;
-});
-```
-
-This successfully makes the Shortcuts tab appear in:
-- The rendered preview in the Elementor editor
-- The frontend display of the My Account widget
-
-#### What Doesn't Work
-1. Using `wc_get_account_menu_items()` in the widget's `get_account_pages()` method:
-```php
-protected function get_account_pages() {
-    $items = wc_get_account_menu_items();
-    $pages = array();
-
-    foreach ( $items as $key => $item ) {
-        $pages[ $key ] = array(
-            'label' => $item,
-            'endpoint' => $key,
-        );
-    }
-
-    return $pages;
-}
-```
-This approach fails to make the Shortcuts tab appear in:
-- The list of tabs under the Content tab in the Elementor widget settings
-
-#### Reference
-- Parent Widget Class: `ElementorPro\Modules\Woocommerce\Widgets\My_Account`
-- WooCommerce Query Class: `WC_Query` (handles endpoint registration)
-- Elementor Widget Base: `Elementor\Widget_Base`
-
-## Investigation of Parent Widget Tab System
-
-The parent widget (ElementorPro\Modules\Woocommerce\Widgets\My_Account) handles tabs in two ways:
-
-1. **Tab Registration in Editor**:
-   ```php
-   protected function register_controls() {
-       // ... other controls ...
-       $repeater = new Repeater();
-       $repeater->add_control(
-           'tab_name',
-           [
-               'label' => esc_html__('Tab Name', 'elementor-pro'),
-               'type' => Controls_Manager::TEXT,
-               'dynamic' => [
-                   'active' => true,
-               ],
-           ]
-       );
-
-       $this->add_control(
-           'tabs',
-           [
-               'label' => '',
-               'type' => Controls_Manager::REPEATER,
-               'fields' => $repeater->get_controls(),
-               'default' => [
-                   [
-                       'field_key' => 'dashboard',
-                       'field_label' => esc_html__('Dashboard', 'elementor-pro'),
-                       'tab_name' => esc_html__('Dashboard', 'elementor-pro'),
-                   ],
-                   // ... other tabs ...
-               ],
-           ]
-       );
-   }
-   ```
-
-2. **Frontend Tab Display**:
-   - Uses `get_account_pages()` to define available pages
-   - Modifies menu items through `modify_menu_items()` filter on 'woocommerce_account_menu_items'
-
-### Tab Registration Solution 
-
-After several attempts, we found that the only reliable way to add our tab to both the frontend and widget settings is to:
-
-1. Let parent widget register all controls
-2. Remove the tabs control completely
-3. Re-add it with our shortcuts tab included in the defaults
-
-```php
-protected function register_controls() {
-    parent::register_controls();
-
-    // Remove the parent's tabs control first
-    $this->remove_control('tabs');
-
-    // Then add our own version with our tab included
-    $repeater = new \Elementor\Repeater();
-    $repeater->add_control(
-        'tab_name',
-        [
-            'label' => esc_html__('Tab Name', 'shortcuts-hub'),
-            'type' => \Elementor\Controls_Manager::TEXT,
-            'dynamic' => [
-                'active' => true,
-            ],
-        ]
-    );
-
-    $this->add_control(
-        'tabs',
-        [
-            'label' => '',
-            'type' => \Elementor\Controls_Manager::REPEATER,
-            'fields' => $repeater->get_controls(),
-            'item_actions' => [
-                'add' => false,
-                'duplicate' => false,
-                'remove' => false,
-                'sort' => false,
-            ],
-            'default' => [
-                // Copy all parent tabs...
-                [
-                    'field_key' => 'shortcuts',
-                    'field_label' => esc_html__('Shortcuts', 'shortcuts-hub'),
-                    'tab_name' => esc_html__('Shortcuts', 'shortcuts-hub'),
-                ],
-            ],
-            'title_field' => '{{{ tab_name }}}',
-        ]
-    );
-}
-```
-
-This works because:
-1. We preserve parent widget's styling by calling parent::register_controls()
-2. We completely replace the tabs control instead of trying to modify it
-3. We include all the original tabs plus our shortcuts tab
-
-Failed approaches and why they didn't work:
-1. ❌ Modifying parent's control after registration - Control settings are immutable
-2. ❌ Using WooCommerce menu filter only - Doesn't affect widget settings
-3. ❌ Trying to update control defaults - Defaults are locked once set
-4. ❌ Complete control override without parent call - Lost all styling controls
-
-## WooCommerce My Account Widget Integration Success
-
-We've successfully integrated the Shortcuts tab into the WooCommerce My Account widget's settings panel in Elementor. Here's how it works:
-
-1. **Widget Extension**:
-   ```php
-   class My_Account_Widget extends Elementor_My_Account {
-       public function __construct($data = [], $args = null) {
-           parent::__construct($data, $args);
-           add_filter('woocommerce_account_menu_items', [$this, 'add_shortcuts_endpoint']);
-           add_action('woocommerce_account_shortcuts_endpoint', [$this, 'render_shortcuts_content']);
-       }
-   }
-   ```
-   - Extends the WooCommerce My Account widget
-   - Adds necessary hooks for the Shortcuts endpoint
-
-2. **Tab Registration in Editor**:
-   ```php
-   protected function register_controls() {
-       parent::register_controls();
-       $tabs = $this->get_controls()['tabs'];
-       $tabs['default'][] = [
-           'field_key' => 'shortcuts',
-           'field_label' => esc_html__('Shortcuts', 'shortcuts-hub'),
-           'tab_name' => esc_html__('Shortcuts', 'shortcuts-hub'),
-       ];
-       $this->update_control('tabs', $tabs);
-   }
-   ```
-   This approach successfully:
-   - Preserves parent widget functionality
-   - Adds our Shortcuts tab to the configurable settings
-   - Maintains Elementor's widget control system
-
-3. **Integration Points**:
-   - The tab appears in the Elementor editor settings
-   - The endpoint is properly registered with WooCommerce
-   - The tab shows up in the frontend My Account menu
-
-This implementation proves that extending the WooCommerce My Account widget while preserving its core functionality is possible. The key was modifying the tabs control after the parent widget's initialization but before the widget is fully registered.
-
-## Current Widget Integration Status
-
-#### What's Working
-1. **My Account Widget Editor Integration**:
-   - Shortcuts tab appears in the widget's Content tab settings
-   - Successfully listed among configurable endpoints
-   - Widget renders in the Elementor editor preview
-
-2. **Endpoint Registration**:
-   - WooCommerce endpoint properly registered
-   - Menu item appears in account navigation
-   - Basic content structure renders
-
-#### Known Issues
-1. **Tab Switching in Editor**:
-   - All pages are showing simultaneously instead of one at a time
-   - Tab clicking in editor preview doesn't trigger page switching
-   - Need to investigate parent widget's tab switching mechanism
-
-2. **Widget Category and Visibility**:
-   - Shortcuts Hub category not appearing in Elementor editor
-   - Download Button widget not visible in widget panel
-   - May need to review widget registration and category definition
-
-3. **Next Steps**:
-   - Investigate parent widget's tab switching implementation
-   - Debug category registration in Elementor
-   - Review widget registration process for Download Button
-   - Consider implementing custom tab switching logic if needed
-
-This partial success suggests we're on the right track with the widget extension approach, but need to address the tab switching behavior and widget visibility issues.
-
-## Best Practices
-1. **Icon Data**:
-   - Always store in JSON format
-
-2. **AJAX Security**:
-   - Use WordPress nonces for all AJAX requests
-   - Nonce parameter should be named 'security' in both PHP and JavaScript
-   - Access via $_POST['security'] in PHP handlers
-   - Send via shortcutsHubData.security in JavaScript
-   - Always verify for logged-in users using wp_verify_nonce()
-
-3. **Error Handling**:
-   - Validate data at each step
-   - Provide meaningful fallbacks
-   - Log important operations
-   - Clear user feedback
-
-4. **Performance**:
-   - Cache expensive operations
-   - Minimize DOM operations
-   - Optimize media uploads
-   - Use WordPress core functions
-
-## Future Considerations
-1. **Icon Management**:
-   - Icon library categorization
-   - Favorite/recent icons
-   - Custom icon library
-
-2. **UI/UX**:
-   - Enhanced icon search
-   - Bulk operations
-   - Preview improvements
-   - Mobile optimization
-
-3. **Integration**:
-   - Additional widget types
-   - External API support
-   - Import/export functionality
-
-4. **Security**:
-   - Enhanced token management
-   - Rate limiting implementation
-   - Additional authentication methods
-   - Session security improvements
-
-5. **Performance**:
-   - API response caching
-   - Asset optimization
-   - Database query optimization
-   - Lazy loading implementation
-
-## Download Button Widget Implementation Details
-
-#### Script Loading in Elementor Editor
-1. **Challenges and Solutions**:
-   - **Challenge**: Scripts not loading in Elementor editor
-   - **Solution**: Multi-pronged approach using both widget methods and manager hooks
-   ```php
-   // In Download_Button_Widget class
-   public function get_script_depends() {
-       return ['shortcuts-hub-download-button'];
-   }
-
-   protected function register_controls() {
-       wp_enqueue_script('shortcuts-hub-download-button');
-       // ... control registration code
-   }
-
-   // In Elementor_Manager class
-   public function __construct() {
-       add_action('elementor/editor/after_enqueue_scripts', [$this, 'register_assets']);
-       add_action('elementor/frontend/after_register_scripts', [$this, 'register_assets']);
-       add_action('elementor/preview/enqueue_scripts', [$this, 'register_assets']);
-   }
-   ```
-   - **Why it Works**: 
-     - `get_script_depends()` declares dependencies for frontend
-     - Direct enqueuing in `register_controls()` ensures editor availability
-     - Manager hooks handle both editor and preview contexts
-
-2. **Widget Registration Success**:
-   - **Category Registration**:
-     ```php
-     public function register_widget_categories($elements_manager) {
-         $elements_manager->add_category('shortcuts-hub', [
-             'title' => esc_html__('Shortcuts Hub', 'shortcuts-hub'),
-             'icon' => 'fa fa-plug',
-         ]);
-     }
-     ```
-   - **Widget Registration**:
-     ```php
-     public function register_widgets($widgets_manager) {
-         require_once SHORTCUTS_HUB_PATH . 'includes/elementor/widgets/download-button-widget.php';
-         $widgets_manager->register(new Download_Button_Widget());
-     }
-     ```
-   - **Success Factors**:
-     - Early hook timing (elementor/elements/categories_registered)
-     - Proper file inclusion path using plugin constants
-     - Correct class instantiation and registration
-
-3. **State Management**:
-   - **Challenge**: Maintaining download state through editor refreshes
-   - **Solution**: Session-based state management
-   ```php
-   // Session data structure for pending downloads
-   [
-       'shortcuts_hub_pending_download' => [
-           'shortcut' => [
-               'id' => int,
-               'name' => string,
-               'post_id' => int
-           ],
-           'version' => [
-               'version' => string,
-               'url' => string,
-               // ... other version details
-           ]
-       ]
-   ]
-   ```
-   - **Implementation**: Server-side session storage with client-side state sync
-
-4. **Best Practices Learned**:
-   - Always declare script dependencies via `get_script_depends()`
-   - Use multiple hook points for asset registration
-   - Implement proper state management for editor interactions
-   - Register widgets after Elementor is fully loaded
-   - Use consistent version numbers for cache busting
-   - Maintain script modularity for better maintenance
-
-## Login and Download Flow Implementation
-
-#### Current Implementation Analysis
-1. **Download Button Flow**:
-   ```javascript
-   // Current client-side flow
-   1. Click download button
-   2. Check login status
-   3. If not logged in:
-      - Redirect to login page with parameters
-      - Store shortcut data and redirect URL
-   4. If logged in:
-      - Log download via AJAX
-      - Open download URL in popup
-   ```
-
-2. **Login Form Processing**:
-   ```php
-   // Server-side flow
-   1. Validate credentials
-   2. Process login
-   3. Set auth cookie
-   4. Return response with:
-      - success status
-      - redirect URL
-      - download data
-   ```
-
-#### Challenges and Solutions
-
-1. **Pop-up Blocking Issue**:
-   - **Challenge**: Browsers block pop-ups triggered during form submission
-   - **Solution**: Two-step approach
-   ```javascript
-   // Step 1: After successful login
-   function handleLoginSuccess(response) {
-       // Store download data in session
-       sessionStorage.setItem('pending_download', JSON.stringify(response.download_data));
-       // Redirect main window
-       window.location.href = response.redirect_url;
-   }
-   
-   // Step 2: On redirect page load
-   function handleRedirectPageLoad() {
-       const pendingDownload = sessionStorage.getItem('pending_download');
-       if (pendingDownload) {
-           const downloadData = JSON.parse(pendingDownload);
-           // Clear stored data
-           sessionStorage.removeItem('pending_download');
-           // Open download in popup
-           window.open(downloadData.url, '_blank', 'width=800,height=600');
-       }
-   }
-   ```
-
-2. **Download Logging**:
-   - **Implementation**: Server-side tracking
-   ```php
-   function log_shortcut_download($shortcut_id, $version_data) {
-       global $wpdb;
-       $user_id = get_current_user_id();
-       
-       return $wpdb->insert(
-           $wpdb->prefix . 'shortcut_downloads',
-           [
-               'user_id' => $user_id,
-               'shortcut_id' => $shortcut_id,
-               'version' => $version_data['version'],
-               'download_date' => current_time('mysql'),
-               'download_status' => 'completed'
-           ]
-       );
-   }
-   ```
-
-#### Improved Flow Implementation Plan
-
-1. **Download Button Enhancement**:
-   ```javascript
-   class ShortcutDownloadManager {
-       constructor() {
-           this.bindEvents();
-           this.checkPendingDownloads();
-       }
-
-       bindEvents() {
-           // Handle download button clicks
-           document.addEventListener('click', '.shortcut-download-btn', this.handleDownloadClick);
-       }
-
-       checkPendingDownloads() {
-           // Check for pending downloads on page load
-           const pendingDownload = sessionStorage.getItem('pending_download');
-           if (pendingDownload) {
-               this.processPendingDownload(JSON.parse(pendingDownload));
-           }
-       }
-
-       async processPendingDownload(downloadData) {
-           try {
-               // Log download first
-               await this.logDownload(downloadData);
-               // Clear pending download
-               sessionStorage.removeItem('pending_download');
-               // Open download popup
-               this.openDownloadPopup(downloadData.version.url);
-           } catch (error) {
-               console.error('Download processing failed:', error);
-           }
-       }
-
-       openDownloadPopup(url) {
-           const popup = window.open(url, '_blank', 'width=800,height=600');
-           if (popup) {
-               popup.focus();
-           } else {
-               alert('Please allow pop-ups for download functionality');
-           }
-       }
-   }
-   ```
-
-2. **Login Flow Enhancement**:
-   ```php
-   class ShortcutsHubLoginFlow {
-       public function process_login($user_id) {
-           // Get pending download from session
-           $pending_download = $this->get_pending_download();
-           
-           if ($pending_download) {
-               // Store download in user meta for reliability
-               update_user_meta($user_id, '_pending_shortcut_download', $pending_download);
-               
-               // Clear session data
-               $this->clear_pending_download();
-               
-               return [
-                   'success' => true,
-                   'redirect_url' => $pending_download['redirect_url'],
-                   'download_data' => $pending_download['shortcut']
-               ];
-           }
-           
-           return ['success' => true, 'redirect_url' => home_url()];
-       }
-   }
-   ```
-
-3. **Download Tracking**:
-   ```php
-   class ShortcutDownloadTracker {
-       public function log_download($shortcut_id, $version_data, $user_id) {
-           global $wpdb;
-           
-           // Start transaction
-           $wpdb->query('START TRANSACTION');
-           
-           try {
-               // Log download
-               $wpdb->insert(/* ... */);
-               
-               // Update download count
-               $this->update_download_count($shortcut_id);
-               
-               $wpdb->query('COMMIT');
-               return true;
-           } catch (Exception $e) {
-               $wpdb->query('ROLLBACK');
-               return false;
-           }
-       }
-   }
-   ```
-
-#### Implementation Steps
-
-1. **Phase 1: Session Management**
-   - Implement reliable session handling
-   - Store download data securely
-   - Handle session cleanup
-
-2. **Phase 2: Login Flow**
-   - Update login form processing
-   - Implement redirect handling
-   - Add download data preservation
-
-3. **Phase 3: Download Processing**
-   - Implement download logging
-   - Add popup management
-   - Handle error cases
-
-4. **Phase 4: Testing**
-   - Test login flow with various browsers
-   - Verify popup behavior
-   - Validate download logging
-   - Check error handling
-
-This implementation plan addresses the popup blocking issues while ensuring reliable download tracking and a smooth user experience.
-
-## Deletion Architecture
-
-#### Overview
-The deletion system supports both soft deletion (trash) and permanent deletion, with a consistent state management across WordPress and Switchblade.
-
-#### Components
-
-1. **Frontend Interface** (`shortcuts-delete.js`):
-   - Delete button with dropdown for permanent deletion
-   - Restore button for trashed items
-   - Badge system showing current state (draft/deleted)
-   - Confirmation dialog for permanent deletion
-
-2. **Badge Management**:
-   - Container class: `badge-container`
-   - Badge classes:
-     - Draft: `<span class="badge draft">Draft</span>`
-     - Deleted: `<span class="badge deleted">Deleted</span>`
-   - Dynamic badge switching on state changes
-
-3. **State Flow**:
-   ```
-   Normal -> Trash (Soft Delete)
-            |
-            v
-   [Can be restored or permanently deleted]
-            |
-            v
-   Permanent Delete (Cannot be restored)
-   ```
-
-4. **AJAX Handler** (`shortcuts-ajax.php`):
-   - Endpoint: `delete_shortcut`
-   - Parameters:
-     - `post_id`: WordPress post ID
-     - `sb_id`: Switchblade ID
-     - `permanent`: Boolean for permanent deletion
-     - `restore`: Boolean for restoration
-   - Handles both WordPress and Switchblade state updates
-
-5. **Switchblade Integration** (`sb-api.php`):
-   - Synchronizes deletion state with Switchblade server
-   - Handles API errors gracefully
-   - Maintains consistency between systems
-
-#### Implementation Details
-
-1. **Delete Operation**:
-   ```javascript
-   // Frontend
-   deleteShortcut(postId, sbId, buttonElement, permanent = false, restore = false)
-   
-   // Backend
-   wp_ajax_delete_shortcut()
-   sb_api_call('DELETE', "/shortcuts/{$sb_id}")
-   ```
-
-2. **State Management**:
-   - WordPress post_status: 'publish' -> 'trash' -> deleted
-   - Switchblade status synchronized via API calls
-   - UI updates through badge system and button state
-
-3. **Error Handling**:
-   - Frontend: Reverts UI if operation fails
-   - Backend: Rolls back changes if either system fails
-   - User feedback through alerts and console logs
-
-#### Best Practices
-
-1. **UI Updates**:
-   - Always update badges before buttons
-   - Use consistent class names across render and update code
-   - Provide immediate feedback while waiting for server response
-
-2. **Error Recovery**:
-   - Store original button text for error recovery
-   - Keep track of previous state for rollback
-   - Log all API interactions for debugging
-
-3. **State Consistency**:
-   - Validate state changes server-side
-   - Ensure WordPress and Switchblade stay in sync
-   - Handle edge cases (e.g., network failures) gracefully

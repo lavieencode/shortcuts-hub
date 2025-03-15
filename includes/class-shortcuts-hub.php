@@ -149,6 +149,7 @@ class Shortcuts_Hub {
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/ajax/shortcuts-ajax.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/ajax/versions-ajax.php';
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/ajax/actions-ajax.php';
+        require_once plugin_dir_path(dirname(__FILE__)) . 'includes/ajax/editor-ajax.php';
         
         // Pages
         require_once plugin_dir_path(dirname(__FILE__)) . 'includes/pages/shortcuts-list-page.php';
@@ -169,8 +170,25 @@ class Shortcuts_Hub {
             if ($this->ajax_handler === null) {
                 $this->ajax_handler = \ShortcutsHub\Shortcuts_Ajax_Handler::instance();
                 $this->ajax_handler->register_handlers();
+                
+                // Initialize the editor AJAX handler
+                $editor_ajax = \ShortcutsHub\Editor_Ajax_Handler::instance();
+                $editor_ajax->register_handlers();
             }
         }
+        
+        // Add editor AJAX variables to Elementor editor
+        add_action('elementor/editor/before_enqueue_scripts', [$this, 'add_editor_variables']);
+    }
+    
+    /**
+     * Add editor variables for AJAX requests
+     */
+    public function add_editor_variables() {
+        wp_localize_script('elementor-editor', 'shortcuts_hub_editor', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('shortcuts_hub_editor_nonce')
+        ]);
     }
 
     /**
@@ -413,6 +431,11 @@ class Shortcuts_Hub {
 
             // Create/upgrade database tables if needed
             $this->maybe_create_tables();
+            
+            // Create downloads table if needed
+            if (function_exists('create_downloads_table')) {
+                create_downloads_table();
+            }
 
             // Set default options
             $this->set_default_options();
@@ -464,6 +487,11 @@ class Shortcuts_Hub {
             $column_names = array_map(function($col) { return $col->Field; }, $columns);
             $expected_columns = array('id', 'action_id', 'shortcut_id', 'created_at');
             $missing_columns = array_diff($expected_columns, $column_names);
+        }
+
+        // Also create the downloads table if the function exists
+        if (function_exists('create_downloads_table')) {
+            create_downloads_table();
         }
 
         return $table_exists && empty($missing_columns);

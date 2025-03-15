@@ -37,6 +37,11 @@ register_activation_hook(__FILE__, function() {
     // Use singleton instance but don't initialize
     $instance = shortcuts_hub();
     $instance->activate();
+    
+    // Register the Shortcuts endpoint for WooCommerce My Account
+    if (class_exists('\ShortcutsHub\Elementor\Widgets\My_Account_Widget')) {
+        \ShortcutsHub\Elementor\Widgets\My_Account_Widget::register_on_activation();
+    }
 });
 
 /**
@@ -47,6 +52,34 @@ register_deactivation_hook(__FILE__, function() {
     $instance = shortcuts_hub();
     $instance->deactivate();
 });
+
+// Register WooCommerce endpoints
+add_action('init', 'shortcuts_hub_register_endpoints', 5);
+
+/**
+ * Register the Shortcuts endpoint for WooCommerce
+ */
+function shortcuts_hub_register_endpoints() {
+    // Register the shortcuts endpoint
+    add_rewrite_endpoint('shortcuts', EP_ROOT | EP_PAGES);
+    
+    // Only flush rewrite rules if the flag is set
+    if (get_option('shortcuts_hub_flush_rewrite_rules')) {
+        flush_rewrite_rules(false);
+        delete_option('shortcuts_hub_flush_rewrite_rules');
+    }
+}
+
+// Add template for the Shortcuts endpoint
+add_action('woocommerce_account_shortcuts_endpoint', 'shortcuts_hub_endpoint_content');
+
+/**
+ * Content for the Shortcuts endpoint
+ */
+function shortcuts_hub_endpoint_content() {
+    // Include the template
+    include_once(plugin_dir_path(__FILE__) . 'templates/myaccount/shortcuts.php');
+}
 
 // Hook into WordPress initialization - but AFTER activation is complete
 add_action('plugins_loaded', 'shortcuts_hub_init', 10);

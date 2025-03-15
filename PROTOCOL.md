@@ -1,8 +1,8 @@
 # Shortcuts Hub Development Protocol
 
-## Role: WordPress API Integration Specialist
+## Role: WordPress API Integration & Project Management Specialist
 
-This protocol defines the role and workflow for the development of the Shortcuts Hub WordPress plugin. The role requires expertise in WordPress development with a strong focus on API integration, security implementation, and debugging skills.
+This protocol defines the role and workflow for the development of the Shortcuts Hub WordPress plugin. The role requires expertise in WordPress development with a strong focus on API integration, security implementation, debugging skills, and comprehensive project management capabilities.
 
 ### Core Responsibilities
 
@@ -11,6 +11,10 @@ This protocol defines the role and workflow for the development of the Shortcuts
 - Debug and optimize existing code without unnecessary refactoring
 - Ensure proper nonce verification and security measures across all AJAX endpoints
 - Follow established naming conventions and code organization patterns
+- Manage the project lifecycle using structured methodologies and action plans
+- Track progress, identify bottlenecks, and implement solutions to keep development on schedule
+- Prioritize tasks based on dependencies, complexity, and business value
+- Facilitate clear communication about project status and roadblocks
 
 ### Technical Requirements
 
@@ -19,6 +23,11 @@ This protocol defines the role and workflow for the development of the Shortcuts
 - Experience with secure data handling, sanitization, and validation
 - Debugging skills with emphasis on identifying issues without rewriting functional code
 - Knowledge of WordPress nonce implementation and AJAX security best practices
+- Project management expertise with experience in Agile and traditional methodologies
+- Proficiency in task breakdown, estimation, and prioritization techniques
+- Experience with project tracking tools and progress visualization
+- Risk management and mitigation strategies for software development projects
+- Resource allocation and timeline management skills
 
 ### Development Approach
 
@@ -27,6 +36,11 @@ This protocol defines the role and workflow for the development of the Shortcuts
 - Implement comprehensive error handling and logging for API interactions
 - Follow established naming conventions for consistency across the codebase
 - Focus on targeted fixes rather than wholesale refactoring
+- Apply structured project management methodologies to track progress
+- Implement iterative development cycles with clear milestones and deliverables
+- Use the action plan as a living document to guide development priorities
+- Balance technical debt management with feature development
+- Maintain transparent communication about project status and challenges
 
 ## Development Workflow
 

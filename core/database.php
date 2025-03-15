@@ -6,6 +6,76 @@ if (!defined('ABSPATH')) {
 
 require_once SHORTCUTS_HUB_PATH . 'sh-debug.php';
 
+/**
+ * Creates the downloads table if it doesn't exist
+ * 
+ * @return bool True if table exists or was created successfully, false otherwise
+ */
+function create_downloads_table() {
+    global $wpdb;
+    
+    $table_name = $wpdb->prefix . 'shortcutshub_downloads';
+    
+    // Check if table already exists
+    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+    
+    if ($table_exists) {
+        return true; // Table already exists, no need to create it
+    }
+    
+    // Table doesn't exist, create it
+    $charset_collate = $wpdb->get_charset_collate();
+    
+    $sql = "CREATE TABLE $table_name (
+        id bigint(20) NOT NULL AUTO_INCREMENT,
+        user_id bigint(20) NOT NULL,
+        shortcut_id bigint(20) NULL,
+        shortcut_name varchar(255) NOT NULL,
+        version varchar(50) NULL,
+        download_url text NULL,
+        post_url text NULL,
+        post_id bigint(20) NULL,
+        ip_address varchar(100) NULL,
+        download_date datetime DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY  (id),
+        KEY user_id (user_id),
+        KEY shortcut_id (shortcut_id)
+    ) $charset_collate;";
+    
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    $result = dbDelta($sql);
+    
+    // Verify table exists after creation attempt
+    $table_exists = $wpdb->get_var("SHOW TABLES LIKE '$table_name'") === $table_name;
+    
+    if (!$table_exists) {
+        sh_debug_log('Download Table Creation Error', array(
+            'message' => 'Failed to create downloads table',
+            'source' => array(
+                'file' => __FILE__,
+                'line' => __LINE__,
+                'function' => __FUNCTION__
+            ),
+            'data' => array(
+                'error' => $wpdb->last_error,
+                'result' => $result
+            ),
+            'debug' => true
+        ));
+        return false;
+    }
+    
+    return true;
+}
+
+// Initialize the downloads table
+add_action('plugins_loaded', function() {
+    // Only try to create the table if we're not in the middle of an AJAX request
+    if (!defined('DOING_AJAX') || !DOING_AJAX) {
+        create_downloads_table();
+    }
+}, 20); // Priority 20 to ensure it runs after the main plugin initialization
+
 // Function to log shortcut downloads with enhanced data
 function log_download($shortcut_name, $version_data, $download_url) {
     global $wpdb;

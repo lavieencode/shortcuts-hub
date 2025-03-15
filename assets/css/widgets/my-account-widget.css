@@ -1,0 +1,181 @@
+/* My Account Widget - My Shortcuts Table Styles */
+
+/* Page Title */
+.shortcuts-page-title {
+    color: #909CFE;
+    font-size: 24px;
+    margin-bottom: 20px !important;
+}
+
+/* Table Container */
+.shortcuts-table-container {
+    margin-top: 20px;
+    overflow-x: auto;
+    position: relative;
+}
+
+/* Table Styles */
+.shortcuts-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    min-width: 800px;
+    margin-top: -4px;
+    table-layout: fixed;
+    word-break: normal;
+}
+
+.shortcuts-table td {
+    white-space: nowrap;
+    padding: 12px 15px;
+    vertical-align: middle;
+    font-size: 15px;
+}
+
+/* Column Widths */
+.shortcuts-table .shortcut-name-column {
+    width: 30%;
+}
+
+.shortcuts-table .shortcut-version-column {
+    width: 30%;
+    text-align: center;
+}
+
+.shortcuts-table .shortcut-date-column {
+    width: 25%;
+    text-align: center;
+}
+
+.shortcuts-table .shortcut-actions-column {
+    width: 15%;
+    text-align: center;
+}
+
+/* Cell Alignments */
+.shortcuts-table td.shortcut-version-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.shortcuts-table td.shortcut-date-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.shortcuts-table td.shortcut-actions-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* Shortcut Name Container */
+.shortcut-name-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #373737;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-right: 15px;
+}
+
+.shortcut-name-text {
+    font-weight: 600;
+    color: #CACACA;
+    font-size: 15px;
+}
+
+.shortcut-name-text a {
+    color: #CACACA;
+    text-decoration: none;
+}
+
+.shortcut-name-text a:hover {
+    color: #909CFE;
+}
+
+/* Action Button */
+.shortcut-action-button {
+    background: none;
+    border: none;
+    color: #909CFE;
+    cursor: pointer;
+    padding: 8px;
+    margin-left: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+    display: inline-block;
+}
+
+.shortcut-action-button:hover {
+    background-color: #252525;
+}
+
+.shortcut-action-button i {
+    font-size: 16px;
+}
+
+/* Table Header */
+.shortcuts-table thead th {
+    color: #909CFE;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.shortcuts-table thead th.shortcut-version-column,
+.shortcuts-table thead th.shortcut-date-column,
+.shortcuts-table thead th.shortcut-actions-column {
+    text-align: center;
+}
+
+/* Responsive Styles */
+@media screen and (max-width: 768px) {
+    .shortcuts-table {
+        min-width: 100%;
+    }
+    
+    .shortcuts-table thead {
+        display: none;
+    }
+    
+    .shortcuts-table tbody tr {
+        display: block;
+        margin-bottom: 15px;
+        border: 1px solid #373737;
+    }
+    
+    .shortcuts-table tbody td {
+        display: block;
+        text-align: right;
+        padding: 10px;
+        position: relative;
+        border-bottom: 1px solid #373737;
+    }
+    
+    .shortcuts-table tbody td:last-child {
+        border-bottom: none;
+    }
+    
+    .shortcuts-table tbody td:before {
+        content: attr(data-title);
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-weight: 600;
+        color: #909CFE;
+    }
+    
+    .shortcut-name-container {
+        margin-right: 0;
+        justify-content: flex-end;
+    }
+    
+    .shortcuts-table td.shortcut-version-cell,
+    .shortcuts-table td.shortcut-date-cell,
+    .shortcuts-table td.shortcut-actions-cell {
+        text-align: right;
+    }
+}
